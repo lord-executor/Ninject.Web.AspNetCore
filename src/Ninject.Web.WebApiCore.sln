@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.WebApiCore", "N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.WebApiCore.HttpSys", "Ninject.Web.WebApiCore.Httpsys\Ninject.Web.WebApiCore.HttpSys.csproj", "{2E8666BD-C364-43D7-92E4-623021E63085}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApplication-AspNetCore22", "SampleApplication-AspNetCore22\SampleApplication-AspNetCore22.csproj", "{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2E8666BD-C364-43D7-92E4-623021E63085}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E8666BD-C364-43D7-92E4-623021E63085}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E8666BD-C364-43D7-92E4-623021E63085}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
