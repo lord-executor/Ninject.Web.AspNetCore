@@ -9,6 +9,13 @@ namespace Ninject.Web.WebApiCore.Hosting
 		private Type _customStartup;
 		private Action<KestrelServerOptions> _configureKestrelAction;
 
+		internal string[] CliArgs { get; private set; }
+
+		public WebApiHostConfiguration(string[] cliArgs = null)
+		{
+			CliArgs = cliArgs;
+		}
+
 		public WebApiHostConfiguration UseStartup<TStartup>() where TStartup : WebApiStartupBase
 		{
 			return UseStartup(typeof(TStartup));

@@ -1,13 +1,17 @@
-﻿using System;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.HttpSys;
-using Ninject.Web.WebApiCore.Hosting;
+using System;
 
 namespace Ninject.Web.WebApiCore.Hosting
 {
 	public class WebApiHostHttpSysConfiguration : WebApiHostConfiguration
 	{
 		private Action<HttpSysOptions> _configureHttpSysAction;
+
+		public WebApiHostHttpSysConfiguration(string[] cliArgs = null)
+			: base(cliArgs)
+		{
+		}
 
 		public new WebApiHostHttpSysConfiguration UseStartup<TStartup>() where TStartup : WebApiStartupBase
 		{
