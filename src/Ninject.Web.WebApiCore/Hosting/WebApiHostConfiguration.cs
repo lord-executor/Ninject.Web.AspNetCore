@@ -29,6 +29,11 @@ namespace Ninject.Web.WebApiCore.Hosting
 			return this;
 		}
 
+		public WebApiHostConfiguration UseKestrel()
+        {
+			return UseKestrel(_ => { });
+        }
+
 		public WebApiHostConfiguration UseKestrel(Action<KestrelServerOptions> configureAction)
 		{
 			_configureKestrelAction = configureAction;
