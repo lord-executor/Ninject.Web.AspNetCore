@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Ninject.Web.Common.SelfHost;
 
@@ -6,7 +7,6 @@ namespace Ninject.Web.WebApiCore.Hosting
 {
 	public class WebApiHost : INinjectSelfHost
 	{
-
 		private WebApiHostConfiguration _configuration;
 		private IKernel _kernel;
 
@@ -18,7 +18,12 @@ namespace Ninject.Web.WebApiCore.Hosting
 
 		public void Start()
 		{
-			var host = new WebHostBuilder()
+			// The default web host builder takes care of
+			// * Content and Web-root
+			// * Loading appsettings.json files and environment variables configuration source
+			// * Logging configuration (from appsettings.json)
+			// * AllowedHosts configuration (from appsettings.json)
+			var host = WebHost.CreateDefaultBuilder()
 				.ConfigureServices(s => { s.AddNinject(_kernel); });
 			_configuration.Apply(host);
 
