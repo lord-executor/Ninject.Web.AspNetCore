@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Ninject.Web.WebApiCore
+namespace Ninject.Web.AspNetCore
 {
 	/// <summary>
 	/// This class fixes the issue that ASP.NET core registers 2 implementations for IServer and tries to inject IServer then with single injection

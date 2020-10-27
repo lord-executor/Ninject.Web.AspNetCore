@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
-using Ninject.Activation;
+﻿using Ninject.Activation;
 using Ninject.Components;
 using Ninject.Web.Common;
 
-namespace Ninject.Web.WebApiCore
+namespace Ninject.Web.AspNetCore
 {
-	public class WebApiApplicationPlugin : NinjectComponent, INinjectHttpApplicationPlugin
+	public class AspNetCoreApplicationPlugin : NinjectComponent, INinjectHttpApplicationPlugin
 	{
 		private readonly IKernel _kernel;
 
-		public WebApiApplicationPlugin(IKernel kernel)
+		public AspNetCoreApplicationPlugin(IKernel kernel)
 		{
 			_kernel = kernel;
 		}

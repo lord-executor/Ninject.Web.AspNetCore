@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Ninject.Web.WebApiCore.Hosting
+namespace Ninject.Web.AspNetCore.Hosting
 {
     /// <summary>
-    /// NInject customized startup class similar to Microsoft.AspNetCore.Hosting.StartupBase of TBuilder.
+    /// Ninject customized startup class similar to Microsoft.AspNetCore.Hosting.StartupBase of TBuilder.
     /// </summary>
-    public abstract class WebApiStartupBase : IStartup
+    public abstract class AspNetCoreStartupBase : IStartup
 	{
 		private readonly IServiceProviderFactory<NInjectServiceProviderBuilder> _providerFactory;
 
-		protected WebApiStartupBase(IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
+		protected AspNetCoreStartupBase(IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
 		{
 			_providerFactory = providerFactory;
 		}

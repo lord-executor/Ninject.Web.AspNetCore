@@ -2,18 +2,18 @@
 using Microsoft.AspNetCore.Server.HttpSys;
 using System;
 
-namespace Ninject.Web.WebApiCore.Hosting
+namespace Ninject.Web.AspNetCore.Hosting
 {
-	public class WebApiHostHttpSysConfiguration : WebApiHostConfiguration
+	public class AspNetCoreHostHttpSysConfiguration : AspNetCoreHostConfiguration
 	{
 		private Action<HttpSysOptions> _configureHttpSysAction;
 
-		public WebApiHostHttpSysConfiguration(string[] cliArgs = null)
+		public AspNetCoreHostHttpSysConfiguration(string[] cliArgs = null)
 			: base(cliArgs)
 		{
 		}
 
-		public WebApiHostHttpSysConfiguration UseHttpSys(Action<HttpSysOptions> configureAction)
+		public AspNetCoreHostHttpSysConfiguration UseHttpSys(Action<HttpSysOptions> configureAction)
 		{
 			_configureHttpSysAction = configureAction;
 			return this;

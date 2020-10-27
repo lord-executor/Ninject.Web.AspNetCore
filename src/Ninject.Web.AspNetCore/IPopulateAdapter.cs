@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Ninject.Web.WebApiCore
+namespace Ninject.Web.AspNetCore
 {
 	/// <summary>
 	/// Allows to adapt the population form ServiceCollection process.

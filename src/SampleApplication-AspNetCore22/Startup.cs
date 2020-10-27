@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Ninject.Web.WebApiCore;
-using Ninject.Web.WebApiCore.Hosting;
+using Ninject.Web.AspNetCore;
+using Ninject.Web.AspNetCore.Hosting;
 
 namespace SampleApplication_AspNetCore22
 {
-	public class Startup : WebApiStartupBase
+	public class Startup : AspNetCoreStartupBase
 	{
 		public Startup(IConfiguration configuration, IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
 			: base(providerFactory)

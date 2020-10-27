@@ -3,16 +3,16 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
-namespace Ninject.Web.WebApiCore.Hosting
+namespace Ninject.Web.AspNetCore.Hosting
 {
-	public class WebApiHostConfiguration
+	public class AspNetCoreHostConfiguration
 	{
 		private Type _customStartup;
 		private Action<KestrelServerOptions> _configureKestrelAction;
 
 		internal Func<IWebHostBuilder> WebHostBuilderFactory { get; private set; }
 
-		public WebApiHostConfiguration(string[] cliArgs = null)
+		public AspNetCoreHostConfiguration(string[] cliArgs = null)
 		{
 			WebHostBuilderFactory = () => WebHost.CreateDefaultBuilder(cliArgs); ;
 		}
@@ -24,9 +24,9 @@ namespace Ninject.Web.WebApiCore.Hosting
 
 		internal void ConfigureStartupType(Type startupType)
 		{
-			if (!typeof(WebApiStartupBase).IsAssignableFrom(startupType))
+			if (!typeof(AspNetCoreStartupBase).IsAssignableFrom(startupType))
 			{
-				throw new ArgumentException("startup type must inherit from " + nameof(WebApiStartupBase));
+				throw new ArgumentException("startup type must inherit from " + nameof(AspNetCoreStartupBase));
 			}
 			_customStartup = startupType;
 		}
@@ -56,7 +56,7 @@ namespace Ninject.Web.WebApiCore.Hosting
 			var startupType = _customStartup;
 			if (startupType == null)
 			{
-				startupType = typeof(DefaultWebApiStartup);
+				startupType = typeof(EmptyStartup);
 			}
 
 			builder.UseStartup(startupType);

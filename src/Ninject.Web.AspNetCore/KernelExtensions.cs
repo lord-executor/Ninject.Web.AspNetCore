@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Ninject.Syntax;
 using Ninject.Web.Common;
 
-namespace Ninject.Web.WebApiCore
+namespace Ninject.Web.AspNetCore
 {
 	public static class KernelExtensions
 	{

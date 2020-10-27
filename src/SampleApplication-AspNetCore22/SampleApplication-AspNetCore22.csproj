@@ -16,7 +16,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Ninject.Web.WebApiCore\Ninject.Web.WebApiCore.csproj" />
+    <ProjectReference Include="..\Ninject.Web.AspNetCore\Ninject.Web.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

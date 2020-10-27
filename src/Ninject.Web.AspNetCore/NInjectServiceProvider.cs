@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ninject.Web.WebApiCore
+namespace Ninject.Web.AspNetCore
 {
 	/// <summary>
 	/// We have to wrap IKernel here as an IServiceProvider,

@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Ninject.Web.Common.SelfHost;
 
-namespace Ninject.Web.WebApiCore.Hosting
+namespace Ninject.Web.AspNetCore.Hosting
 {
-	public class WebApiHost : INinjectSelfHost
+	public class AspNetCoreHost : INinjectSelfHost
 	{
-		private WebApiHostConfiguration _configuration;
+		private AspNetCoreHostConfiguration _configuration;
 		private IKernel _kernel;
 
-		public WebApiHost(WebApiHostConfiguration configuration, IKernel kernel)
+		public AspNetCoreHost(AspNetCoreHostConfiguration configuration, IKernel kernel)
 		{
 			_configuration = configuration;
 			_kernel = kernel;

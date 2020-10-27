@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Ninject.Web.WebApiCore</RootNamespace>
+    <RootNamespace>Ninject.Web.AspNetCore</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ninject.Web.WebApiCore\Ninject.Web.WebApiCore.csproj" />
+    <ProjectReference Include="..\Ninject.Web.AspNetCore\Ninject.Web.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

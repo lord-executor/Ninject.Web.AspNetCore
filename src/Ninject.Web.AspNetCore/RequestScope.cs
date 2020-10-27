@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Ninject.Web.WebApiCore
+namespace Ninject.Web.AspNetCore
 {
 	public class RequestScope : IDisposable
 	{
