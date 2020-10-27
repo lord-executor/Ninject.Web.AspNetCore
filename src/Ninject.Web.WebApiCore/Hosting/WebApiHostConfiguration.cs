@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
@@ -9,11 +10,16 @@ namespace Ninject.Web.WebApiCore.Hosting
 		private Type _customStartup;
 		private Action<KestrelServerOptions> _configureKestrelAction;
 
-		internal string[] CliArgs { get; private set; }
+		internal Func<IWebHostBuilder> WebHostBuilderFactory { get; private set; }
 
 		public WebApiHostConfiguration(string[] cliArgs = null)
 		{
-			CliArgs = cliArgs;
+			WebHostBuilderFactory = () => WebHost.CreateDefaultBuilder(cliArgs); ;
+		}
+
+		internal void ConfigureWebHostBuilder(Func<IWebHostBuilder> webHostBuilderFactory)
+		{
+			WebHostBuilderFactory = webHostBuilderFactory;
 		}
 
 		internal void ConfigureStartupType(Type startupType)
