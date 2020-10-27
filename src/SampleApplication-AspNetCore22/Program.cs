@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Ninject;
-using Ninject.Web.Common.SelfHost;
 using Ninject.Web.AspNetCore.Hosting;
+using Ninject.Web.Common.SelfHost;
 
 namespace SampleApplication_AspNetCore22
 {
@@ -10,12 +9,23 @@ namespace SampleApplication_AspNetCore22
 	{
 		public static void Main(string[] args)
 		{
-			var options = new AspNetCoreHostConfiguration(args)
-				.UseWebHostBuilder(CreateWebHostBuilder)
-				.UseStartup(typeof(Startup))
-				.UseKestrel();
+			object hostConfiguration;
 
-			var host = new NinjectSelfHostBootstrapper(CreateKernel, options);
+			if (args.Length > 0 && args[0] == "--useHttpSys")
+			{
+				hostConfiguration = new AspNetCoreHostHttpSysConfiguration(args)
+					.UseWebHostBuilder(CreateWebHostBuilder)
+					.UseStartup(typeof(Startup))
+					.UseHttpSys(_ => { });
+			}
+			else
+			{
+				hostConfiguration = new AspNetCoreHostConfiguration(args)
+					.UseStartup(typeof(Startup))
+					.UseKestrel();
+			}
+
+			var host = new NinjectSelfHostBootstrapper(CreateKernel, hostConfiguration);
 			host.Start();
 		}
 

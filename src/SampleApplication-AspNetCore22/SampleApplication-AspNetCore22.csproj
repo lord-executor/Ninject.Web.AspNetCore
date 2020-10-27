@@ -16,6 +16,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Ninject.Web.AspNetCore.Httpsys\Ninject.Web.AspNetCore.HttpSys.csproj" />
     <ProjectReference Include="..\Ninject.Web.AspNetCore\Ninject.Web.AspNetCore.csproj" />
   </ItemGroup>
 
