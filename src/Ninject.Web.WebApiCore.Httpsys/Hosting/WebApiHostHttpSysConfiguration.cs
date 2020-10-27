@@ -13,17 +13,6 @@ namespace Ninject.Web.WebApiCore.Hosting
 		{
 		}
 
-		public new WebApiHostHttpSysConfiguration UseStartup<TStartup>() where TStartup : WebApiStartupBase
-		{
-			return UseStartup(typeof(TStartup));
-		}
-
-		public new WebApiHostHttpSysConfiguration UseStartup(Type startupType)
-		{
-			ConfigureStartupType(startupType);
-			return this;
-		}
-
 		public WebApiHostHttpSysConfiguration UseHttpSys(Action<HttpSysOptions> configureAction)
 		{
 			_configureHttpSysAction = configureAction;

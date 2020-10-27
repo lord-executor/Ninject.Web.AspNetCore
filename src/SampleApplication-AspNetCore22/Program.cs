@@ -9,8 +9,8 @@ namespace SampleApplication_AspNetCore22
 		public static void Main(string[] args)
 		{
 			var options = new WebApiHostConfiguration(args)
-				.UseKestrel()
-				.UseStartup<Startup>();
+				.UseStartup(typeof(Startup))
+				.UseKestrel();
 
 			var host = new NinjectSelfHostBootstrapper(CreateKernel, options);
 			host.Start();

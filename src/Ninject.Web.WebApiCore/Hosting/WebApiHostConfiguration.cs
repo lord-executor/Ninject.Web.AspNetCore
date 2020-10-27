@@ -16,12 +16,7 @@ namespace Ninject.Web.WebApiCore.Hosting
 			CliArgs = cliArgs;
 		}
 
-		public WebApiHostConfiguration UseStartup<TStartup>() where TStartup : WebApiStartupBase
-		{
-			return UseStartup(typeof(TStartup));
-		}
-
-		protected void ConfigureStartupType(Type startupType)
+		internal void ConfigureStartupType(Type startupType)
 		{
 			if (!typeof(WebApiStartupBase).IsAssignableFrom(startupType))
 			{
@@ -30,21 +25,9 @@ namespace Ninject.Web.WebApiCore.Hosting
 			_customStartup = startupType;
 		}
 
-		public WebApiHostConfiguration UseStartup(Type startupType)
-		{
-			ConfigureStartupType(startupType);
-			return this;
-		}
-
-		public WebApiHostConfiguration UseKestrel()
-        {
-			return UseKestrel(_ => { });
-        }
-
-		public WebApiHostConfiguration UseKestrel(Action<KestrelServerOptions> configureAction)
+		internal void ConfigureKestrel(Action<KestrelServerOptions> configureAction)
 		{
 			_configureKestrelAction = configureAction;
-			return this;
 		}
 
 		internal virtual void Apply(IWebHostBuilder builder)
