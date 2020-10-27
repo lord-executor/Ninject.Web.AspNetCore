@@ -1,65 +1,45 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System;
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
-	public class AspNetCoreHostConfiguration
+	public class AspNetCoreHostConfiguration : IAspNetCoreHostConfiguration
 	{
 		private Type _customStartup;
-		private Action<KestrelServerOptions> _configureKestrelAction;
+		private Action<IWebHostBuilder> _hostingModelConfigurationAction;
 
 		internal Func<IWebHostBuilder> WebHostBuilderFactory { get; private set; }
 
 		public AspNetCoreHostConfiguration(string[] cliArgs = null)
 		{
-			WebHostBuilderFactory = () => WebHost.CreateDefaultBuilder(cliArgs); ;
+			_customStartup = typeof(EmptyStartup);
+			WebHostBuilderFactory = () => WebHost.CreateDefaultBuilder(cliArgs);
 		}
 
-		internal void ConfigureWebHostBuilder(Func<IWebHostBuilder> webHostBuilderFactory)
+		void IAspNetCoreHostConfiguration.ConfigureWebHostBuilder(Func<IWebHostBuilder> webHostBuilderFactory)
 		{
 			WebHostBuilderFactory = webHostBuilderFactory;
 		}
 
-		internal void ConfigureStartupType(Type startupType)
+		void IAspNetCoreHostConfiguration.ConfigureStartupType(Type startupType)
 		{
 			if (!typeof(AspNetCoreStartupBase).IsAssignableFrom(startupType))
 			{
-				throw new ArgumentException("startup type must inherit from " + nameof(AspNetCoreStartupBase));
+				throw new ArgumentException("Startup type must inherit from " + nameof(AspNetCoreStartupBase));
 			}
 			_customStartup = startupType;
 		}
 
-		internal void ConfigureKestrel(Action<KestrelServerOptions> configureAction)
+		void IAspNetCoreHostConfiguration.ConfigureHostingModel(Action<IWebHostBuilder> configureAction)
 		{
-			_configureKestrelAction = configureAction;
+			_hostingModelConfigurationAction = configureAction;
 		}
 
 		internal virtual void Apply(IWebHostBuilder builder)
 		{
-			ApplyHostingModel(builder);
-
-			ApplyStartup(builder);
-		}
-
-		protected virtual void ApplyHostingModel(IWebHostBuilder builder)
-		{
-			if (_configureKestrelAction != null)
-			{
-				builder.UseKestrel(_configureKestrelAction);
-			}
-		}
-
-		protected void ApplyStartup(IWebHostBuilder builder)
-		{
-			var startupType = _customStartup;
-			if (startupType == null)
-			{
-				startupType = typeof(EmptyStartup);
-			}
-
-			builder.UseStartup(startupType);
+			_hostingModelConfigurationAction?.Invoke(builder);
+			builder.UseStartup(_customStartup);
 		}
 	}
 }

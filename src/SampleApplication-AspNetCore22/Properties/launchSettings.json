@@ -17,6 +17,7 @@
     },
     "Kestrel": {
       "commandName": "Project",
+      "commandLineArgs": "--useKestrel",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -30,7 +31,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:5000"
+      "applicationUrl": "http://localhost:5001"
     }
   }
 }

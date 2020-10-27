@@ -2,6 +2,7 @@
 using Ninject;
 using Ninject.Web.AspNetCore.Hosting;
 using Ninject.Web.Common.SelfHost;
+using System.Linq;
 
 namespace SampleApplication_AspNetCore22
 {
@@ -9,20 +10,21 @@ namespace SampleApplication_AspNetCore22
 	{
 		public static void Main(string[] args)
 		{
-			object hostConfiguration;
+			// When no hosting model is selected with UseKestrel or UseHttpSys, the default from ASP.NET Core
+			// is to run in Kestrel when the program is started normally and to run in IIS in-process mode
+			// when it detects that it is running inside of an IIS process. So technically, UseKestrel is
+			// optional and does not need to be called unless you want to configure it.
+			var model = args.FirstOrDefault(arg => arg.StartsWith("--use"))?.Substring(5) ?? "IIS";
+			var hostConfiguration = new AspNetCoreHostConfiguration(args)
+					.UseStartup(typeof(Startup));
 
-			if (args.Length > 0 && args[0] == "--useHttpSys")
+			if (model == "HttpSys")
 			{
-				hostConfiguration = new AspNetCoreHostHttpSysConfiguration(args)
-					.UseWebHostBuilder(CreateWebHostBuilder)
-					.UseStartup(typeof(Startup))
-					.UseHttpSys(_ => { });
+				hostConfiguration.UseHttpSys();
 			}
-			else
+			else if (model == "Kestrel")
 			{
-				hostConfiguration = new AspNetCoreHostConfiguration(args)
-					.UseStartup(typeof(Startup))
-					.UseKestrel();
+				hostConfiguration.UseKestrel();
 			}
 
 			var host = new NinjectSelfHostBootstrapper(CreateKernel, hostConfiguration);
