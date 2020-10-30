@@ -25,13 +25,6 @@ namespace Ninject.Web.AspNetCore.Hosting
 		public DefaultWebHostConfiguration(string[] cliArgs)
 		{
 			_cliArgs = cliArgs;
-
-			_builder
-				.UseDefaultServiceProvider((WebHostBuilderContext context, ServiceProviderOptions options) =>
-				{
-					// In development mode perform check verifying that scoped services never gets resolved from root provider
-					options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
-				});
 		}
 
 		public DefaultWebHostConfiguration ConfigureContentRoot()
