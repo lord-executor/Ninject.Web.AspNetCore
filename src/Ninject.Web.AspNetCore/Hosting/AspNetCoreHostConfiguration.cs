@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using System;
 
 namespace Ninject.Web.AspNetCore.Hosting
@@ -14,7 +13,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 		public AspNetCoreHostConfiguration(string[] cliArgs = null)
 		{
 			_customStartup = typeof(EmptyStartup);
-			WebHostBuilderFactory = () => WebHost.CreateDefaultBuilder(cliArgs);
+			WebHostBuilderFactory = () => new DefaultWebHostConfiguration(cliArgs).ConfigureAll().GetBuilder();
 		}
 
 		void IAspNetCoreHostConfiguration.ConfigureWebHostBuilder(Func<IWebHostBuilder> webHostBuilderFactory)

@@ -37,7 +37,11 @@ namespace Ninject.Web.AspNetCore.Hosting
 		{
 			config.ConfigureHostingModel(builder =>
 			{
-				builder.UseKestrel(configureAction);
+				builder.UseKestrel((builderContext, options) => {
+					// Defaults from Microsoft.AspNetCore.WebHost.CreateDefaultBuilder
+					options.Configure(builderContext.Configuration.GetSection("Kestrel"));
+					configureAction(options);
+				});
 			});
 			return config;
 		}
