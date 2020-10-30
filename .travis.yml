@@ -1,0 +1,7 @@
+language: csharp
+mono: none
+dotnet: 2.2
+solution: src/Ninject.Web.AspNetCore.sln
+script:
+  - dotnet restore src/Ninject.Web.AspNetCore.sln
+  - dotnet build src/Ninject.Web.AspNetCore.sln -f netcoreapp2.2
