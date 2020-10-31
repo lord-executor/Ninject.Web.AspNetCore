@@ -13,7 +13,6 @@ namespace Ninject.Web.AspNetCore
 		{
 			Kernel.Components.Add<INinjectHttpApplicationPlugin, AspNetCoreApplicationPlugin>(); // provides the scope object for InRequestScope bindings
 			Kernel.Bind<IServiceScopeFactory>().To<NInjectServiceScopeFactory>().InTransientScope().WithConstructorArgument("kernel", Kernel);
-			Kernel.Bind<IPopulateAdapter>().To<FixDoubleBindingAdapter>();
 			Kernel.Bind<IPopulateAdapter>().To<FixServicesForPublicatonAdapter>();
 		}
 	}
