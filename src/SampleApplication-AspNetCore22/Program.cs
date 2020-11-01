@@ -11,8 +11,15 @@ namespace SampleApplication_AspNetCore22
 	{
 		public static void Main(string[] args)
 		{
-			// IIS just starts the server without any arguments, so it is the default here
-			var model = args.FirstOrDefault(arg => arg.StartsWith("--use"))?.Substring(5) ?? "IIS";
+			// Simple (and probably unreliable) IIS detection mechanism
+			var model = Environment.GetEnvironmentVariable("ASPNETCORE_HOSTINGSTARTUPASSEMBLIES") == "Microsoft.AspNetCore.Server.IISIntegration" ? "IIS" : null;
+			// The hosting model can be explicitly configured with the SERVER_HOSTING_MODEL environment variable.
+			// See https://www.andrecarlucci.com/en/setting-environment-variables-for-asp-net-core-when-publishing-on-iis/ for
+			// setting the variable in IIS.
+			model = Environment.GetEnvironmentVariable("SERVER_HOSTING_MODEL") ?? model;
+			// Command line arguments have higher precedence than environment variables
+			model = args.FirstOrDefault(arg => arg.StartsWith("--use"))?.Substring(5) ?? model;
+
 			var hostConfiguration = new AspNetCoreHostConfiguration(args)
 					.UseStartup<Startup>();
 

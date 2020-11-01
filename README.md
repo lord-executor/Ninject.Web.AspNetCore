@@ -51,6 +51,7 @@ public class Program
 
 You can also use `DefaultWebHostConfiguration` which comes with the Ninject integration to use some of the defaults that you get with an OOTB default web host builder for ASP.NET and add your own configuration on top of that. `DefaultWebHostConfiguration` can essentially do the same as `WebHost.CreateDefaultBuilder` except that it does not already configure the actual hosting model. It just adds the default configuration for logging, content root, etc.
 
+
 # The Problem with WebHost.CreateDefaultBuilder
 In most ASP.NET Core examples that you find out there, including the ones you get when creating a new project from one of the many templates, you will find code like the following:
 
@@ -71,3 +72,36 @@ When these service registrations are translated to Ninject, this becomes a bit o
 The same thing of course happens if you are using the default web host builder _and then_ tell it to `UseHttpSys`... Because it has already registered Kestrel (and IIS, but I'm assuming that the application is running in its own process here) it will still have two `IServer` implementations and startup will fail.
 
 This is why with `Ninject.Web.AspNetCore` the `AspNetCoreHostConfiguration` only expects you to explicitly declare the hosting model and only allows you to define _one_ hosting model. If you try to register multiple ones, it will simply use the last one that was configured. This is due to the fact that internally `AspNetCoreHostConfiguration` just stores one `_hostingModelConfigurationAction`.
+
+
+# Detecting IIS In-Process Hosting
+If you want you server to be able to run as a separate stand-alone server _as well as_ integrated into an IIS server with in-process hosting, then your code needs to be able to call the right hosting model method (`UseKestrel` or `UseIIS`) depending on the context.
+
+You can check the SampleApplication `Program.cs` for practical examples.
+
+## Environment Variables
+The built-in ASP.NET Core IIS integration detection code is relying on OS detection and Windows specific kernel methods, there is a much cleaner way to do that. A mechanism that has been used to detect the runtime context of an application since the dawn of modern operating systems: **environment variables**.
+
+There already seems to be an environment variable defined by the IIS AspNetCore integration that makes this quite easy - although I cannot guarantee that this variable will always be available, but in my tests it has always been there.
+```
+ASPNETCORE_HOSTINGSTARTUPASSEMBLIES = Microsoft.AspNetCore.Server.IISIntegration
+```
+
+If that is not _reliable_ enough, you can also simply introduce your own environment variable in the IIS configuration as described in https://www.andrecarlucci.com/en/setting-environment-variables-for-asp-net-core-when-publishing-on-iis/. The sample application checks for a `SERVER_HOSTING_MODEL` environment variable that contains the name of the hosting model to use - for the IIS in-process configuration this would simply be set to `IIS`.
+
+## Using Command Line Arguments
+In the `web.config` for your IIS integration which may be generated for you when you publish the project to IIS, you can simply modify the command arguments like shown below for an in-process IIS hosting.
+```
+<aspNetCore processPath="dotnet" arguments=".\SampleApplication-AspNetCore22.dll --useIIS" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="InProcess" />
+```
+
+If you want to host the server as an out-of-process self-hosted application, then you can do something like this instead.
+```
+<aspNetCore processPath="dotnet" arguments=".\SampleApplication-AspNetCore22.dll --useKestrel" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="OutOfProcess" />
+```
+
+
+# Versioning
+The package version numbers are chosen to align with the version of ASP.NET Core they were built against.
+
+* Version 2.2.0 is compatible with ASP.NET Core 2.2.0 and is compatible with .NET Standard 2.0. This means that it is the only version that works for both .NET Core projects as well as .NET 4.8 projects.
