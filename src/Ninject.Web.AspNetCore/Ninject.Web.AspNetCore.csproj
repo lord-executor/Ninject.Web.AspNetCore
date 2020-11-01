@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netcoreapp2.2</TargetFrameworks>
-    <Version>2.2.0</Version>
+    <Version>2.2.0-rc1</Version>
     <PackageProjectUrl>https://github.com/lord-executor/Ninject.Web.AspNetCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lord-executor/Ninject.Web.AspNetCore</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
