@@ -14,7 +14,7 @@ namespace SampleApplication_AspNetCore22
 			// IIS just starts the server without any arguments, so it is the default here
 			var model = args.FirstOrDefault(arg => arg.StartsWith("--use"))?.Substring(5) ?? "IIS";
 			var hostConfiguration = new AspNetCoreHostConfiguration(args)
-					.UseStartup(typeof(Startup));
+					.UseStartup<Startup>();
 
 			switch (model)
 			{

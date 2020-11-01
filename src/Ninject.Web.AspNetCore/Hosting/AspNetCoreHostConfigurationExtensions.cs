@@ -26,6 +26,11 @@ namespace Ninject.Web.AspNetCore.Hosting
 			return config;
 		}
 
+		public static AspNetCoreHostConfiguration UseStartup<TStartup>(this AspNetCoreHostConfiguration config)
+		{
+			return config.UseStartup(typeof(TStartup));
+		}
+
 		public static T UseKestrel<T>(this T config)
 			where T : IAspNetCoreHostConfiguration
 		{
