@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lord-executor/Ninject.Web.AspNetCore.svg?branch=master)](https://travis-ci.org/lord-executor/Ninject.Web.AspNetCore)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/blob/master/LICENSE) [![Build Status](https://travis-ci.org/lord-executor/Ninject.Web.AspNetCore.svg?branch=master)](https://travis-ci.org/lord-executor/Ninject.Web.AspNetCore)
 
 # Configuration
 `Ninject.Web.AspNetCore` is built in a way that makes it easy to integrate with all standard ASP.NET Core examples and templates. All you have to do is eliminate the default web host builder and use the `AspNetCoreHostConfiguration` in combination with the `NinjectSelfHostBootstrapper` instead like this.
