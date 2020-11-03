@@ -24,6 +24,7 @@ namespace SampleApplication_AspNetCore22.Controllers
 			ViewData["ProcessName"] = Process.GetCurrentProcess().ProcessName;
 			ViewData["Server"] = _server.GetType().FullName;
 			ViewData["ServiceProvider"] = _serviceProvider.GetType().FullName;
+			ViewData["dotNETVersion"] = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 			ViewData["Environment"] = Environment.GetEnvironmentVariables();
 			return View();
 		}
