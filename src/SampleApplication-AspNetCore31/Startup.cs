@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Ninject.Web.AspNetCore;
 using Ninject.Web.AspNetCore.Hosting;
 
@@ -33,7 +34,7 @@ namespace SampleApplication_AspNetCore22
 
 		public override void Configure(IApplicationBuilder app)
 		{
-			var env = app.ApplicationServices.GetRequiredService<IHostingEnvironment>();
+			var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
 
 			if (env.IsDevelopment())
 			{
@@ -45,13 +46,13 @@ namespace SampleApplication_AspNetCore22
 			}
 
 			app.UseStaticFiles();
-			app.UseCookiePolicy();
+			app.UseRouting();
 
-			app.UseMvc(routes =>
+			app.UseEndpoints(endpoints =>
 			{
-				routes.MapRoute(
+				endpoints.MapControllerRoute(
 					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
+					pattern: "{controller=Home}/{action=Index}/{id?}");
 			});
 		}
 	}
