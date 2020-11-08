@@ -5,7 +5,7 @@ using Ninject.Web.Common.SelfHost;
 using System;
 using System.Linq;
 
-namespace SampleApplication_AspNetCore22
+namespace SampleApplication_AspNetCore
 {
 	public class Program
 	{
@@ -21,7 +21,8 @@ namespace SampleApplication_AspNetCore22
 			model = args.FirstOrDefault(arg => arg.StartsWith("--use"))?.Substring(5) ?? model;
 
 			var hostConfiguration = new AspNetCoreHostConfiguration(args)
-					.UseStartup<Startup>();
+					.UseStartup<Startup>()
+					.UseWebHostBuilder(CreateWebHostBuilder);
 
 			switch (model)
 			{
@@ -80,7 +81,10 @@ namespace SampleApplication_AspNetCore22
 
 		public static IWebHostBuilder CreateWebHostBuilder()
 		{
-			return new WebHostBuilder();
+			return new DefaultWebHostConfiguration(null)
+				.ConfigureAll()
+				.GetBuilder()
+				.UseWebRoot(@"..\SampleApplication-Shared\wwwroot");
 		}
 
 		public static bool IsDotNetCoreRuntime()

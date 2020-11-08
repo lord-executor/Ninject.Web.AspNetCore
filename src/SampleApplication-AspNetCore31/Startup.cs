@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Ninject.Web.AspNetCore;
 using Ninject.Web.AspNetCore.Hosting;
 
-namespace SampleApplication_AspNetCore22
+namespace SampleApplication_AspNetCore
 {
 	public class Startup : AspNetCoreStartupBase
 	{

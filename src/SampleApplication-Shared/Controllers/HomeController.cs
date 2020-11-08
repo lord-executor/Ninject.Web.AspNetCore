@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
-using SampleApplication_AspNetCore22.Models;
+using SampleApplication_AspNetCore.Models;
 
-namespace SampleApplication_AspNetCore22.Controllers
+namespace SampleApplication_AspNetCore.Controllers
 {
 	public class HomeController : Controller
 	{

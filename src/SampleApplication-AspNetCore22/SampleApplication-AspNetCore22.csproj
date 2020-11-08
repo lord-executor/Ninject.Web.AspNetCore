@@ -4,11 +4,22 @@
     <TargetFrameworks>net48;netcoreapp2.2</TargetFrameworks>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <DebugType>full</DebugType>
-    <RootNamespace>SampleApplication_AspNetCore22</RootNamespace>
+    <RootNamespace>SampleApplication_AspNetCore</RootNamespace>
     <UserSecretsId>cba31371-2e46-4888-a024-8cfdeb164a68</UserSecretsId>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\SampleApplication-Shared\**\*.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Content Include="..\SampleApplication-Shared\**\*.cshtml" ExcludeFromSingleFile="true">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\SampleApplication-Shared\wwwroot\**">
+      <Link>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
@@ -20,7 +31,6 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-
 
   <ItemGroup>
     <ProjectReference Include="..\Ninject.Web.AspNetCore.Httpsys\Ninject.Web.AspNetCore.HttpSys.csproj" />
