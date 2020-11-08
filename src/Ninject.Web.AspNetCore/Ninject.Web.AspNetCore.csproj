@@ -1,12 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.2</TargetFrameworks>
-    <Version>2.2.0-rc1</Version>
+    <TargetFrameworks>netcoreapp3.1;netcoreapp3.0;netcoreapp2.2;netstandard2.0</TargetFrameworks>
+    <Version>2.2.0</Version>
     <PackageProjectUrl>https://github.com/lord-executor/Ninject.Web.AspNetCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lord-executor/Ninject.Web.AspNetCore</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Authors>lord-executor</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netcoreapp3.0'">
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -29,6 +33,13 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.2'">
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="Ninject.Web.Common" Version="3.3.2" />
+    <PackageReference Include="Ninject.Web.Common.SelfHost" Version="3.3.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netcoreapp3.0'">
+    <FrameworkReference  Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="Ninject.Web.Common" Version="3.3.2" />
     <PackageReference Include="Ninject.Web.Common.SelfHost" Version="3.3.2" />

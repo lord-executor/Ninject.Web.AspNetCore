@@ -4,6 +4,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+#if NETCOREAPP3_0 || NETCOREAPP3_1
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+#endif
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -41,7 +47,11 @@ namespace Ninject.Web.AspNetCore.Hosting
 		{
 			_builder.ConfigureAppConfiguration((WebHostBuilderContext hostingContext, IConfigurationBuilder config) =>
 			{
+#if NETCOREAPP2_2 || NETSTANDARD2_0
 				IHostingEnvironment hostingEnvironment = hostingContext.HostingEnvironment;
+#else
+				IWebHostEnvironment hostingEnvironment = hostingContext.HostingEnvironment;
+#endif
 				config
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 					.AddJsonFile("appsettings." + hostingEnvironment.EnvironmentName + ".json", optional: true, reloadOnChange: true);
@@ -72,7 +82,6 @@ namespace Ninject.Web.AspNetCore.Hosting
 				logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
 				logging.AddConsole();
 				logging.AddDebug();
-				//logging.AddEventSourceLogger();
 			});
 
 			return this;
@@ -97,13 +106,48 @@ namespace Ninject.Web.AspNetCore.Hosting
 			return this;
 		}
 
+#if NETCOREAPP3_0 || NETCOREAPP3_1
+		public DefaultWebHostConfiguration ConfigureForwardedHeaders()
+		{
+			_builder.ConfigureServices((WebHostBuilderContext hostingContext, IServiceCollection services) =>
+			{
+				if (string.Equals("true", hostingContext.Configuration["ForwardedHeaders_Enabled"], StringComparison.OrdinalIgnoreCase))
+				{
+					services.Configure((ForwardedHeadersOptions options) =>
+					{
+						options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+						options.KnownNetworks.Clear();
+						options.KnownProxies.Clear();
+					});
+					services.AddTransient<IStartupFilter, ForwardedHeadersStartupFilter>();
+				}
+			});
+
+			return this;
+		}
+#endif
+
+		public DefaultWebHostConfiguration ConfigureRouting()
+		{
+			_builder.ConfigureServices((WebHostBuilderContext hostingContext, IServiceCollection services) =>
+			{
+				services.AddRouting();
+			});
+
+			return this;
+		}
+
 		public DefaultWebHostConfiguration ConfigureAll()
 		{
 			return this
 				.ConfigureContentRoot()
 				.ConfigureAppSettings()
 				.ConfigureLogging()
-				.ConfigureAllowedHosts();
+				.ConfigureAllowedHosts()
+#if NETCOREAPP3_0 || NETCOREAPP3_1
+				.ConfigureForwardedHeaders()
+#endif
+				.ConfigureRouting();
 		}
 
 		public IWebHostBuilder GetBuilder()
