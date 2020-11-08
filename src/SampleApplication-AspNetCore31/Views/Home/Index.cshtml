@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<ul>
+    <li>Executing Assembly: @ViewData["EntryAssembly"]</li>
+    <li>Process Name: @ViewData["ProcessName"]</li>
+    <li>Server Implementation: @ViewData["Server"]</li>
+    <li>Service Provider: @ViewData["ServiceProvider"]</li>
+    <li>.NET Version: @ViewData["dotNETVersion"]</li>
+    <li>
+        Environment Variables:
+        <ul>
+            @foreach (var key in ((System.Collections.IDictionary)ViewData["Environment"]).Keys)
+            {
+                <li>@key = @(((System.Collections.IDictionary)ViewData["Environment"])[key])</li>
+            }
+        </ul>
+    </li>
+</ul>

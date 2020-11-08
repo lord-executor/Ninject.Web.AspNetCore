@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApplication-AspNetCor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.AspNetCore.IIS", "Ninject.Web.AspNetCore.IIS\Ninject.Web.AspNetCore.IIS.csproj", "{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApplication-AspNetCore31", "SampleApplication-AspNetCore31\SampleApplication-AspNetCore31.csproj", "{8E2DE3C5-5B18-4136-878D-AA671FD7709C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
