@@ -18,8 +18,50 @@ public class Program
 
     public static IKernel CreateKernel()
     {
-        var kernel = new StandardKernel();
+        var settings = new NinjectSettings();
+        // Unfortunately, in .NET Core projects, referenced NuGet assemblies are not copied to the output directory
+        // in a normal build which means that the automatic extension loading does not work _reliably_ and it is
+        // much more reasonable to not rely on that and load everything explicitly.
+        settings.LoadExtensions = false;
+
+        var kernel = new StandardKernel(settings);
+
+        kernel.Load(typeof(AspNetCoreHostConfiguration).Assembly);
+
         return kernel;
+    }
+}
+```
+
+Then, for your `Starup` configuration you will have to inherit from `AspNetCoreStartupBase`. Use the sample below and add your custom configuration in the marked locations.
+
+```
+public class Startup : AspNetCoreStartupBase
+{
+    public Startup(IConfiguration configuration, IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
+        : base(providerFactory)
+    {
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        base.ConfigureServices(services);
+
+        // Add your services configuration HERE
+    }
+
+    public override void Configure(IApplicationBuilder app)
+    {
+        // For simplicitly, there is only one overload of Configure supported, so in order to get the additional
+        // services, you can just resolve them with the service provider.
+        var env = app.ApplicationServices.GetRequiredService<IHostingEnvironment>();
+        // For ASP.NET Core 3+ you can instead resolve IWebHostEnvironment
+        // var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+
+        // Add your application builder configuration HERE
     }
 }
 ```
@@ -51,6 +93,33 @@ public class Program
 
 You can also use `DefaultWebHostConfiguration` which comes with the Ninject integration to use some of the defaults that you get with an OOTB default web host builder for ASP.NET and add your own configuration on top of that. `DefaultWebHostConfiguration` can essentially do the same as `WebHost.CreateDefaultBuilder` except that it does not already configure the actual hosting model. It just adds the default configuration for logging, content root, etc.
 
+```
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        var hostConfiguration = new AspNetCoreHostConfiguration(args)
+                .UseWebHostBuilder(CreateWebHostBuilder)
+                .UseStartup<Startup>();
+                .UseKestrel();
+
+        var host = new NinjectSelfHostBootstrapper(CreateKernel, hostConfiguration);
+            host.Start();
+    }
+
+    private static IWebHostBuilder CreateWebHostBuilder()
+    {
+        return new DefaultWebHostConfiguration()
+            .ConfigureContentRoot()
+            .ConfigureAppSettings()
+            .ConfigureLogging()
+            .ConfigureAllowedHosts()
+            // .ConfigureForwardedHeaders() // ASP.NET Core 3+ only
+            .ConfigureRouting()
+            .GetBuilder();
+    }
+}
+```
 
 # The Problem with WebHost.CreateDefaultBuilder
 In most ASP.NET Core examples that you find out there, including the ones you get when creating a new project from one of the many templates, you will find code like the following:
@@ -80,12 +149,13 @@ If you want you server to be able to run as a separate stand-alone server _as we
 You can check the SampleApplication `Program.cs` for practical examples.
 
 ## Environment Variables
-The built-in ASP.NET Core IIS integration detection code is relying on OS detection and Windows specific kernel methods, there is a much cleaner way to do that. A mechanism that has been used to detect the runtime context of an application since the dawn of modern operating systems: **environment variables**.
+The built-in ASP.NET Core IIS integration detection code is relying on OS detection and Windows specific kernel methods, but there is a much cleaner way to do that. A mechanism that has been used to detect the runtime context of an application since the dawn of modern operating systems: **environment variables**.
 
-There already seems to be an environment variable defined by the IIS AspNetCore integration that makes this quite easy - although I cannot guarantee that this variable will always be available, but in my tests it has always been there.
+For .NET Core 2.2 there already seems to be an environment variable defined by the IIS AspNetCore integration that makes this quite easy:
 ```
 ASPNETCORE_HOSTINGSTARTUPASSEMBLIES = Microsoft.AspNetCore.Server.IISIntegration
 ```
+Unfortunately that only works for .NET Core 2.2 and the variable no longer exists with higher versions. I'm sure that you can pick an environment variable for other versions of .NET Core as well, but there does not seem to be anything _consistent_.
 
 If that is not _reliable_ enough, you can also simply introduce your own environment variable in the IIS configuration as described in https://www.andrecarlucci.com/en/setting-environment-variables-for-asp-net-core-when-publishing-on-iis/. The sample application checks for a `SERVER_HOSTING_MODEL` environment variable that contains the name of the hosting model to use - for the IIS in-process configuration this would simply be set to `IIS`.
 
