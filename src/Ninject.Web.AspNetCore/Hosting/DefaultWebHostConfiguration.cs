@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 #if NETCOREAPP3_0 || NETCOREAPP3_1
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.AspNetCore.HttpOverrides;
 #endif
 
@@ -129,6 +130,16 @@ namespace Ninject.Web.AspNetCore.Hosting
 
 		public DefaultWebHostConfiguration ConfigureRouting()
 		{
+#if NETCOREAPP3_0 || NETCOREAPP3_1
+			_builder.ConfigureAppConfiguration((WebHostBuilderContext hostingContext, IConfigurationBuilder _) =>
+			{
+				if (hostingContext.HostingEnvironment.IsDevelopment())
+				{
+					StaticWebAssetsLoader.UseStaticWebAssets(hostingContext.HostingEnvironment, hostingContext.Configuration);
+				}
+			});
+#endif
+
 			_builder.ConfigureServices((WebHostBuilderContext hostingContext, IServiceCollection services) =>
 			{
 				services.AddRouting();
