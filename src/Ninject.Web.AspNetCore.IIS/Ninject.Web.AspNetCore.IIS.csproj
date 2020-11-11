@@ -9,6 +9,7 @@
     <Authors>lord-executor</Authors>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Ninject.Web.AspNetCore.snk</AssemblyOriginatorKeyFile>
+    <Configurations>Debug;Release22;Release31</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release22'">

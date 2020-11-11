@@ -6,6 +6,7 @@
     <DebugType>full</DebugType>
     <RootNamespace>SampleApplication-AspNetCore</RootNamespace>
     <OutputType>Exe</OutputType>
+    <Configurations>Debug;Release22;Release31</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
