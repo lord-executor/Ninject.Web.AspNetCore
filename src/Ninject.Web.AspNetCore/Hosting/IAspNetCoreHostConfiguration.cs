@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Threading;
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
@@ -10,5 +11,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 		void ConfigureStartupType(Type startupType);
 
 		void ConfigureHostingModel(Action<IWebHostBuilder> configureAction);
+
+		void ConfigureStartupBehavior(bool blockOnStart, CancellationToken cancellationToken);
 	}
 }

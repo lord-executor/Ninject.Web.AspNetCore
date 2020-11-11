@@ -22,7 +22,8 @@ namespace SampleApplication_AspNetCore
 
 			var hostConfiguration = new AspNetCoreHostConfiguration(args)
 					.UseStartup<Startup>()
-					.UseWebHostBuilder(CreateWebHostBuilder);
+					.UseWebHostBuilder(CreateWebHostBuilder)
+					.BlockOnStart();
 
 			switch (model)
 			{

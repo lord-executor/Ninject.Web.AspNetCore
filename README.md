@@ -20,7 +20,8 @@ public class Program
     {
         var hostConfiguration = new AspNetCoreHostConfiguration(args)
                 .UseStartup<Startup>()
-                .UseKestrel();
+                .UseKestrel()
+                .BlockOnStart();
 
         var host = new NinjectSelfHostBootstrapper(CreateKernel, hostConfiguration);
         host.Start();
@@ -87,7 +88,8 @@ public class Program
         var hostConfiguration = new AspNetCoreHostConfiguration(args)
                 .UseWebHostBuilder(CreateWebHostBuilder)
                 .UseStartup<Startup>();
-                .UseKestrel();
+                .UseKestrel()
+                .BlockOnStart();
 
         var host = new NinjectSelfHostBootstrapper(CreateKernel, hostConfiguration);
             host.Start();
@@ -111,7 +113,8 @@ public class Program
         var hostConfiguration = new AspNetCoreHostConfiguration(args)
                 .UseWebHostBuilder(CreateWebHostBuilder)
                 .UseStartup<Startup>();
-                .UseKestrel();
+                .UseKestrel()
+                .BlockOnStart();
 
         var host = new NinjectSelfHostBootstrapper(CreateKernel, hostConfiguration);
             host.Start();

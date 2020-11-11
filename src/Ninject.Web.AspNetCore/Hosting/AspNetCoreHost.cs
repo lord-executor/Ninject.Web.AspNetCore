@@ -26,7 +26,13 @@ namespace Ninject.Web.AspNetCore.Hosting
 			_configuration.Apply(host);
 
 			var builder = host.Build();
-			builder.Run();
+			if (_configuration.BlockOnStart)
+			{
+				builder.Run();
+			} else
+			{
+				builder.RunAsync(_configuration.CancellationToken);
+			}
 		}
 	}
 }

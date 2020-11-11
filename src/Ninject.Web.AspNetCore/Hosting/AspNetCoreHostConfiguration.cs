@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Threading;
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
@@ -9,6 +10,8 @@ namespace Ninject.Web.AspNetCore.Hosting
 		private Action<IWebHostBuilder> _hostingModelConfigurationAction;
 
 		internal Func<IWebHostBuilder> WebHostBuilderFactory { get; private set; }
+		internal bool BlockOnStart { get; private set; } = false;
+		internal CancellationToken CancellationToken { get; private set; }
 
 		public AspNetCoreHostConfiguration(string[] cliArgs = null)
 		{
@@ -33,6 +36,12 @@ namespace Ninject.Web.AspNetCore.Hosting
 		void IAspNetCoreHostConfiguration.ConfigureHostingModel(Action<IWebHostBuilder> configureAction)
 		{
 			_hostingModelConfigurationAction = configureAction;
+		}
+
+		void IAspNetCoreHostConfiguration.ConfigureStartupBehavior(bool blockOnStart, CancellationToken cancellationToken)
+		{
+			BlockOnStart = blockOnStart;
+			CancellationToken = cancellationToken;
 		}
 
 		internal virtual void Apply(IWebHostBuilder builder)

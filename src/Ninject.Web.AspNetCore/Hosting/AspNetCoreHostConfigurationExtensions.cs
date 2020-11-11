@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System;
+using System.Threading;
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
@@ -48,6 +49,20 @@ namespace Ninject.Web.AspNetCore.Hosting
 					configureAction(options);
 				});
 			});
+			return config;
+		}
+
+		public static T BlockOnStart<T>(this T config, bool blockOnStart = true)
+			where T : IAspNetCoreHostConfiguration
+		{
+			config.ConfigureStartupBehavior(blockOnStart, default);
+			return config;
+		}
+
+		public static T UseCancellationToken<T>(this T config, CancellationToken token)
+			where T : IAspNetCoreHostConfiguration
+		{
+			config.ConfigureStartupBehavior(false, token);
 			return config;
 		}
 	}
