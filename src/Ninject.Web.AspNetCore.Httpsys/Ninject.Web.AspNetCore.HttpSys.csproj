@@ -7,6 +7,8 @@
     <RepositoryUrl>https://github.com/lord-executor/Ninject.Web.AspNetCore</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Authors>lord-executor</Authors>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Ninject.Web.AspNetCore.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release22'">
@@ -28,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netcoreapp3.0'">
-    <FrameworkReference  Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
