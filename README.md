@@ -203,4 +203,4 @@ The package version numbers are chosen to align with the version of ASP.NET Core
 |---------|----------------------|-----------------|--------------------|-------|
 | 2.2.*   | 2.2.*                | 3.3.4           | netstandard2.0, netcoreapp2.2 | Should only be used as a "transitional" version when migrating to more recent .NET Core versions. Only receives updates for critical bugfixes. |
 | 3.0.*   | 3.0.*, 3.1.*         | 3.3.4           | netcoreapp3.0, netcoreapp3.1  | The current _mainline_ version that is actively maintained - at least until .NET 5 is realeased. |
-| ???     | 5.0                  | ???             |                               | Will be implemented once .NET 5 is actually released |
+| 5.0.*   | 5.0                  | 3.3.4           |                               | Will be implemented once .NET 5 is actually released |

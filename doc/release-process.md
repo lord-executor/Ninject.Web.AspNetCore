@@ -2,6 +2,7 @@
 Build and package the project with the  _Release_ configuration.
 
 ```
+dotnet build .\src\Ninject.Web.AspNetCore.sln -c Release -p:Version="5.0.X"
 dotnet pack .\src\Ninject.Web.AspNetCore.sln -c Release -p:Version="5.0.X"
 ```
 
