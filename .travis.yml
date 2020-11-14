@@ -1,9 +1,6 @@
 language: csharp
 mono: none
-before_install:
-  - sudo apt-get -y install dotnet-sdk-2.2
-dotnet: 3.1
+dotnet: 5.0
 script:
   - dotnet restore src/Ninject.Web.AspNetCore.sln
-  - dotnet build src/Ninject.Web.AspNetCore.sln -c Release22 -f netcoreapp2.2
-  - dotnet build src/Ninject.Web.AspNetCore.sln -c Release31 -f netcoreapp3.1
+  - dotnet build src/Ninject.Web.AspNetCore.sln -c Release
