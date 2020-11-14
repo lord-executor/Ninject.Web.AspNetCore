@@ -2,6 +2,7 @@
 {
 	public class Samurai : IWarrior
 	{
+		public string Name => nameof(Samurai);
 	}
 
 }
