@@ -1,6 +1,4 @@
-﻿#if NETCOREAPP3_0 || NETCOREAPP3_1
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using System;
 
@@ -21,5 +19,3 @@ namespace Ninject.Web.AspNetCore.Hosting
 		}
 	}
 }
-
-#endif

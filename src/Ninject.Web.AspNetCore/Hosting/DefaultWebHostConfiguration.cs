@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.HostFiltering;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HostFiltering;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-#if NETCOREAPP3_0 || NETCOREAPP3_1
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.AspNetCore.HttpOverrides;
-#endif
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Reflection;
@@ -48,11 +45,8 @@ namespace Ninject.Web.AspNetCore.Hosting
 		{
 			_builder.ConfigureAppConfiguration((WebHostBuilderContext hostingContext, IConfigurationBuilder config) =>
 			{
-#if NETCOREAPP2_2 || NETSTANDARD2_0
-				IHostingEnvironment hostingEnvironment = hostingContext.HostingEnvironment;
-#else
-				IWebHostEnvironment hostingEnvironment = hostingContext.HostingEnvironment;
-#endif
+				var hostingEnvironment = hostingContext.HostingEnvironment;
+
 				config
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 					.AddJsonFile("appsettings." + hostingEnvironment.EnvironmentName + ".json", optional: true, reloadOnChange: true);
@@ -80,6 +74,11 @@ namespace Ninject.Web.AspNetCore.Hosting
 		{
 			_builder.ConfigureLogging((WebHostBuilderContext hostingContext, ILoggingBuilder logging) =>
 			{
+				logging.Configure((LoggerFactoryOptions options) =>
+				{
+					options.ActivityTrackingOptions = ActivityTrackingOptions.SpanId | ActivityTrackingOptions.TraceId | ActivityTrackingOptions.ParentId;
+				});
+
 				logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
 				logging.AddConsole();
 				logging.AddDebug();
@@ -106,8 +105,6 @@ namespace Ninject.Web.AspNetCore.Hosting
 
 			return this;
 		}
-
-#if NETCOREAPP3_0 || NETCOREAPP3_1
 		public DefaultWebHostConfiguration ConfigureForwardedHeaders()
 		{
 			_builder.ConfigureServices((WebHostBuilderContext hostingContext, IServiceCollection services) =>
@@ -126,11 +123,9 @@ namespace Ninject.Web.AspNetCore.Hosting
 
 			return this;
 		}
-#endif
 
 		public DefaultWebHostConfiguration ConfigureRouting()
 		{
-#if NETCOREAPP3_0 || NETCOREAPP3_1
 			_builder.ConfigureAppConfiguration((WebHostBuilderContext hostingContext, IConfigurationBuilder _) =>
 			{
 				if (hostingContext.HostingEnvironment.IsDevelopment())
@@ -138,7 +133,6 @@ namespace Ninject.Web.AspNetCore.Hosting
 					StaticWebAssetsLoader.UseStaticWebAssets(hostingContext.HostingEnvironment, hostingContext.Configuration);
 				}
 			});
-#endif
 
 			_builder.ConfigureServices((WebHostBuilderContext hostingContext, IServiceCollection services) =>
 			{
@@ -155,9 +149,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 				.ConfigureAppSettings()
 				.ConfigureLogging()
 				.ConfigureAllowedHosts()
-#if NETCOREAPP3_0 || NETCOREAPP3_1
 				.ConfigureForwardedHeaders()
-#endif
 				.ConfigureRouting();
 		}
 

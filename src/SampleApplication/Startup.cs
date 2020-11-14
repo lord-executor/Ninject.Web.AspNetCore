@@ -24,12 +24,7 @@ namespace SampleApplication_AspNetCore
 		{
 			base.ConfigureServices(services);
 
-			services.Configure<CookiePolicyOptions>(options =>
-			{
-				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
-				options.CheckConsentNeeded = context => true;
-				options.MinimumSameSitePolicy = SameSiteMode.None;
-			});
+			services.AddControllersWithViews();
 		}
 
 		public override void Configure(IApplicationBuilder app)
@@ -47,6 +42,7 @@ namespace SampleApplication_AspNetCore
 
 			app.UseStaticFiles();
 			app.UseRouting();
+			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
 			{
