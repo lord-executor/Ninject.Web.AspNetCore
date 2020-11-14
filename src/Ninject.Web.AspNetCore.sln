@@ -7,11 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.AspNetCore", "N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.AspNetCore.HttpSys", "Ninject.Web.AspNetCore.Httpsys\Ninject.Web.AspNetCore.HttpSys.csproj", "{2E8666BD-C364-43D7-92E4-623021E63085}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApplication-AspNetCore22", "SampleApplication-AspNetCore22\SampleApplication-AspNetCore22.csproj", "{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.AspNetCore.IIS", "Ninject.Web.AspNetCore.IIS\Ninject.Web.AspNetCore.IIS.csproj", "{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApplication-AspNetCore31", "SampleApplication-AspNetCore31\SampleApplication-AspNetCore31.csproj", "{8E2DE3C5-5B18-4136-878D-AA671FD7709C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApplication", "SampleApplication\SampleApplication.csproj", "{BE382F5B-43A9-4F5E-BCD0-AE885E122657}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,20 +30,18 @@ Global
 		{2E8666BD-C364-43D7-92E4-623021E63085}.Release22|Any CPU.Build.0 = Release22|Any CPU
 		{2E8666BD-C364-43D7-92E4-623021E63085}.Release31|Any CPU.ActiveCfg = Release31|Any CPU
 		{2E8666BD-C364-43D7-92E4-623021E63085}.Release31|Any CPU.Build.0 = Release31|Any CPU
-		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Release22|Any CPU.ActiveCfg = Release22|Any CPU
-		{EB786EC3-8AF2-4C9B-BE1F-A1CDA32D0100}.Release31|Any CPU.ActiveCfg = Release31|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Release22|Any CPU.ActiveCfg = Release22|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Release22|Any CPU.Build.0 = Release22|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Release31|Any CPU.ActiveCfg = Release31|Any CPU
 		{5D9455D9-FE35-4E0B-B621-3A6D810ECF6A}.Release31|Any CPU.Build.0 = Release31|Any CPU
-		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Release22|Any CPU.ActiveCfg = Release22|Any CPU
-		{8E2DE3C5-5B18-4136-878D-AA671FD7709C}.Release31|Any CPU.ActiveCfg = Release31|Any CPU
+		{BE382F5B-43A9-4F5E-BCD0-AE885E122657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE382F5B-43A9-4F5E-BCD0-AE885E122657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE382F5B-43A9-4F5E-BCD0-AE885E122657}.Release22|Any CPU.ActiveCfg = Release22|Any CPU
+		{BE382F5B-43A9-4F5E-BCD0-AE885E122657}.Release22|Any CPU.Build.0 = Release22|Any CPU
+		{BE382F5B-43A9-4F5E-BCD0-AE885E122657}.Release31|Any CPU.ActiveCfg = Release31|Any CPU
+		{BE382F5B-43A9-4F5E-BCD0-AE885E122657}.Release31|Any CPU.Build.0 = Release31|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
