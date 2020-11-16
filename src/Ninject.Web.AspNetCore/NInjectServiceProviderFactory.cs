@@ -5,19 +5,16 @@ namespace Ninject.Web.AspNetCore
 {
 	public class NInjectServiceProviderFactory : IServiceProviderFactory<NInjectServiceProviderBuilder>
 	{
-
-		private readonly Action<IKernel> _configurationAction;
 		private readonly IKernel _kernel;
 
 
-		public NInjectServiceProviderFactory(Action<IKernel> configurationAction = null) : this (new StandardKernel(), configurationAction)
+		public NInjectServiceProviderFactory() : this(new StandardKernel())
 		{
 		}
 
-		public NInjectServiceProviderFactory(IKernel kernel, Action<IKernel> configurationAction = null)
+		public NInjectServiceProviderFactory(IKernel kernel)
 		{
 			_kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-			_configurationAction = configurationAction ?? (k => { });
 		}
 
 		public NInjectServiceProviderBuilder CreateBuilder(IServiceCollection services)

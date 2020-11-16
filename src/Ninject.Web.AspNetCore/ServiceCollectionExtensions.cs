@@ -15,9 +15,9 @@ namespace Ninject.Web.AspNetCore
 		/// <param name="services">The service collection to add the factory to.</param>
 		/// <param name="configurationAction">Action on a <see cref="ContainerBuilder"/> that adds component registrations to the container.</param>
 		/// <returns>The service collection.</returns>
-		public static IServiceCollection AddNinject(this IServiceCollection services, IKernel kernel, Action<IKernel> configurationAction = null)
+		public static IServiceCollection AddNinject(this IServiceCollection services, IKernel kernel)
 		{
-			return services.AddSingleton<IServiceProviderFactory<NInjectServiceProviderBuilder>>(new NInjectServiceProviderFactory(kernel, configurationAction));
+			return services.AddSingleton<IServiceProviderFactory<NInjectServiceProviderBuilder>>(new NInjectServiceProviderFactory(kernel));
 		}
 	}
 }
