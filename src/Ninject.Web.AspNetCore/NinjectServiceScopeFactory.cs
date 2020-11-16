@@ -2,18 +2,18 @@
 
 namespace Ninject.Web.AspNetCore
 {
-	public class NInjectServiceScopeFactory : IServiceScopeFactory
+	public class NinjectServiceScopeFactory : IServiceScopeFactory
 	{
 
 		private readonly IKernel _kernel;
-		public NInjectServiceScopeFactory(IKernel kernel)
+		public NinjectServiceScopeFactory(IKernel kernel)
 		{
 			_kernel = kernel;
 		}
 
 		public IServiceScope CreateScope()
 		{
-			return new NInjectServiceScope(_kernel);
+			return new NinjectServiceScope(_kernel);
 		}
 	}
 }

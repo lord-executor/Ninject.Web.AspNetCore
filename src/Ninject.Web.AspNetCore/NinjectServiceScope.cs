@@ -3,14 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Ninject.Web.AspNetCore
 {
-	public class NInjectServiceScope : IServiceScope
+	public class NinjectServiceScope : IServiceScope
 	{
 
 		private bool _disposed;
 		private readonly IKernel _kernel;
 		private readonly RequestScope _scope;
 
-		public NInjectServiceScope(IKernel kernel)
+		public NinjectServiceScope(IKernel kernel)
 		{
 			_kernel = kernel;
 			_scope = new RequestScope();

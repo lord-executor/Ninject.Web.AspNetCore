@@ -49,7 +49,7 @@ Then, for your `Starup` configuration you will have to inherit from `AspNetCoreS
 ```cs
 public class Startup : AspNetCoreStartupBase
 {
-    public Startup(IConfiguration configuration, IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
+    public Startup(IConfiguration configuration, IServiceProviderFactory<NinjectServiceProviderBuilder> providerFactory)
         : base(providerFactory)
     {
         Configuration = configuration;

@@ -30,7 +30,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var kernel = CreateKernel(new ServiceCollection());
 			var contextMock = new Mock<IContext>();
 			
-			using (var aspNetScope = new NInjectServiceScope(kernel))
+			using (var aspNetScope = new NinjectServiceScope(kernel))
 			{				
 				var requestScope = kernel.Components.GetAll<INinjectHttpApplicationPlugin>().Select(c => c.GetRequestScope(contextMock.Object)).FirstOrDefault(s => s != null);
 				requestScope.Should().NotBeNull().And.BeOfType(typeof(RequestScope));

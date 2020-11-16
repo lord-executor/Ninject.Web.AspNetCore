@@ -10,7 +10,7 @@ namespace SampleApplication_AspNetCore
 {
 	public class Startup : AspNetCoreStartupBase
 	{
-		public Startup(IConfiguration configuration, IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
+		public Startup(IConfiguration configuration, IServiceProviderFactory<NinjectServiceProviderBuilder> providerFactory)
 			: base(providerFactory)
 		{
 			Configuration = configuration;

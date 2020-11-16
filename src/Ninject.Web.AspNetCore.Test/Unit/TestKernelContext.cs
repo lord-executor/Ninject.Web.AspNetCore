@@ -11,7 +11,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var kernel = new StandardKernel(new NinjectSettings() { LoadExtensions = false });
 			kernel.Load(typeof(AspNetCoreApplicationPlugin).Assembly);
-			kernel.Bind<IServiceProvider>().ToConstant(new NInjectServiceProvider(kernel));
+			kernel.Bind<IServiceProvider>().ToConstant(new NinjectServiceProvider(kernel));
 			kernel.Bind<AspNetCoreHostConfiguration>().ToConstant(configuration ?? new AspNetCoreHostConfiguration());
 			kernel.Populate(collection);			
 			return kernel;
