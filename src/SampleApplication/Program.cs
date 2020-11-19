@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 using Ninject;
 using Ninject.Web.AspNetCore;
 using Ninject.Web.AspNetCore.Hosting;
 using Ninject.Web.Common.SelfHost;
+using SampleApplication.Service;
 using System;
 using System.Linq;
+using System.Reflection;
 
-namespace SampleApplication_AspNetCore
+namespace SampleApplication
 {
 	public class Program
 	{
@@ -58,6 +63,12 @@ namespace SampleApplication_AspNetCore
 			var kernel = new AspNetCoreKernel(settings);
 
 			kernel.Load(typeof(AspNetCoreHostConfiguration).Assembly);
+			kernel.Load(Assembly.GetExecutingAssembly());
+
+			kernel.Bind<Lazy<IModelMetadataProvider>>().ToMethod(x =>
+				new Lazy<IModelMetadataProvider>(() => x.Kernel.Get<IModelMetadataProvider>()));
+			kernel.Bind<ControllerFromInterfaceConvention>().ToSelf().InTransientScope();
+			kernel.Bind<IConfigureOptions<MvcOptions>>().To<ControllerFromInterfaceConfiguration>().InTransientScope();
 
 			return kernel;
 		}

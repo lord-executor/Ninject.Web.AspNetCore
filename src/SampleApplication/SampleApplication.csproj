@@ -4,7 +4,7 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <DebugType>full</DebugType>
-    <RootNamespace>SampleApplication-AspNetCore</RootNamespace>
+    <RootNamespace>SampleApplication</RootNamespace>
     <OutputType>Exe</OutputType>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
