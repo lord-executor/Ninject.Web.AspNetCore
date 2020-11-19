@@ -66,8 +66,7 @@ namespace SampleApplication_AspNetCore
 		{
 			return new DefaultWebHostConfiguration(null)
 				.ConfigureAll()
-				.GetBuilder()
-				.UseWebRoot(@"..\SampleApplication-Shared\wwwroot");
+				.GetBuilder();
 		}
 	}
 }
