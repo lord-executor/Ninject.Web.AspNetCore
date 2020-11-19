@@ -12,6 +12,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 		internal Func<IWebHostBuilder> WebHostBuilderFactory { get; private set; }
 		internal bool BlockOnStart { get; private set; } = false;
 		internal CancellationToken CancellationToken { get; private set; }
+		internal Type CustomControllerActivator { get; private set; }
 
 		public AspNetCoreHostConfiguration(string[] cliArgs = null)
 		{
@@ -48,6 +49,11 @@ namespace Ninject.Web.AspNetCore.Hosting
 		{
 			_hostingModelConfigurationAction?.Invoke(builder);
 			builder.UseStartup(_customStartup);
+		}
+
+		void IAspNetCoreHostConfiguration.ConfigureCustomControllerActivator(Type controllerActivatorType)
+		{
+			CustomControllerActivator = controllerActivatorType;
 		}
 	}
 }

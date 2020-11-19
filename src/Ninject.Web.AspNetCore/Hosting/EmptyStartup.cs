@@ -5,7 +5,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 {
 	public class EmptyStartup : AspNetCoreStartupBase
 	{
-		public EmptyStartup(IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory) : base(providerFactory)
+		public EmptyStartup(IServiceProviderFactory<NinjectServiceProviderBuilder> providerFactory) : base(providerFactory)
 		{
 		}
 

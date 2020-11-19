@@ -65,5 +65,12 @@ namespace Ninject.Web.AspNetCore.Hosting
 			config.ConfigureStartupBehavior(false, token);
 			return config;
 		}
+
+		public static T UseCustomControllerActivator<T>(this T config, Type customControllerActivator)
+			where T : IAspNetCoreHostConfiguration
+		{
+			config.ConfigureCustomControllerActivator(customControllerActivator);
+			return config;
+		}
 	}
 }

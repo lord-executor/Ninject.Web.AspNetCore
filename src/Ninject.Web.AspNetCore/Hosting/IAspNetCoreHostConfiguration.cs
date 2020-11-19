@@ -13,5 +13,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 		void ConfigureHostingModel(Action<IWebHostBuilder> configureAction);
 
 		void ConfigureStartupBehavior(bool blockOnStart, CancellationToken cancellationToken);
+
+		void ConfigureCustomControllerActivator(Type controllerActivatorType);
 	}
 }

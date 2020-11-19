@@ -11,9 +11,9 @@ namespace Ninject.Web.AspNetCore.Hosting
     /// </summary>
     public abstract class AspNetCoreStartupBase : IStartup
 	{
-		private readonly IServiceProviderFactory<NInjectServiceProviderBuilder> _providerFactory;
+		private readonly IServiceProviderFactory<NinjectServiceProviderBuilder> _providerFactory;
 
-		protected AspNetCoreStartupBase(IServiceProviderFactory<NInjectServiceProviderBuilder> providerFactory)
+		protected AspNetCoreStartupBase(IServiceProviderFactory<NinjectServiceProviderBuilder> providerFactory)
 		{
 			_providerFactory = providerFactory;
 		}
@@ -26,7 +26,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
 			ConfigureMvcOptions(mvcBuilder);
-			ConfigureServices(services); // allow to customize the services before conversion to NInject bindings happen.
+			ConfigureServices(services); // allow to customize the services before conversion to Ninject bindings happen.
 			return _providerFactory.CreateBuilder(services).Build();
 		}
 

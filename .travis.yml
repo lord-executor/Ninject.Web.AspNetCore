@@ -4,3 +4,4 @@ dotnet: 5.0
 script:
   - dotnet restore src/Ninject.Web.AspNetCore.sln
   - dotnet build src/Ninject.Web.AspNetCore.sln -c Release
+  - dotnet test src/Ninject.Web.AspNetCore.sln -c Debug
