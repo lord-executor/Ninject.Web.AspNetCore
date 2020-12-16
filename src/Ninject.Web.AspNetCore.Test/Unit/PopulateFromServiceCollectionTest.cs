@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ninject.Web.AspNetCore.Test.Fakes;
 using Ninject.Web.Common;
+using System;
 using Xunit;
 
 namespace Ninject.Web.AspNetCore.Test.Unit
@@ -83,6 +84,5 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			first.Name.Should().Be(name);
 			first.Should().BeOfType(typeof(Ninja));
 		}
-
 	}
 }

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Ninject.Syntax;
+using Ninject.Web.Common;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -18,7 +22,10 @@ namespace Ninject.Web.AspNetCore
 		{
 			var result = new NinjectServiceProvider(_kernel);
 			_kernel.Bind<IServiceProvider>().ToConstant(result); // needed for factory methods in IServiceCollection
-			_kernel.Populate(_services);
+
+			var adapter = new ServiceCollectionAdapter();
+			adapter.Populate(_kernel, _services);
+
 			return result;
 		}
 
