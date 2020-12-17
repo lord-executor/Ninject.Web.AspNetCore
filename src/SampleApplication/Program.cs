@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Ninject;
+using Ninject.Web.AspNetCore;
 using Ninject.Web.AspNetCore.Hosting;
 using Ninject.Web.Common.SelfHost;
 using System;
@@ -54,7 +55,7 @@ namespace SampleApplication_AspNetCore
 			// much more reasonable to not rely on that and load everything explicitly.
 			settings.LoadExtensions = false;
 
-			var kernel = new StandardKernel(settings);
+			var kernel = new AspNetCoreKernel(settings);
 
 			kernel.Load(typeof(AspNetCoreHostConfiguration).Assembly);
 

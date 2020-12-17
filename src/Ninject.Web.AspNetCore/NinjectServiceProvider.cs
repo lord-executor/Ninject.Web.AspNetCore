@@ -25,28 +25,14 @@ namespace Ninject.Web.AspNetCore
 
 		public object GetRequiredService(Type serviceType)
 		{
-			var result = _kernel.Get(serviceType, LatestBindingConstraint);
+			var result = _kernel.Get(serviceType);
 			return result;
 		}
 
 		public object GetService(Type serviceType)
 		{
-			// Call TryGet as IServiceProvider.GetService must return null if not found.
-			// See also https://github.com/ninject/Ninject/issues/378 and NinjectBugsRegressionTest
-			try
-			{
-				var result = _kernel.TryGet(serviceType, LatestBindingConstraint);
-				return result;
-			}
-			catch (InvalidOperationException)
-			{
-				return null;
-			}
-		}
-
-		private bool LatestBindingConstraint(IBindingMetadata bindingMetadata)
-		{
-			return bindingMetadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true;
+			var result = _kernel.TryGet(serviceType);
+			return result;
 		}
 	}
 }

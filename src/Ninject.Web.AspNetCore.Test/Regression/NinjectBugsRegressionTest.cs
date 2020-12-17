@@ -36,7 +36,7 @@ namespace Ninject.Web.AspNetCore.Test.Regression
 		private IKernel CreateKernel()
 		{
 			var settings = new NinjectSettings();
-			var kernel = new StandardKernel(settings);
+			var kernel = new AspNetCoreKernel(settings);
 
 			return kernel;
 		}

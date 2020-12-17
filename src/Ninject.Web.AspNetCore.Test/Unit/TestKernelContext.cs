@@ -9,7 +9,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 		protected IKernel CreateKernel(IServiceCollection collection, AspNetCoreHostConfiguration configuration = null)
 		{
-			var kernel = new StandardKernel(new NinjectSettings() { LoadExtensions = false });
+			var kernel = new AspNetCoreKernel(new NinjectSettings() { LoadExtensions = false });
 			kernel.Load(typeof(AspNetCoreApplicationPlugin).Assembly);
 			kernel.Bind<IServiceProvider>().ToConstant(new NinjectServiceProvider(kernel));
 			kernel.Bind<AspNetCoreHostConfiguration>().ToConstant(configuration ?? new AspNetCoreHostConfiguration());

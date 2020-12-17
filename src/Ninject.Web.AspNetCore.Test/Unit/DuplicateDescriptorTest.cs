@@ -35,6 +35,24 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			warriors.OfType<Knight>().Single().Weapon.Should().BeOfType<Longsword>();
 		}
 
+		[Theory]
+		[MemberData(nameof(ResolverData))]
+		public void BindingsFromDescriptors_ResolveAllWarriors_OrderOfDescriptorsIsPreserved(Resolver resolver)
+		{
+			var kernel = CreateDuplicateDescriptors();
+
+			var warriors = resolver.ResolveAll<IWarrior>(kernel);
+			warriors.Should().HaveCount(2);
+			// Yes. ASP.NET Core actually works under the assumptions that multi-injection happens in
+			// the same order as the registration of the descriptors and in situations like when resolving
+			// and running IEnumerable<IConfigureOptions<KestrelServerOptions>>, it will fail when that
+			// order is not preserved.
+			warriors.Select(w => w.GetType()).Should().ContainInOrder(
+				typeof(Ninja),
+				typeof(Knight)
+			);
+		}
+
 		[Fact]
 		public void BindingsFromKernel_ResolveWarrior_FailsWithActivationException()
 		{
@@ -66,7 +84,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 		private IKernel CreateDuplicateBindings()
 		{
-			var kernel = new StandardKernel(new NinjectSettings() { LoadExtensions = false });
+			var kernel = new AspNetCoreKernel(new NinjectSettings() { LoadExtensions = false });
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("Shadow"));
 			kernel.Bind<IWarrior>().To<Knight>().WithMetadata(nameof(Knight), true);
 			kernel.Bind<IWeapon>().To<Lance>();
