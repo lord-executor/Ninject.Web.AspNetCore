@@ -14,6 +14,11 @@ namespace SampleApplication.Service.ChatBot
 
 		public HelloResponse SayHello(HelloRequest request)
 		{
+			if (request == null || String.IsNullOrEmpty(request.Name))
+			{
+				throw new ArgumentException("Request must contain a non-empty Name");
+			}
+
 			return new HelloResponse
 			{
 				HelloMessage = String.Format(_messageTemplates[request.Type], request.Name),

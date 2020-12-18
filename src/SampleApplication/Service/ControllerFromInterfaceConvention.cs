@@ -9,12 +9,12 @@ namespace SampleApplication.Service
 	public class ControllerFromInterfaceConvention : IApplicationModelConvention
 	{
 		private readonly Lazy<IModelMetadataProvider> _modelMetadataProvider;
-		private readonly IList<ApiPublication> _apiPublications;
+		private readonly IList<PublishInstruction> _apiPublications;
 
 		public ControllerFromInterfaceConvention(
 			// this _must_ be injected as Lazy because it does not exist yet when the type is instantiated
 			Lazy<IModelMetadataProvider> modelMetadataProvider,
-			IList<ApiPublication> apiPublications
+			IList<PublishInstruction> apiPublications
 		) {
 			_modelMetadataProvider = modelMetadataProvider;
 			_apiPublications = apiPublications;
@@ -28,7 +28,7 @@ namespace SampleApplication.Service
 			}
 		}
 
-		private void AddControllerModel(ApplicationModel application, ApiPublication publication)
+		private void AddControllerModel(ApplicationModel application, PublishInstruction publication)
 		{
 			var controllerModel = new ControllerModel(publication.InterfaceType.GetTypeInfo(), new List<object>());
 			controllerModel.Application = application;
@@ -63,7 +63,7 @@ namespace SampleApplication.Service
 			application.Controllers.Add(controllerModel);
 		}
 
-		private ActionModel CreateActionModel(ApiPublication publication, MethodInfo methodInfo)
+		private ActionModel CreateActionModel(PublishInstruction publication, MethodInfo methodInfo)
 		{
 			var result = new ActionModel(methodInfo, new List<object>());
 			result.ActionName = methodInfo.Name;

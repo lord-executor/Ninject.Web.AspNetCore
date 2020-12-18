@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Services";
+}
+
+<h1>@ViewData["Title"]</h1>
+<pre><code id="logContainer"></code></pre>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var testUserName = "Test Osteron"
+        ServiceTests([
+            {
+                name: "ChatBot: SayHello",
+                run: () => {
+                    return [
+                        apiCall("/api/ChatBot/SayHello", {
+                            Type: 0, // Normal
+                            Name: testUserName,
+                        }).then(response => {
+                            return {
+                                success: response.helloMessage === `Hello ${testUserName}.`,
+                                data: response,
+                            };
+                        }),
+                        apiCall("/api/ChatBot/SayHello", {
+                            Type: 1, // Casual
+                            Name: testUserName,
+                        }).then(response => {
+                            return {
+                                success: response.helloMessage === `Hey ${testUserName}, what up?`,
+                                data: response,
+                            };
+                        }),
+                        apiCall("/api/ChatBot/SayHello", {
+                            Type: 2, // Rude
+                            Name: testUserName,
+                        }).then(response => {
+                            return {
+                                success: response.helloMessage === `Talk to the hand ${testUserName}!`,
+                                data: response,
+                            };
+                        }),
+                        apiCall("/api/ChatBot/SayHello", {
+                            Type: 0, // Normal
+                            Name: null,
+                        }).then(response => {
+                            return {
+                                success: false,
+                                data: response,
+                            };
+                        }).catch(e => {
+                            const expectedMessage = "System.ArgumentException: Request must contain a non-empty Name";
+                            return {
+                                success: e.responseText.substring(0, expectedMessage.length) === expectedMessage,
+                                data: e,
+                            }
+                        }),
+                    ];
+                },
+            },
+        ]);
+    </script>
+}

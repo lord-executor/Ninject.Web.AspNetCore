@@ -7,7 +7,7 @@ namespace SampleApplication.Service.ChatBot
 		public override void Load()
 		{
 			Kernel.Bind<IChatBotService>().To<ChatBotService>();
-			Kernel.Bind<ApiPublication>().ToConstant(new ApiPublication(typeof(IChatBotService), "/api/ChatBot"));
+			Kernel.Bind<PublishInstruction>().ToConstant(new PublishInstruction(typeof(IChatBotService), "/api/ChatBot"));
 		}
 	}
 }

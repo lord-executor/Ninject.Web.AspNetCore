@@ -2,7 +2,7 @@
 
 namespace SampleApplication.Service
 {
-	public class ApiPublication
+	public class PublishInstruction
 	{
 		/// <summary>
 		/// The interface for this API - this interface will be resolved using the DI container
@@ -14,7 +14,7 @@ namespace SampleApplication.Service
 		/// </summary>
 		public string Path { get; }
 
-		public ApiPublication(Type interfaceType, string path)
+		public PublishInstruction(Type interfaceType, string path)
 		{
 			InterfaceType = interfaceType;
 			Path = path;
