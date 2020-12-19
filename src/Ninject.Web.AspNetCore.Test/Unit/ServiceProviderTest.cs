@@ -12,9 +12,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 	{
 				
 		[Fact]
-		public void ServiceProviderCreatedSuccessfully()
+		public void ServiceProvider_CreatedSuccessfully()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			NinjectServiceProviderBuilder builder = CreateServiceProviderBuilder(kernel);
 
 			var provider = builder.Build();
@@ -23,9 +23,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		}		
 
 		[Fact]
-		public void OptionalExistingSingleServiceResolved()
+		public void OptionalExisting_SingleServiceResolved()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			var provider = CreateServiceProvider(kernel);
 			
@@ -33,18 +33,18 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		}
 
 		[Fact]
-		public void OptionalNonExistingSingleServiceResolvedToNull()
+		public void OptionalNonExisting_SingleServiceResolvedToNull()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			var provider = CreateServiceProvider(kernel);
 			
 			provider.GetService(typeof(IWarrior)).Should().BeNull();
 		}
 
 		[Fact]
-		public void OptionalExistingMultipleServicesResolvedQueriedAsList()
+		public void OptionalExistingMultipleServices_ResolvedQueriedAsList()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test"));
 			var provider = CreateServiceProvider(kernel);
@@ -59,20 +59,20 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		}
 
 		[Fact]
-		public void OptionalExistingMultipleServicesNotResolvedWhenNotQueriedAsList()
+		public void OptionalExistingMultipleServices_ResolvesToNull()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test"));
 			var provider = CreateServiceProvider(kernel);
 
-			provider.GetService(typeof(IWarrior)).Should().BeNull();			
+			provider.GetService(typeof(IWarrior)).Should().BeNull();
 		}
 
 		[Fact]
 		public void RequiredExistingSingleServiceResolved()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			var provider = CreateServiceProvider(kernel);
 
@@ -82,7 +82,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void RequiredNonExistingSingleServiceResolvedToException()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			var provider = CreateServiceProvider(kernel);
 
 			Action action = () => provider.GetRequiredService(typeof(IWarrior));
@@ -92,7 +92,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void RequiredExistingMultipleServicesResolvedQueriedAsList()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test"));
 			var provider = CreateServiceProvider(kernel);
@@ -109,7 +109,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void RequiredExistingMultipleServicesResolvedToExceptionWhenNotQueriedAsList()
 		{
-			StandardKernel kernel = CreateTestKernel();
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test"));
 			var provider = CreateServiceProvider(kernel);
@@ -133,15 +133,11 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			return builder;
 		}
 
-		private StandardKernel CreateTestKernel()
+		private IKernel CreateTestKernel()
 		{
-			var kernel = new StandardKernel(new NinjectSettings() { LoadExtensions = false });
+			var kernel = new AspNetCoreKernel(new NinjectSettings() { LoadExtensions = false });
 			kernel.Load(typeof(AspNetCoreApplicationPlugin).Assembly);
 			return kernel;
 		}
-
-
-
-
 	}
 }

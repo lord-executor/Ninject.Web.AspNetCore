@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Ninject.Planning.Bindings;
 using System;
 
 namespace Ninject.Web.AspNetCore
@@ -16,7 +17,7 @@ namespace Ninject.Web.AspNetCore
 	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService
 	{
 		private readonly IKernel _kernel;
-		
+
 		public NinjectServiceProvider(IKernel kernel)
 		{
 			_kernel = kernel;
@@ -30,10 +31,8 @@ namespace Ninject.Web.AspNetCore
 
 		public object GetService(Type serviceType)
 		{
-			// call TryGet as IServiceProvider.GetService must return null if not found.
 			var result = _kernel.TryGet(serviceType);
 			return result;
 		}
-
 	}
 }
