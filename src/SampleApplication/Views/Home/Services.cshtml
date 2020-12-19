@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Services";
+    ViewData["Title"] = "Services Jasmine Specs";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -7,58 +7,12 @@
 
 @section Scripts
 {
-    <script type="text/javascript">
-        var testUserName = "Test Osteron"
-        ServiceTests([
-            {
-                name: "ChatBot: SayHello",
-                run: () => {
-                    return [
-                        apiCall("/api/ChatBot/SayHello", {
-                            Type: 0, // Normal
-                            Name: testUserName,
-                        }).then(response => {
-                            return {
-                                success: response.helloMessage === `Hello ${testUserName}.`,
-                                data: response,
-                            };
-                        }),
-                        apiCall("/api/ChatBot/SayHello", {
-                            Type: 1, // Casual
-                            Name: testUserName,
-                        }).then(response => {
-                            return {
-                                success: response.helloMessage === `Hey ${testUserName}, what up?`,
-                                data: response,
-                            };
-                        }),
-                        apiCall("/api/ChatBot/SayHello", {
-                            Type: 2, // Rude
-                            Name: testUserName,
-                        }).then(response => {
-                            return {
-                                success: response.helloMessage === `Talk to the hand ${testUserName}!`,
-                                data: response,
-                            };
-                        }),
-                        apiCall("/api/ChatBot/SayHello", {
-                            Type: 0, // Normal
-                            Name: null,
-                        }).then(response => {
-                            return {
-                                success: false,
-                                data: response,
-                            };
-                        }).catch(e => {
-                            const expectedMessage = "System.ArgumentException: Request must contain a non-empty Name";
-                            return {
-                                success: e.responseText.substring(0, expectedMessage.length) === expectedMessage,
-                                data: e,
-                            }
-                        }),
-                    ];
-                },
-            },
-        ]);
-    </script>
+    <link rel="stylesheet" href="/js/jasmine/lib/jasmine-3.6.0/jasmine.css">
+
+    <script src="/js/jasmine/lib/jasmine-3.6.0/jasmine.js"></script>
+    <script src="/js/jasmine/lib/jasmine-3.6.0/jasmine-html.js"></script>
+    <script src="/js/jasmine/lib/jasmine-3.6.0/boot.js"></script>
+
+    <!-- include spec files here... -->
+    <script src="/js/jasmine/spec/ChatBotSpec.js"></script>
 }
