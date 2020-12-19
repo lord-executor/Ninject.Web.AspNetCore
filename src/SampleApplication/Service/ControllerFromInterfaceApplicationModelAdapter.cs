@@ -1,43 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace SampleApplication.Service
 {
-	public class ControllerFromInterfaceConvention : IApplicationModelConvention
+	public class ControllerFromInterfaceApplicationModelAdapter : IApplicationModelAdapter
 	{
-		private readonly Lazy<IModelMetadataProvider> _modelMetadataProvider;
-		private readonly IList<PublishInstruction> _apiPublications;
+		private readonly IModelMetadataProvider _modelMetadataProvider;
+		private readonly PublishInstruction _publishInstruction;
 
-		public ControllerFromInterfaceConvention(
-			// this _must_ be injected as Lazy because it does not exist yet when the type is instantiated
-			Lazy<IModelMetadataProvider> modelMetadataProvider,
-			IList<PublishInstruction> apiPublications
-		) {
+		public ControllerFromInterfaceApplicationModelAdapter(IModelMetadataProvider modelMetadataProvider, PublishInstruction publishInstruction)
+		{
 			_modelMetadataProvider = modelMetadataProvider;
-			_apiPublications = apiPublications;
+			_publishInstruction = publishInstruction;
 		}
 
 		public void Apply(ApplicationModel application)
 		{
-			foreach (var publication in _apiPublications)
-			{
-				AddControllerModel(application, publication);
-			}
+			var controllerModel = CreateControllerModel();
+			controllerModel.Application = application;
+			application.Controllers.Add(controllerModel);
 		}
 
-		private void AddControllerModel(ApplicationModel application, PublishInstruction publication)
+		private ControllerModel CreateControllerModel()
 		{
-			var controllerModel = new ControllerModel(publication.InterfaceType.GetTypeInfo(), new List<object>());
-			controllerModel.Application = application;
+			var controllerModel = new ControllerModel(_publishInstruction.InterfaceType.GetTypeInfo(), new List<object>());
+			var inferMappingConvention = new InferParameterBindingInfoConvention(_modelMetadataProvider);
 
-			var inferMappingConvention = new InferParameterBindingInfoConvention(_modelMetadataProvider.Value);
-
-			foreach (var methodInfo in publication.InterfaceType.GetMethods())
+			foreach (var methodInfo in _publishInstruction.InterfaceType.GetMethods())
 			{
-				var actionModel = CreateActionModel(publication, methodInfo);
+				var actionModel = CreateActionModel(_publishInstruction, methodInfo);
 				if (actionModel == null)
 				{
 					continue;
@@ -59,8 +52,7 @@ namespace SampleApplication.Service
 				inferMappingConvention.Apply(actionModel);
 			}
 
-
-			application.Controllers.Add(controllerModel);
+			return controllerModel;
 		}
 
 		private ActionModel CreateActionModel(PublishInstruction publication, MethodInfo methodInfo)
@@ -71,7 +63,7 @@ namespace SampleApplication.Service
 			selector.AttributeRouteModel = new AttributeRouteModel
 			{
 				Name = "R1" + publication.InterfaceType.Name,
-				Template = publication.Path + "/{action}"
+				Template = publication.Path,
 			};
 			result.Selectors.Add(selector);
 			return result;
@@ -82,7 +74,7 @@ namespace SampleApplication.Service
 			var attributes = parameterInfo.GetCustomAttributes(inherit: true);
 
 			BindingInfo bindingInfo;
-			if (_modelMetadataProvider.Value is ModelMetadataProvider modelMetadataProviderBase)
+			if (_modelMetadataProvider is ModelMetadataProvider modelMetadataProviderBase)
 			{
 				var modelMetadata = modelMetadataProviderBase.GetMetadataForParameter(parameterInfo);
 				bindingInfo = BindingInfo.GetBindingInfo(attributes, modelMetadata);

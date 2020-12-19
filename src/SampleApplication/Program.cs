@@ -67,8 +67,8 @@ namespace SampleApplication
 
 			kernel.Bind<Lazy<IModelMetadataProvider>>().ToMethod(x =>
 				new Lazy<IModelMetadataProvider>(() => x.Kernel.Get<IModelMetadataProvider>()));
-			kernel.Bind<ControllerFromInterfaceConvention>().ToSelf().InTransientScope();
-			kernel.Bind<IConfigureOptions<MvcOptions>>().To<ControllerFromInterfaceConfiguration>().InTransientScope();
+			kernel.Bind<PublishInstructionApplicationModelConvention>().ToSelf().InTransientScope();
+			kernel.Bind<IConfigureOptions<MvcOptions>>().To<PublishInstructionApplicationModelConfiguration>().InTransientScope();
 
 			return kernel;
 		}

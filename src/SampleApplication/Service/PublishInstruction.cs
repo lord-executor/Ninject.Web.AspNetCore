@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 
 namespace SampleApplication.Service
 {
@@ -17,7 +18,12 @@ namespace SampleApplication.Service
 		public PublishInstruction(Type interfaceType, string path)
 		{
 			InterfaceType = interfaceType;
-			Path = path;
+			Path = $"{path}/{{action}}";
+		}
+
+		public IApplicationModelAdapter CreateAdapter(IModelMetadataProvider modelMetadataProvider)
+		{
+			return new ControllerFromInterfaceApplicationModelAdapter(modelMetadataProvider, this);
 		}
 	}
 }
