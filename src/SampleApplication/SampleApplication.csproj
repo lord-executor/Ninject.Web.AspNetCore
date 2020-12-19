@@ -4,22 +4,10 @@
     <TargetFrameworks>net5.0</TargetFrameworks>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <DebugType>full</DebugType>
-    <RootNamespace>SampleApplication-AspNetCore</RootNamespace>
+    <RootNamespace>SampleApplication</RootNamespace>
     <OutputType>Exe</OutputType>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\SampleApplication-Shared\**\*.cs">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
-    <Content Include="..\SampleApplication-Shared\**\*.cshtml" ExcludeFromSingleFile="true">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Content>
-    <Content Include="..\SampleApplication-Shared\wwwroot\**">
-      <Link>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Content>
-  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Ninject.Web.AspNetCore.Httpsys\Ninject.Web.AspNetCore.HttpSys.csproj" />

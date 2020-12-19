@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
-using SampleApplication_AspNetCore.Models;
+using SampleApplication.Models;
 
-namespace SampleApplication_AspNetCore.Controllers
+namespace SampleApplication.Controllers
 {
 	public class HomeController : Controller
 	{
@@ -26,6 +26,11 @@ namespace SampleApplication_AspNetCore.Controllers
 			ViewData["ServiceProvider"] = _serviceProvider.GetType().FullName;
 			ViewData["dotNETVersion"] = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
 			ViewData["Environment"] = Environment.GetEnvironmentVariables();
+			return View();
+		}
+
+		public IActionResult Services()
+		{
 			return View();
 		}
 

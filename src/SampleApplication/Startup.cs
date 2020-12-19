@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Ninject.Web.AspNetCore;
 using Ninject.Web.AspNetCore.Hosting;
 
-namespace SampleApplication_AspNetCore
+namespace SampleApplication
 {
 	public class Startup : AspNetCoreStartupBase
 	{
