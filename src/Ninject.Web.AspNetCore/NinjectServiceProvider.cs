@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Ninject.Planning.Bindings;
+using Ninject.Syntax;
 using System;
 
 namespace Ninject.Web.AspNetCore
@@ -16,22 +16,22 @@ namespace Ninject.Web.AspNetCore
 	/// </summary>
 	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService
 	{
-		private readonly IKernel _kernel;
+		private readonly IResolutionRoot _resolutionRoot;
 
-		public NinjectServiceProvider(IKernel kernel)
+		public NinjectServiceProvider(IResolutionRoot resolutionRoot)
 		{
-			_kernel = kernel;
+			_resolutionRoot = resolutionRoot;
 		}
 
 		public object GetRequiredService(Type serviceType)
 		{
-			var result = _kernel.Get(serviceType);
+			var result = _resolutionRoot.Get(serviceType);
 			return result;
 		}
 
 		public object GetService(Type serviceType)
 		{
-			var result = _kernel.TryGet(serviceType);
+			var result = _resolutionRoot.TryGet(serviceType);
 			return result;
 		}
 	}
