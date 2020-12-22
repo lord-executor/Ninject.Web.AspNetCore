@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Ninject.Syntax;
-using Ninject.Web.Common;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Ninject.Web.AspNetCore
 {

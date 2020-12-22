@@ -31,6 +31,16 @@ namespace Ninject.Web.AspNetCore.Hosting
 			_cliArgs = cliArgs;
 		}
 
+		public DefaultWebHostConfiguration ConfigureRequestScope()
+		{
+			_builder.ConfigureServices(services =>
+			{
+				services.AddTransient<IStartupFilter, RequestScopeStartupFilter>();
+			});
+
+			return this;
+		}
+
 		public DefaultWebHostConfiguration ConfigureContentRoot()
 		{
 			if (string.IsNullOrEmpty(_builder.GetSetting(WebHostDefaults.ContentRootKey)))
@@ -145,6 +155,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 		public DefaultWebHostConfiguration ConfigureAll()
 		{
 			return this
+				.ConfigureRequestScope() // do this first since it sets up the request scope for DI
 				.ConfigureContentRoot()
 				.ConfigureAppSettings()
 				.ConfigureLogging()
