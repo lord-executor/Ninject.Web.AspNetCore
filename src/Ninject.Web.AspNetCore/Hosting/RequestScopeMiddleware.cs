@@ -8,10 +8,12 @@ namespace Ninject.Web.AspNetCore.Hosting
 	/// </summary>
 	public class RequestScopeMiddleware : IMiddleware
 	{
-		public Task InvokeAsync(HttpContext context, RequestDelegate next)
+		public async Task InvokeAsync(HttpContext context, RequestDelegate next)
 		{
-			var scope = new RequestScope();
-			return next.Invoke(context).ContinueWith(_ => scope.Dispose());
+			using (new RequestScope())
+			{
+				await next.Invoke(context);
+			}
 		}
 	}
 }
