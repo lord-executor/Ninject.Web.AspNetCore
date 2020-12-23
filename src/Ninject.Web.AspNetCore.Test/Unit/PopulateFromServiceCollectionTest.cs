@@ -55,16 +55,17 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var collection = new ServiceCollection();
 			collection.Add(new ServiceDescriptor(typeof(IWarrior), typeof(Samurai), ServiceLifetime.Scoped));
 
-			var kernel = CreateKernel(collection);			
+			var kernel = CreateKernel(collection);
 
 			IWarrior first;
-			using (var scope1 = new NinjectServiceScope(kernel))
+			using (var scope1 = new RequestScope())
 			{
 				first = kernel.Get<IWarrior>();
 				var second = kernel.Get<IWarrior>();
 				first.Should().BeSameAs(second).And.BeOfType(typeof(Samurai));
 			}
-			using (var scope2 = new NinjectServiceScope(kernel))
+
+			using (var scope2 = new RequestScope())
 			{
 				var third = kernel.Get<IWarrior>();
 				third.Should().NotBeSameAs(first).And.BeOfType(typeof(Samurai));
