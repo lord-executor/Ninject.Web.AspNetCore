@@ -6,18 +6,39 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 {
 	public class TestKernelContext
 	{
+		protected AspNetCoreHostConfiguration DefaultConfiguration { get; set; } = new AspNetCoreHostConfiguration();
 
-		protected IKernel CreateKernel(IServiceCollection collection, AspNetCoreHostConfiguration configuration = null)
+		protected NinjectSettings CreateDefaultSettings()
 		{
-			var kernel = new AspNetCoreKernel(new NinjectSettings() { LoadExtensions = false });
+			return new NinjectSettings() { LoadExtensions = false };
+		}
+
+		protected IKernel CreateKernel(IServiceCollection collection)
+		{
+			return CreateKernel(collection, CreateDefaultSettings(), DefaultConfiguration);
+		}
+
+		protected IKernel CreateKernel(IServiceCollection collection, AspNetCoreHostConfiguration configuration)
+		{
+			return CreateKernel(collection, CreateDefaultSettings(), configuration);
+		}
+
+		protected IKernel CreateKernel(IServiceCollection collection, NinjectSettings settings)
+		{
+			return CreateKernel(collection, settings, DefaultConfiguration);
+		}
+
+		protected IKernel CreateKernel(IServiceCollection collection, NinjectSettings settings, AspNetCoreHostConfiguration configuration)
+		{
+			var kernel = new AspNetCoreKernel(settings);
 			kernel.Load(typeof(AspNetCoreApplicationPlugin).Assembly);
 			kernel.Bind<IServiceProvider>().ToConstant(new NinjectServiceProvider(kernel));
-			kernel.Bind<AspNetCoreHostConfiguration>().ToConstant(configuration ?? new AspNetCoreHostConfiguration());
+			kernel.Bind<AspNetCoreHostConfiguration>().ToConstant(configuration);
 
 			new ServiceCollectionAdapter().Populate(kernel, collection);
 			return kernel;
 		}
-		
+
 
 	}
 }

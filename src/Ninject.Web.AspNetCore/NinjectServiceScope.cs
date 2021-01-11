@@ -1,45 +1,25 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Ninject.Infrastructure.Disposal;
 
 namespace Ninject.Web.AspNetCore
 {
-	public class NinjectServiceScope : IServiceScope
+	public class NinjectServiceScope : DisposableObject, IServiceScope
 	{
-
-		private bool _disposed;
-		private readonly IKernel _kernel;
-		private readonly RequestScope _scope;
-
 		public NinjectServiceScope(IKernel kernel)
 		{
-			_kernel = kernel;
-			_scope = new RequestScope();
+			var resolutionRoot = new ServiceProviderScopeResolutionRoot(kernel);
+			ServiceProvider = new NinjectServiceProvider(resolutionRoot);
+			Disposed += (_, _) => resolutionRoot.Dispose();
 		}
 
-		// note that we can't return the IKernel directly here, although it would implement IServiceProvider.
-		// the problem is, that Ninject incorrectly throws an exception if no binding resolvable whereas
+		// Note that we can't return the IKernel directly here, although it would implement IServiceProvider.
+		// The problem is, that Ninject incorrectly throws an exception if no binding resolvable whereas
 		// IServiceProvider.GetService requires to return null in this case.
-		// see https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider.getservice?view=netcore-3.1
-		public IServiceProvider ServiceProvider => _kernel.Get<IServiceProvider>();
-
-		public void Dispose()
-		{
-			this.Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!this._disposed)
-			{
-				this._disposed = true;
-
-				if (disposing)
-				{
-					_scope.Dispose();
-				}
-			}
-		}
+		// see https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider.getservice?view=netcore-3.1.
+		// Additionally, emulating the scope mechanism of IServiceProvider also requires a different resolution
+		// root implementation.
+		public IServiceProvider ServiceProvider { get; }
 
 	}
 }

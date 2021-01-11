@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Ninject.Web.Common.SelfHost;
+
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
@@ -26,6 +28,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 			_configuration.Apply(host);
 
 			var builder = host.Build();
+			
 			if (_configuration.BlockOnStart)
 			{
 				builder.Run();
