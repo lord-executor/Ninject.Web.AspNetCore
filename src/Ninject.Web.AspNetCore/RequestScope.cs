@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Ninject.Infrastructure.Disposal;
+using System;
 using System.Threading;
 
 namespace Ninject.Web.AspNetCore
 {
-	public class RequestScope : IDisposable
+	public class RequestScope : DisposableObject
 	{
 		private static AsyncLocal<RequestScope> _current = new AsyncLocal<RequestScope>();
 		public static RequestScope Current => _current.Value;
@@ -20,9 +21,14 @@ namespace Ninject.Web.AspNetCore
 			}
 		}
 
-		public void Dispose()
+		public override void Dispose(bool disposing)
 		{
-			_current.Value = null;
+			if (disposing && !IsDisposed)
+			{
+				_current.Value = null;
+			}
+
+			base.Dispose(disposing);
 		}
 	}
 }
