@@ -1,0 +1,47 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+ 
+The format is based on [Keep a Changelog](http://keepachangelog.com/).
+
+The major and minor parts of the version number indicate the compatibility
+with the ASP.NET Core framework version (2.2.*, 3.0.*, 5.0.*) and only
+the build part is actually indicating the release version of the project.
+
+## [*.*.3] - 2021-05-08
+
+### Changed
+* `RequestScope` is now inheriting from `Ninject.Infrastructure.Disposal.DisposableObject`
+  and therefore implements `INotifyWhenDisposed` which means that services that are tied
+  to the request scope will be disposed _immediately_ when the request scope is disposed.
+  This should improve the memory performance since objects bound to the request scope
+  can release their unmanaged resources sooner.
+
+## [*.*.2] - 2020-11-19
+
+With this update, some of the class names had their inconsistent naming
+fixed from "NInject" to "Ninject". The compiler will complain when you
+update and the issue is trivial to fix.
+
+### Added
+* Added support for custom controller activator type
+
+### Changed
+* `NinjectServiceProvider` is now implementing `ISupportRequiredService`
+  and provides much better exceptions when a required service cannot be
+  resolved
+
+### Fixed
+* Consolidated class naming (fixed "NInject" to "Ninject")
+
+## [*.*.1] - 2020-11-11
+
+### Added
+* Configurable blocking behavior of INinjectSelfHost implementation
+* Signing assemblies with a strong name
+
+### Fixed
+* Added missing develop static web assets configuration for ASP.NET Core 3+
+
+## [*.*.0] - 2020-11-08
+
+Initial release for internal testing and figuring out the release procedure with NuGet packages.

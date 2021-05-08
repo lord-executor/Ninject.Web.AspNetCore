@@ -1,4 +1,4 @@
-﻿namespace Ninject.Web.AspNetCore.Test.Fakes
+namespace Ninject.Web.AspNetCore.Test.Fakes
 {
 	public interface IWeapon
 	{
