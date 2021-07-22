@@ -95,11 +95,12 @@ public class Program
             host.Start();
     }
 
-    private static IWebHostBuilder CreateWebHostBuilder()
-    {
-        return new WebHostBuilder()
-            // ...
-    }
+    public static IWebHostBuilder CreateWebHostBuilder()
+	{
+		return new DefaultWebHostConfiguration(null)
+			.ConfigureAll()
+			.GetBuilder();
+	}
 }
 ```
 
