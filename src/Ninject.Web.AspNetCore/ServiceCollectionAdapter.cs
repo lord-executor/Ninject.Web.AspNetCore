@@ -62,7 +62,7 @@ namespace Ninject.Web.AspNetCore
 			IBindingNamedWithOrOnSyntax<T> result;
 			if (descriptor.ImplementationType != null)
 			{
-				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
+				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType).WhenGenericsMatch(descriptor.ImplementationType), descriptor.Lifetime);
 			}
 			else if (descriptor.ImplementationFactory != null)
 			{
@@ -94,7 +94,13 @@ namespace Ninject.Web.AspNetCore
 				case ServiceLifetime.Scoped:
 					return bindingInSyntax.InRequestScope();
 				case ServiceLifetime.Transient:
-					return bindingInSyntax.InTransientScope();
+					//return bindingInSyntax.InTransientScope();
+					// Microsoft.Extensions.DependencyInjection expects transient services to be disposed
+					// See the compliance tests for more details.
+					return bindingInSyntax.InScope(context => {
+						var scope = context.Parameters.OfType<ServiceProviderScopeParameter>().SingleOrDefault();
+						return scope?.DeriveTransientScope();
+					});
 				default:
 					throw new NotSupportedException();
 			}

@@ -18,6 +18,11 @@ namespace Ninject.Web.AspNetCore.ComplianceTests
 	/// </summary>
 	public class DependencyInjectionComplianceTests : Microsoft.Extensions.DependencyInjection.Specification.DependencyInjectionSpecificationTests
 	{
+		//public DependencyInjectionComplianceTests()
+		//{
+		//	//this.
+		//}
+
 		protected override IServiceProvider CreateServiceProvider(IServiceCollection serviceCollection)
 		{
 			var kernel = new AspNetCoreKernel();

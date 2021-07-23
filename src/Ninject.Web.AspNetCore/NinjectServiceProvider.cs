@@ -14,7 +14,7 @@ namespace Ninject.Web.AspNetCore
 	/// we implement it here to have the nicer exceptions from NInject so that it's possible to distinguish the "not registered at all"
 	/// vs the "ambigious matches found" cases.
 	/// </summary>
-	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService
+	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
 	{
 		private readonly IResolutionRoot _resolutionRoot;
 
@@ -33,6 +33,11 @@ namespace Ninject.Web.AspNetCore
 		{
 			var result = _resolutionRoot.TryGet(serviceType);
 			return result;
+		}
+
+		public void Dispose()
+		{
+			(_resolutionRoot as IDisposable)?.Dispose();
 		}
 	}
 }

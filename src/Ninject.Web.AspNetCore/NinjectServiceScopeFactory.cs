@@ -13,7 +13,7 @@ namespace Ninject.Web.AspNetCore
 
 		public IServiceScope CreateScope()
 		{
-			return new NinjectServiceScope(_kernel);
+			return new NinjectServiceScope(_kernel, false);
 		}
 	}
 }

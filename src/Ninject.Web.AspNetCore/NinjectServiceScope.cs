@@ -6,11 +6,21 @@ namespace Ninject.Web.AspNetCore
 {
 	public class NinjectServiceScope : DisposableObject, IServiceScope
 	{
-		public NinjectServiceScope(IKernel kernel)
+		public NinjectServiceScope(IKernel kernel, bool isRootScope)
 		{
 			var resolutionRoot = new ServiceProviderScopeResolutionRoot(kernel);
+			if (isRootScope)
+			{
+				resolutionRoot.Disposed += (_, _) =>
+				{
+					kernel.Dispose();
+				};
+			}
 			ServiceProvider = new NinjectServiceProvider(resolutionRoot);
-			Disposed += (_, _) => resolutionRoot.Dispose();
+			Disposed += (_, _) =>
+			{
+				resolutionRoot.Dispose();
+			};
 		}
 
 		// Note that we can't return the IKernel directly here, although it would implement IServiceProvider.
