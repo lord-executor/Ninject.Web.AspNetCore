@@ -1,5 +1,4 @@
 ﻿using Ninject.Activation;
-using Ninject.Infrastructure.Disposal;
 using Ninject.Parameters;
 using Ninject.Planning.Bindings;
 using Ninject.Syntax;
@@ -9,15 +8,15 @@ using System.Linq;
 
 namespace Ninject.Web.AspNetCore
 {
-	public class ServiceProviderScopeResolutionRoot : DisposableObject, IResolutionRoot
+	public class ServiceProviderScopeResolutionRoot : IResolutionRoot
 	{
 		private readonly IResolutionRoot _parent;
 		private readonly ServiceProviderScopeParameter _scopeParameter;
 
-		public ServiceProviderScopeResolutionRoot(IResolutionRoot parent)
+		public ServiceProviderScopeResolutionRoot(IResolutionRoot parent, NinjectServiceScope scope)
 		{
 			_parent = parent;
-			_scopeParameter = new ServiceProviderScopeParameter(this);
+			_scopeParameter = new ServiceProviderScopeParameter(scope);
 		}
 
 		public bool CanResolve(IRequest request)

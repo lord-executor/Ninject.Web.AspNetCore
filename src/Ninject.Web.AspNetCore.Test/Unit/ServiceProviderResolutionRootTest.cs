@@ -13,7 +13,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void ScopeResolutionRoot_Resolution_IsDelegatedToParent()
 		{
-			var scopeRoot = new ServiceProviderScopeResolutionRoot(CreateKernel());
+			var scopeRoot = CreateScopeResolutionRoot();
 
 			var request = scopeRoot.CreateRequest(typeof(IWarrior), null, Enumerable.Empty<IParameter>(), false, true);
 
@@ -26,7 +26,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void ScopeResolutionRoot_RequestWithoutParameters_ShouldAddScopeParameter()
 		{
-			var scopeRoot = new ServiceProviderScopeResolutionRoot(CreateKernel());
+			var scopeRoot = CreateScopeResolutionRoot();
 
 			var request = scopeRoot.CreateRequest(typeof(IWarrior), null, Enumerable.Empty<IParameter>(), false, true);
 
@@ -36,13 +36,20 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void ScopeResolutionRoot_RequestWithParameters_ShouldAddScopeParameter()
 		{
-			var scopeRoot = new ServiceProviderScopeResolutionRoot(CreateKernel());
+			var scopeRoot = CreateScopeResolutionRoot();
 
 			var request = scopeRoot.CreateRequest(typeof(IWarrior), null, new[] { new Parameter("foo", (object)null, false) }, false, true);
 
 			request.Parameters.Should().HaveCount(2).And
 				.Contain(p => p.Name == "foo").And
 				.Contain(p => p.Name == nameof(ServiceProviderScopeParameter));
+		}
+
+		private ServiceProviderScopeResolutionRoot CreateScopeResolutionRoot()
+		{
+			var kernel = CreateKernel();
+			var scope = new NinjectServiceScope(kernel, true);
+			return new ServiceProviderScopeResolutionRoot(kernel, scope);
 		}
 
 		private IKernel CreateKernel()

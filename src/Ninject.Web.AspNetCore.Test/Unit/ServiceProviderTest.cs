@@ -118,14 +118,14 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			action.Should().Throw<ActivationException>().WithMessage("*More than one matching bindings are available*");
 		}
 
-		private IServiceProvider CreateServiceProvider(IKernel kernel)
+		private IServiceProvider CreateServiceProvider(AspNetCoreKernel kernel)
 		{
 			NinjectServiceProviderBuilder builder = CreateServiceProviderBuilder(kernel);
 			var provider = builder.Build();
 			return provider;
 		}
 
-		private NinjectServiceProviderBuilder CreateServiceProviderBuilder(IKernel kernel)
+		private NinjectServiceProviderBuilder CreateServiceProviderBuilder(AspNetCoreKernel kernel)
 		{
 			var collection = new ServiceCollection();
 			var factory = new NinjectServiceProviderFactory(kernel);
@@ -133,7 +133,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			return builder;
 		}
 
-		private IKernel CreateTestKernel()
+		private AspNetCoreKernel CreateTestKernel()
 		{
 			var kernel = new AspNetCoreKernel(new NinjectSettings() { LoadExtensions = false });
 			kernel.Load(typeof(AspNetCoreApplicationPlugin).Assembly);

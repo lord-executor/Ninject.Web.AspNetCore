@@ -17,10 +17,12 @@ namespace Ninject.Web.AspNetCore
 	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
 	{
 		private readonly IResolutionRoot _resolutionRoot;
+		private readonly IServiceScope _scope;
 
-		public NinjectServiceProvider(IResolutionRoot resolutionRoot)
+		public NinjectServiceProvider(IResolutionRoot resolutionRoot, IServiceScope scope)
 		{
 			_resolutionRoot = resolutionRoot;
+			_scope = scope;
 		}
 
 		public object GetRequiredService(Type serviceType)
@@ -37,7 +39,7 @@ namespace Ninject.Web.AspNetCore
 
 		public void Dispose()
 		{
-			(_resolutionRoot as IDisposable)?.Dispose();
+			_scope?.Dispose();
 		}
 	}
 }

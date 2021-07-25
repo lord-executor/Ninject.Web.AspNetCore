@@ -8,19 +8,9 @@ namespace Ninject.Web.AspNetCore
 	{
 		public NinjectServiceScope(IKernel kernel, bool isRootScope)
 		{
-			var resolutionRoot = new ServiceProviderScopeResolutionRoot(kernel);
-			if (isRootScope)
-			{
-				resolutionRoot.Disposed += (_, _) =>
-				{
-					kernel.Dispose();
-				};
-			}
-			ServiceProvider = new NinjectServiceProvider(resolutionRoot);
-			Disposed += (_, _) =>
-			{
-				resolutionRoot.Dispose();
-			};
+			var resolutionRoot = new ServiceProviderScopeResolutionRoot(kernel, this);
+
+			ServiceProvider = new NinjectServiceProvider(resolutionRoot, isRootScope ? this : null);
 		}
 
 		// Note that we can't return the IKernel directly here, although it would implement IServiceProvider.
@@ -30,6 +20,5 @@ namespace Ninject.Web.AspNetCore
 		// Additionally, emulating the scope mechanism of IServiceProvider also requires a different resolution
 		// root implementation.
 		public IServiceProvider ServiceProvider { get; }
-
 	}
 }

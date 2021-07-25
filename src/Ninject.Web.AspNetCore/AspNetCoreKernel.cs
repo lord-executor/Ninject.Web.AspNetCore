@@ -1,4 +1,5 @@
-﻿using Ninject.Activation;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Ninject.Activation;
 using Ninject.Activation.Caching;
 using Ninject.Modules;
 using Ninject.Planning.Bindings;
@@ -7,13 +8,21 @@ using System;
 
 namespace Ninject.Web.AspNetCore
 {
-	public class AspNetCoreKernel : StandardKernel
+	public class AspNetCoreKernel : StandardKernel, IServiceScopeFactory
 	{
+		public IServiceScope RootScope { get; }
+
 		public AspNetCoreKernel(params INinjectModule[] modules)
-			: base(modules) { }
+			: base(modules)
+		{
+			RootScope = new NinjectServiceScope(this, true);
+		}
 
 		public AspNetCoreKernel(INinjectSettings settings, params INinjectModule[] modules)
-			: base(settings, modules) { }
+			: base(settings, modules)
+		{
+			RootScope = new NinjectServiceScope(this, true);
+		}
 
 		protected override Func<IBinding, bool> SatifiesRequest(IRequest request)
 		{
@@ -36,6 +45,21 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IBindingPrecedenceComparer, IndexedBindingPrecedenceComparer>();
 			Components.Remove<ICache, Cache>();
 			Components.Add<ICache, OrderedCache>();
+		}
+
+		public override void Dispose(bool disposing)
+		{
+			if (disposing && !IsDisposed)
+			{
+				RootScope.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
+		public IServiceScope CreateScope()
+		{
+			return new NinjectServiceScope(this, false);
 		}
 	}
 }

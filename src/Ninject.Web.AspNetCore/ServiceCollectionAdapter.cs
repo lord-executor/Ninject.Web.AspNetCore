@@ -93,7 +93,9 @@ namespace Ninject.Web.AspNetCore
 			switch (lifecycleKind)
 			{
 				case ServiceLifetime.Singleton:
-					return bindingInSyntax.InSingletonScope();
+					return bindingInSyntax.InScope(context => {
+						return (context.Kernel as AspNetCoreKernel).RootScope;
+					});
 				case ServiceLifetime.Scoped:
 					return bindingInSyntax.InRequestScope();
 				case ServiceLifetime.Transient:

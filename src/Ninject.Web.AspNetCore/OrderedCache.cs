@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading;
 using Ninject.Activation;
 using Ninject.Activation.Caching;
 using Ninject.Components;
@@ -137,7 +137,7 @@ namespace Ninject.Web.AspNetCore
 			lock (entries)
 			{
 				var instanceFound = false;
-				using (var collector = new Collector(Pipeline, orderedEntries))
+				using (var collector = Collector.Create(Pipeline, orderedEntries))
 				{
 					foreach (var bindingEntry in entries.Values.SelectMany(bindingEntries => bindingEntries.Values).ToList())
 					{
@@ -162,7 +162,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			lock (entries)
 			{
-				using (var collector = new Collector(Pipeline, orderedEntries))
+				using (var collector = Collector.Create(Pipeline, orderedEntries))
 				{
 					var disposedScopes = entries.Where(scope => !((ReferenceEqualWeakReference)scope.Key).IsAlive).Select(scope => scope).ToList();
 					foreach (var disposedScope in disposedScopes)
@@ -183,7 +183,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			lock (entries)
 			{
-				using (var collector = new Collector(Pipeline, orderedEntries))
+				using (var collector = Collector.Create(Pipeline, orderedEntries))
 				{
 					if (entries.TryGetValue(scope, out Multimap<IBindingConfiguration, CacheEntry> bindings))
 					{
@@ -201,7 +201,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			lock (entries)
 			{
-				using (var collector = new Collector(Pipeline, orderedEntries))
+				using (var collector = Collector.Create(Pipeline, orderedEntries))
 				{
 					Forget(collector, GetAllCacheEntries());
 					entries.Clear();
@@ -281,39 +281,71 @@ namespace Ninject.Web.AspNetCore
 
 		private class Collector : IDisposable
 		{
+			private static AsyncLocal<Collector> _current = new AsyncLocal<Collector>();
+
+			private readonly Collector _root;
 			private readonly IPipeline _pipeline;
 			private readonly LinkedList<CacheEntry> _entries;
 			private readonly HashSet<CacheEntry> _deletes = new HashSet<CacheEntry>();
 
-			public Collector(IPipeline pipeline, LinkedList<CacheEntry> entries)
+			public static Collector Create(IPipeline pipeline, LinkedList<CacheEntry> entries)
+			{
+				if (_current.Value == null)
+				{
+					return _current.Value = new Collector(pipeline, entries);
+				}
+				else
+				{
+					return new Collector(_current.Value);
+				}
+			}
+
+			private Collector(IPipeline pipeline, LinkedList<CacheEntry> entries)
 			{
 				_pipeline = pipeline;
 				_entries = entries;
 			}
 
+			private Collector(Collector root)
+			{
+				_root = root;
+			}
+
 			public void Register(CacheEntry entry)
 			{
-				_deletes.Add(entry);
+				if (_root == null)
+				{
+					_deletes.Add(entry);
+				}
+				else
+				{
+					_root.Register(entry);
+				}
 			}
 
 			public void Dispose()
 			{
-				var node = _entries.Last;
-				if (node == null)
+				if (_root == null)
 				{
-					return;
-				}
-
-				do
-				{
-					var current = node;
-					node = node.Previous;
-					if (_deletes.Contains(current.Value))
+					var node = _entries.Last;
+					if (node == null)
 					{
-						_entries.Remove(current);
-						_pipeline.Deactivate(current.Value.Context, current.Value.Reference);
+						return;
 					}
-				} while (node != null);
+
+					do
+					{
+						var current = node;
+						node = node.Previous;
+						if (_deletes.Contains(current.Value))
+						{
+							_entries.Remove(current);
+							_pipeline.Deactivate(current.Value.Context, current.Value.Reference);
+						}
+					} while (node != null);
+
+					_current.Value = null;
+				}
 			}
 		}
 	}

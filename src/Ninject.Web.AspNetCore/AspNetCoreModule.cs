@@ -12,7 +12,7 @@ namespace Ninject.Web.AspNetCore
 		public override void Load()
 		{
 			Kernel.Components.Add<INinjectHttpApplicationPlugin, AspNetCoreApplicationPlugin>(); // provides the scope object for InRequestScope bindings
-			Kernel.Bind<IServiceScopeFactory>().To<NinjectServiceScopeFactory>().InTransientScope().WithConstructorArgument("kernel", Kernel);
+			Kernel.Bind<IServiceScopeFactory>().ToConstant(Kernel as IServiceScopeFactory);
 			Kernel.Bind<IPopulateAdapter>().To<FixServicesForPublicatonAdapter>();
 		}
 	}
