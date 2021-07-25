@@ -9,6 +9,8 @@
 
 		public static void SetMissingRequestScopeBehavior(this INinjectSettings settings, MissingRequestScopeBehaviorType behavior)
 		{
+			// TODO: review if this is still needed since ServiceProviderScopeParameter should apply to all services
+			// registered with the service collection (see AspNetCoreApplicationPlugin)
 			settings.Set(nameof(MissingRequestScopeBehaviorType), behavior);
 		}
 	}

@@ -93,15 +93,16 @@ namespace Ninject.Web.AspNetCore
 			switch (lifecycleKind)
 			{
 				case ServiceLifetime.Singleton:
+					// Microsoft.Extensions.DependencyInjection expects its singletons to be disposed when the root service scope
+					// and/or the root IServiceProvider is disposed.
 					return bindingInSyntax.InScope(context => {
 						return (context.Kernel as AspNetCoreKernel).RootScope;
 					});
 				case ServiceLifetime.Scoped:
 					return bindingInSyntax.InRequestScope();
 				case ServiceLifetime.Transient:
-					//return bindingInSyntax.InTransientScope();
-					// Microsoft.Extensions.DependencyInjection expects transient services to be disposed
-					// See the compliance tests for more details.
+					// Microsoft.Extensions.DependencyInjection expects transient services to be disposed when the IServiceScope
+					// in which they were created is disposed. See the compliance tests for more details.
 					return bindingInSyntax.InScope(context => {
 						var scope = context.Parameters.OfType<ServiceProviderScopeParameter>().SingleOrDefault();
 						return scope?.DeriveTransientScope();

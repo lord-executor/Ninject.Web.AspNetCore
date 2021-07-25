@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Ninject.Activation;
-using Ninject.Activation.Caching;
+using Ninject.Activation.Strategies;
 using Ninject.Modules;
 using Ninject.Planning.Bindings;
 using Ninject.Planning.Bindings.Resolvers;
@@ -43,8 +43,10 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IBindingResolver, ConstrainedGenericBindingResolver>();
 			Components.Remove<IBindingPrecedenceComparer, BindingPrecedenceComparer>();
 			Components.Add<IBindingPrecedenceComparer, IndexedBindingPrecedenceComparer>();
-			Components.Remove<ICache, Cache>();
-			Components.Add<ICache, OrderedCache>();
+
+			Components.Add<IDisposalManager, DisposalManager>();
+			Components.Remove<IActivationStrategy, DisposableStrategy>();
+			Components.Add<IActivationStrategy, OrderedDisposalStrategy>();
 		}
 
 		public override void Dispose(bool disposing)

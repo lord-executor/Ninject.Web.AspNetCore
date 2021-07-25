@@ -3,8 +3,6 @@ using Ninject.Planning.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -17,7 +15,7 @@ namespace Ninject.Web.AspNetCore
 				return 0;
 			}
 
-			// Each function represents a level of precedence.
+			// TODO: can be improved
 			var funcs = new List<Func<IBinding, uint>>
 							{
 								b => (b.Metadata.Has(nameof(BindingIndex)) ? (uint)b.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.Precedence : 0) << 4,

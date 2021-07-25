@@ -54,7 +54,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 		private IKernel CreateKernel()
 		{
-			var kernel = new StandardKernel(new NinjectSettings { LoadExtensions = false });
+			var kernel = new AspNetCoreKernel(new NinjectSettings { LoadExtensions = false });
 
 			kernel.Bind<IWarrior>().To<Samurai>();
 
