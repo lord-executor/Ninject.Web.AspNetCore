@@ -1,10 +1,9 @@
 ﻿using Ninject.Activation;
+using Ninject.Activation.Caching;
 using Ninject.Modules;
-using Ninject.Parameters;
 using Ninject.Planning.Bindings;
 using Ninject.Planning.Bindings.Resolvers;
 using System;
-using System.Collections.Generic;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -35,6 +34,8 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IBindingResolver, ConstrainedGenericBindingResolver>();
 			Components.Remove<IBindingPrecedenceComparer, BindingPrecedenceComparer>();
 			Components.Add<IBindingPrecedenceComparer, IndexedBindingPrecedenceComparer>();
+			Components.Remove<ICache, Cache>();
+			Components.Add<ICache, OrderedCache>();
 		}
 	}
 }
