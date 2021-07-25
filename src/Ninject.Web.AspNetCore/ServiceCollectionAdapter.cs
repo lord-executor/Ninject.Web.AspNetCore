@@ -62,7 +62,8 @@ namespace Ninject.Web.AspNetCore
 			IBindingNamedWithOrOnSyntax<T> result;
 			if (descriptor.ImplementationType != null)
 			{
-				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType).WhenGenericsMatch(descriptor.ImplementationType), descriptor.Lifetime);
+				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
+				result.WithMetadata("BoundType", descriptor.ImplementationType);
 			}
 			else if (descriptor.ImplementationFactory != null)
 			{
@@ -80,7 +81,9 @@ namespace Ninject.Web.AspNetCore
 				result = bindingToSyntax.ToMethod(context => descriptor.ImplementationInstance as T).InSingletonScope();
 			}
 
-			return result.WithMetadata(nameof(BindingIndex), bindingIndex.Next());
+			return result
+				.WithMetadata(nameof(ServiceDescriptor), descriptor)
+				.WithMetadata(nameof(BindingIndex), bindingIndex.Next());
 		}
 
 		private IBindingNamedWithOrOnSyntax<T> ConfigureLifecycle<T>(

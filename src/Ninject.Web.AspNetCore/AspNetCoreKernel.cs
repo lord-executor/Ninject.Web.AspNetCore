@@ -2,6 +2,7 @@
 using Ninject.Modules;
 using Ninject.Parameters;
 using Ninject.Planning.Bindings;
+using Ninject.Planning.Bindings.Resolvers;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +26,15 @@ namespace Ninject.Web.AspNetCore
 				}
 				return binding.Matches(request) && request.Matches(binding) && latest;
 			};
+		}
+
+		protected override void AddComponents()
+		{
+			base.AddComponents();
+			Components.Remove<IBindingResolver, OpenGenericBindingResolver>();
+			Components.Add<IBindingResolver, ConstrainedGenericBindingResolver>();
+			Components.Remove<IBindingPrecedenceComparer, BindingPrecedenceComparer>();
+			Components.Add<IBindingPrecedenceComparer, IndexedBindingPrecedenceComparer>();
 		}
 	}
 }
