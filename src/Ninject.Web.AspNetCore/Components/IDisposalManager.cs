@@ -2,7 +2,7 @@
 using Ninject.Components;
 using System;
 
-namespace Ninject.Web.AspNetCore
+namespace Ninject.Web.AspNetCore.Components
 {
 	public interface IDisposalManager : INinjectComponent
 	{

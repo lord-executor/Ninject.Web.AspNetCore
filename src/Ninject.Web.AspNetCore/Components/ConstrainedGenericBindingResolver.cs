@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ninject.Web.AspNetCore
+namespace Ninject.Web.AspNetCore.Components
 {
 	/// <summary>
 	/// This is an improved version of the <see cref="OpenGenericBindingResolver"/> which is not capable of considering constrained generics
@@ -24,6 +24,7 @@ namespace Ninject.Web.AspNetCore
 				return Enumerable.Empty<IBinding>();
 			}
 
+			// TODO: since reflection is pretty inefficient, we should probably cache this information
 			return bindings[service.GetGenericTypeDefinition()].Where(binding => {
 				if (binding.Target == BindingTarget.Type && binding.Metadata.Has(nameof(ServiceDescriptor)))
 				{

@@ -4,6 +4,7 @@ using Ninject.Activation.Strategies;
 using Ninject.Modules;
 using Ninject.Planning.Bindings;
 using Ninject.Planning.Bindings.Resolvers;
+using Ninject.Web.AspNetCore.Components;
 using System;
 
 namespace Ninject.Web.AspNetCore

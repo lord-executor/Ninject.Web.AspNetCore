@@ -4,8 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ninject.Web.AspNetCore
+namespace Ninject.Web.AspNetCore.Components
 {
+	/// <summary>
+	/// This is very similar to the <see cref="Ninject.Planning.Bindings.BindingPrecedenceComparer"/> except that it considers the
+	/// <see cref="BindingIndex.Item.Precedence"/> as the top priority which is based on the order in which the binding was added.
+	/// This is to satisfy the Microsoft.Extensions.DependencyInjection requirements that expect multi-injected service to be
+	/// instantiated and injected in the order in which their service descriptors were added.
+	/// See DependencyInjectionComplianceTests with the tests:
+	/// * RegistrationOrderIsPreservedWhenServicesAreIEnumerableResolved
+	/// </summary>
 	public class IndexedBindingPrecedenceComparer : NinjectComponent, IBindingPrecedenceComparer
 	{
 		public int Compare(IBinding x, IBinding y)
