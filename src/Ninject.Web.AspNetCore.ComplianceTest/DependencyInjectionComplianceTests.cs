@@ -19,9 +19,6 @@ namespace Ninject.Web.AspNetCore.ComplianceTests
 		protected override IServiceProvider CreateServiceProvider(IServiceCollection serviceCollection)
 		{
 			var kernel = new AspNetCoreKernel();
-			// The compliance tests assume that a scoped service can always be resolved
-			kernel.Settings.SetMissingRequestScopeBehavior(MissingRequestScopeBehaviorType.UseKernel);
-
 			var factory = new NinjectServiceProviderFactory(kernel);
 
 			return factory.CreateBuilder(serviceCollection).Build();

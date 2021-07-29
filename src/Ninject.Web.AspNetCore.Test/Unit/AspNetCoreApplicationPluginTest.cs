@@ -6,9 +6,7 @@ using Ninject.Parameters;
 using Ninject.Web.Common;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Ninject.Web.AspNetCore.Test.Unit
@@ -38,41 +36,17 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		}
 
 		[Fact]
-		public void GetRequestScope_WithoutRequestScopeAndThrowConfiguration_ThrowsExceptionByDefault()
+		public void GetRequestScope_WithoutRequestScope_ThrowsException()
 		{
-			var settings = CreateDefaultSettings();
-			settings.SetMissingRequestScopeBehavior(MissingRequestScopeBehaviorType.Throw);
 			(var applicationPlugin, var context, _) = GetApplicationPluginContext();
-
+			
 			Action action = () => applicationPlugin.GetRequestScope(context);
 			action.Should().Throw<ActivationException>();
 		}
 
-		[Fact]
-		public void GetRequestScope_WithoutRequestScopeAndUseKernelConfiguration_UsesKernelAsScope()
+		private (AspNetCoreApplicationPlugin plugin, IContext context, IKernel kernel) GetApplicationPluginContext()
 		{
-			var settings = CreateDefaultSettings();
-			settings.SetMissingRequestScopeBehavior(MissingRequestScopeBehaviorType.UseKernel);
-			(var applicationPlugin, var context, var kernel) = GetApplicationPluginContext(settings);
-
-			var scope = applicationPlugin.GetRequestScope(context);
-			scope.Should().NotBeNull().And.Be(kernel);
-		}
-
-		[Fact]
-		public void GetRequestScope_WithoutRequestScopeAndUseTransientConfiguration_UsesNullAsScope()
-		{
-			var settings = CreateDefaultSettings();
-			settings.SetMissingRequestScopeBehavior(MissingRequestScopeBehaviorType.UseTransient);
-			(var applicationPlugin, var context, _) = GetApplicationPluginContext(settings);
-
-			var scope = applicationPlugin.GetRequestScope(context);
-			scope.Should().BeNull();
-		}
-
-		private (AspNetCoreApplicationPlugin plugin, IContext context, IKernel kernel) GetApplicationPluginContext(NinjectSettings settings = null)
-		{
-			var kernel = CreateKernel(new ServiceCollection(), settings ?? CreateDefaultSettings());
+			var kernel = CreateKernel(new ServiceCollection(), CreateDefaultSettings());
 			var applicationPlugin = kernel.Components.GetAll<INinjectHttpApplicationPlugin>().OfType<AspNetCoreApplicationPlugin>().Single();
 			var contextMock = new Mock<IContext>();
 			contextMock.Setup(ctx => ctx.Parameters).Returns(new List<IParameter>());
