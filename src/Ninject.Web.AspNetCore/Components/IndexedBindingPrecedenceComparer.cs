@@ -23,19 +23,32 @@ namespace Ninject.Web.AspNetCore.Components
 				return 0;
 			}
 
-			// TODO: can be improved
-			var funcs = new List<Func<IBinding, uint>>
+			// the 4 criteria are ordered from least, to most significant
+			var ninjectPrecedence = new List<Func<IBinding, bool>>
 							{
-								b => (b.Metadata.Has(nameof(BindingIndex)) ? (uint)b.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.Precedence : 0) << 4,
-								b => b != null ? 1U << 3 : 0,       // null bindings should never happen, but just in case
-                                b => b.IsConditional ? 1U << 2 : 0, // conditional bindings > unconditional
-                                b => !b.Service.ContainsGenericParameters ? 1U << 1 : 0, // closed generics > open generics
-                                b => !b.IsImplicit ? 1U << 0 : 0,   // explicit bindings > implicit
+								b => !b.IsImplicit,   // explicit bindings > implicit
+								b => !b.Service.ContainsGenericParameters, // closed generics > open generics
+								b => b.IsConditional, // conditional bindings > unconditional
+								b => b != null,       // null bindings should never happen, but just in case
                             };
+			var indexDifference = GetBindingIndexPrecedence(x) - GetBindingIndexPrecedence(y);
 
-			var xPrecedence = funcs.Select(f => f(x)).Aggregate(0L, (acc, val) => acc |= val);
-			var yPrecedence = funcs.Select(f => f(y)).Aggregate(0L, (acc, val) => acc |= val);
+			// xPrecedence and yPrecedence both are 5 bit numbers made up from the 4 bits from ninjectPrecedence and the 5th (hightest) bit being made up by the normalized
+			// binding index difference. The two 5 bit numbers are then compared and the larger one wins.
+			var xPrecedence = ninjectPrecedence
+				.Select((f, index) => f(x) ? 1U << index : 0U)
+				.Append(indexDifference > 0 ? 1U << 4 : 0U)
+				.Aggregate(0L, (acc, val) => acc |= val);
+			var yPrecedence = ninjectPrecedence
+				.Select((f, index) => f(y) ? 1U << index : 0U)
+				.Append(indexDifference < 0 ? 1U << 4 : 0U)
+				.Aggregate(0L, (acc, val) => acc |= val);
 			return (int)(xPrecedence - yPrecedence);
+		}
+
+		private int GetBindingIndexPrecedence(IBinding binding)
+		{
+			return (int)(binding.Metadata.Has(nameof(BindingIndex)) ? binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.Precedence : 0);
 		}
 	}
 }

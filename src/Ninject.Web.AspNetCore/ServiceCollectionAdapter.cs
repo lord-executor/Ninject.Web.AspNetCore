@@ -19,6 +19,7 @@ namespace Ninject.Web.AspNetCore
 			}
 
 			var adapters = kernel.GetAll<IPopulateAdapter>().ToList();
+			var bindingIndex = new BindingIndex();
 
 			foreach (var descriptor in serviceCollection)
 			{
@@ -27,7 +28,7 @@ namespace Ninject.Web.AspNetCore
 					continue;
 				}
 
-				ConfigureImplementationAndLifecycle(kernel.Bind(descriptor.ServiceType), descriptor);
+				ConfigureImplementationAndLifecycle(kernel.Bind(descriptor.ServiceType), descriptor, bindingIndex);
 			}
 
 			foreach (var adapter in adapters)
@@ -51,14 +52,9 @@ namespace Ninject.Web.AspNetCore
 
 		private IBindingWithOrOnSyntax<T> ConfigureImplementationAndLifecycle<T>(
 			IBindingToSyntax<T> bindingToSyntax,
-			ServiceDescriptor descriptor) where T : class
+			ServiceDescriptor descriptor,
+			BindingIndex bindingIndex) where T : class
 		{
-			if (!_bindingIndexMap.ContainsKey(descriptor.ServiceType))
-			{
-				_bindingIndexMap[descriptor.ServiceType] = new BindingIndex();
-			}
-			var bindingIndex = _bindingIndexMap[descriptor.ServiceType];
-
 			IBindingNamedWithOrOnSyntax<T> result;
 			if (descriptor.ImplementationType != null)
 			{
@@ -83,7 +79,7 @@ namespace Ninject.Web.AspNetCore
 
 			return result
 				.WithMetadata(nameof(ServiceDescriptor), descriptor)
-				.WithMetadata(nameof(BindingIndex), bindingIndex.Next());
+				.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType));
 		}
 
 		private IBindingNamedWithOrOnSyntax<T> ConfigureLifecycle<T>(
