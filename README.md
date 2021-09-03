@@ -16,6 +16,12 @@ The IIS and HttpSys projects are just very small convenience wrappers and you ca
 `Ninject.Web.AspNetCore` is built in a way that makes it easy to integrate with all standard ASP.NET Core examples and templates. All you have to do is eliminate the default web host builder and use the `AspNetCoreHostConfiguration` in combination with the `NinjectSelfHostBootstrapper` like this.
 
 ```cs
+using Microsoft.AspNetCore.Hosting;
+using Ninject;
+using Ninject.Web.AspNetCore;
+using Ninject.Web.AspNetCore.Hosting;
+using Ninject.Web.Common.SelfHost;
+
 public class Program
 {
     public static void Main(string[] args)
@@ -37,7 +43,7 @@ public class Program
         // much more reasonable to not rely on that and load everything explicitly.
         settings.LoadExtensions = false;
 
-        var kernel = new StandardKernel(settings);
+        var kernel = new AspNetCoreKernel(settings);
 
         kernel.Load(typeof(AspNetCoreHostConfiguration).Assembly);
 
@@ -70,9 +76,7 @@ public class Startup : AspNetCoreStartupBase
     {
         // For simplicitly, there is only one overload of Configure supported, so in order to get the additional
         // services, you can just resolve them with the service provider.
-        var env = app.ApplicationServices.GetRequiredService<IHostingEnvironment>();
-        // For ASP.NET Core 3+ you can instead resolve IWebHostEnvironment
-        // var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+        var env = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
 
         // Add your application builder configuration HERE
     }
@@ -109,12 +113,18 @@ public class Program
 You can also use `DefaultWebHostConfiguration` which comes with the Ninject integration to use some of the defaults that you get with an OOTB default web host builder for ASP.NET and add your own configuration on top of that. `DefaultWebHostConfiguration` can essentially do the same as `WebHost.CreateDefaultBuilder` except that it does not already configure the actual hosting model. It just adds the default configuration for logging, content root, etc.
 
 ```cs
+using Microsoft.AspNetCore.Hosting;
+using Ninject;
+using Ninject.Web.AspNetCore;
+using Ninject.Web.AspNetCore.Hosting;
+using Ninject.Web.Common.SelfHost;
+
 public class Program
 {
     public static void Main(string[] args)
     {
-        var hostConfiguration = new AspNetCoreHostConfiguration(args)
-                .UseWebHostBuilder(CreateWebHostBuilder)
+        var hostConfiguration = new AspNetCoreHostConfiguration()
+                .UseWebHostBuilder(CreateWebHostBuilder(args))
                 .UseStartup<Startup>();
                 .UseKestrel()
                 .BlockOnStart();
@@ -123,14 +133,19 @@ public class Program
             host.Start();
     }
 
-    private static IWebHostBuilder CreateWebHostBuilder()
+    public static IKernel CreateKernel()
     {
-        return new DefaultWebHostConfiguration()
+        // ...
+    }
+
+    private static IWebHostBuilder CreateWebHostBuilder(string[] args)
+    {
+        return new DefaultWebHostConfiguration(args)
             .ConfigureContentRoot()
             .ConfigureAppSettings()
             .ConfigureLogging()
             .ConfigureAllowedHosts()
-            // .ConfigureForwardedHeaders() // ASP.NET Core 3+ only
+            .ConfigureForwardedHeaders()
             .ConfigureRouting()
             .GetBuilder();
     }
@@ -151,7 +166,7 @@ That default web host builder already registers both Kestrel and IIS servers. Th
 * Both Kestrel and IIS integration have already been configured before you, the developer, have declared which hosting model you would like to use.
 * Calling `UseKestrel` or `UseIIS` without additional configuration are essentially NO-OPs.
 
-The biggest problem however is this: `UseIIS` only really has an effect when the assemlby is actuall being executed inside of an IIS (w3wp) process. In that case, it will register its own `IServer` implementation with the `ServiceCollection`. Unfortunately, this means that because Kestrell is also configured and already registered its own `IServer` instance, there are now **two** `IServer` implementations. With the _cheap_ `ServiceProvider` implementation that comes with ASP.NET Core this is not a problem because when a _single_ service is requested, it will just return the _last_ implementation that was registered.
+The biggest problem however is this: `UseIIS` only really has an effect when the assemlby is actually being executed inside of an IIS (w3wp) process. In that case, it will register its own `IServer` implementation with the `ServiceCollection`. Unfortunately, this means that because Kestrel is also configured and already registered its own `IServer` instance, there are now **two** `IServer` implementations. With the _cheap_ `ServiceProvider` implementation that comes with ASP.NET Core this is not a problem because when a _single_ service is requested, it will just return the _last_ implementation that was registered.
 
 When these service registrations are translated to Ninject, this becomes a bit of a problem since Ninject won't be able to resolve a single service if there are multiple applicable bindings. Since the `IServiceProvider` implementation should return `null` if it cannot resolve a service, that is exactly what happens and the startup will fail because it cannot find an `IServer` implementation.
 
