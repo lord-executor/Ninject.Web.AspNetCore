@@ -7,6 +7,18 @@ The major and minor parts of the version number indicate the compatibility
 with the ASP.NET Core framework version (2.2.*, 3.0.*, 5.0.*) and only
 the build part is actually indicating the release version of the project.
 
+## 5.1.0 - 2021-09-XX
+
+### Added
+* Added compliance tests for Microsoft.Extensions.DependencyInjection
+* Added `ServiceProviderScopeResolutionRoot` as the underlying mechanism for `NinjectServiceProvider`
+  * This allows for special treatment of requests made through the service provider
+
+### Changed
+* Updated implementation to be fully compliant with all the existing .NET 5 tests
+  * Significant changes in service disposal, binding precedence and resolving open generics
+  * See README section "Compliance with Microsoft.Extensions.DependencyInjection" for more details
+
 ## [*.*.3] - 2021-05-08
 
 ### Changed
