@@ -17,12 +17,14 @@ namespace Ninject.Web.AspNetCore
 			: base(modules)
 		{
 			RootScope = new NinjectServiceScope(this, true);
+			Settings.AllowNullInjection = true;
 		}
 
 		public AspNetCoreKernel(INinjectSettings settings, params INinjectModule[] modules)
 			: base(settings, modules)
 		{
 			RootScope = new NinjectServiceScope(this, true);
+			Settings.AllowNullInjection = true;
 		}
 
 		protected override Func<IBinding, bool> SatifiesRequest(IRequest request)
