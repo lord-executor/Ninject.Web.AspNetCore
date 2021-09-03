@@ -1,5 +1,6 @@
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/blob/master/LICENSE) [![Build Status](https://travis-ci.org/lord-executor/Ninject.Web.AspNetCore.svg?branch=master)](https://travis-ci.org/lord-executor/Ninject.Web.AspNetCore)
 
+
 # Overview
 This project provides full [Ninject](https://github.com/ninject/Ninject) integration with ASP.NET Core projects. Full integration means that the Ninject kernel is used to replace the standard service provider that comes with ASP.NET Core.
 
@@ -9,6 +10,7 @@ The project consists of three different NuGet packages:
 * [Ninject.Web.AspNetCore.HttpSys](https://www.nuget.org/packages/Ninject.Web.AspNetCore.HttpSys/) - Provides a simple way to configure the project to run with the low-level HTTPSys webserver.
 
 The IIS and HttpSys projects are just very small convenience wrappers and you can just as easily copy the handful of lines of configuration code to your own project if you don't want to add them as dependencies.
+
 
 # Configuration
 `Ninject.Web.AspNetCore` is built in a way that makes it easy to integrate with all standard ASP.NET Core examples and templates. All you have to do is eliminate the default web host builder and use the `AspNetCoreHostConfiguration` in combination with the `NinjectSelfHostBootstrapper` like this.
@@ -135,6 +137,7 @@ public class Program
 }
 ```
 
+
 # The Problem with WebHost.CreateDefaultBuilder
 In most ASP.NET Core examples that you find out there, including the ones you get when creating a new project from one of the many templates, you will find code like the following:
 
@@ -195,6 +198,56 @@ If you want to host the server as an out-of-process self-hosted application, the
 ```
 <aspNetCore processPath="dotnet" arguments=".\SampleApplication-AspNetCore22.dll --useKestrel" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="OutOfProcess" />
 ```
+
+
+# Compliance with Microsoft.Extensions.DependencyInjection
+In order to assess the compatibility of any third-party DI container with the assumptions of `Microsoft.Extensions.DependencyInjection`, there is a "specification" test project called [Microsoft.Extensions.DependencyInjection.Specification.Tests](https://github.com/dotnet/runtime/tree/main/src/libraries/Microsoft.Extensions.DependencyInjection.Specification.Tests/src)
+
+## What is Different?
+There are some subtle and some not so subtle differences between the assumptions that Ninject makes compared to Microsoft DI. To get Ninject to be compatible with those assumptions, some "tweaks" had to be introduce that _may_ affect your code if you are unaware of them. This section tries to explain the important differences and how they might affect your application.
+
+### Allow Null Injection
+The `AspNetCoreKernel` sets the `INinjectSettings.AllowNullInjection` property to `true` since that is a use case that is used in some ASP.NET Core scenarios. Since this setting can only be set _globally_ for the kernel, your application has to live with that too.
+
+### Scopes
+Scopes in Microsoft DI work quite different than they do in Ninject.
+* Transient services are instantiated whenever one is requested as you might expect, but their _disposal_ is directly tied to the service provider scope in which they were created. This means for example that transient services that are created throught the `IServiceProvider` during a request are tied to the scope that is created for each request and they are disposed at the end of that request. This leads into the disposal ordering difference described below.
+* Scoped services are always tied to the `IServiceScope` in which they were created. By default that is the root service provider, but new scopes can be created and destroyed at any time through the `IServiceScopeFactory`.
+* Singleton services are tied to the root service provider. This is actually equivalent to Ninject which ties singletons to the kernel.
+
+To compensate for those differences, services that are registered through the `IServiceCollection` are treated differently from services that are registered directly with the kernel. When a service is instantiated through the `NinjectServiceProvider` an additional `ServiceProviderScopeParameter` is added to each request by means of the `ServiceProviderScopeResolutionRoot`. This parameter allows this custom handling to kick in.
+
+This means that if you resolve a service that was registered through the `IServiceCollection` through the `IServiceProvider`, the behavior will be different from the same service instantiated directly through the kernel. So, while it is certainly possible to "cross-instantiate" services, it is usually not advisable.
+
+### Disposal Ordering
+Microsoft DI makes some very strong assumptions about the disposal order of services. Generally, it assumes that all services that are disposed are disposed in the exact reverse order in which they were instantiated. Additionally, it assumes that transient services are disposed when their associated `IServiceScope` is disposed.
+
+This is implemented by replacing the Ninject default `DisposableStrategy` with a `OrderedDisposalStrategy` that tracks _all_ created instances (using weak references) and makes sure that disposal is somewhat grouped when an `IServiceScope` is disposed and that all services that have gone out of scope are disposed in the right order. The details here are a bit complicated, so please check the source code if you need to know more.
+
+### Binding Precedence
+This is one of the _weirdest_ behaviors of Microsoft DI. It is possible to register multiple descriptors for the exact same service type and still resolve a _single_ service instance. In that situation, it will use the descriptor that was registered **last**.
+
+This is another case where instantiation throught the `IServiceProvider` will behave differently from instantiating the service through the kernel. When done through the kernel, this will of course throw an exception because it is unable to resolve a unique binding. To "fix" this for requests through the service provider, we replaced the Ninject default `BindingPrecedenceComparer` with `IndexedBindingPrecedenceComparer` that takes into account the _index_ of the binding which is added when building the service provider.
+
+### Generics with Constraints
+In ASP.NET Core, there are some scenarios with multi-injection where an open generic interface is bound to various different (open) implementations where _some_ of the implementations, while implementing the same interface, have additional binding constraints that the interface does not have. Microsoft DI makes sure that when an actual service is requested which of course has to define/close the generic type only those bindings are considered for which the generic type constraints actually work.
+
+For example:
+```
+interface IMyInterface<T> { ... }
+interface MyImplOne<T> { ... }
+interface MyImplTwo<T> where T : IFoo { ... }
+
+* IMyInterface<> is bound to MyImplOne<>
+* IMyInterface<> is bound to MyImplTwo<>
+
+1. Getting all instances of IMyInterface<Bar> where Bar does not implement IFoo
+   => [MyImplOne<Bar>]
+2. Getting all instances of IMyInterface<Foo> where Foo : IFoo
+   => [MyImplOne<Foo>, MyImplTwo<Foo>]
+```
+
+This is comparatively easy to fix by replacing the Ninject default `OpenGenericBindingResolver` with a slightly improved `ConstrainedGenericBindingResolver`. This one creates the same result when resolved through the Ninject kernel, but **only** if the service was registered through the `IServiceCollection` because that is the only way to add the additional implementation class metadata that is needed for this check.
 
 
 # Versioning
