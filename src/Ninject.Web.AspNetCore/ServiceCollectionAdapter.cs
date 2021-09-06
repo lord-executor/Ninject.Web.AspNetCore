@@ -19,6 +19,7 @@ namespace Ninject.Web.AspNetCore
 			}
 
 			var adapters = kernel.GetAll<IPopulateAdapter>().ToList();
+			var bindingIndex = new BindingIndex();
 
 			foreach (var descriptor in serviceCollection)
 			{
@@ -27,7 +28,7 @@ namespace Ninject.Web.AspNetCore
 					continue;
 				}
 
-				ConfigureImplementationAndLifecycle(kernel.Bind(descriptor.ServiceType), descriptor);
+				ConfigureImplementationAndLifecycle(kernel.Bind(descriptor.ServiceType), descriptor, bindingIndex);
 			}
 
 			foreach (var adapter in adapters)
@@ -51,18 +52,14 @@ namespace Ninject.Web.AspNetCore
 
 		private IBindingWithOrOnSyntax<T> ConfigureImplementationAndLifecycle<T>(
 			IBindingToSyntax<T> bindingToSyntax,
-			ServiceDescriptor descriptor) where T : class
+			ServiceDescriptor descriptor,
+			BindingIndex bindingIndex) where T : class
 		{
-			if (!_bindingIndexMap.ContainsKey(descriptor.ServiceType))
-			{
-				_bindingIndexMap[descriptor.ServiceType] = new BindingIndex();
-			}
-			var bindingIndex = _bindingIndexMap[descriptor.ServiceType];
-
 			IBindingNamedWithOrOnSyntax<T> result;
 			if (descriptor.ImplementationType != null)
 			{
 				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
+				result.WithMetadata("BoundType", descriptor.ImplementationType);
 			}
 			else if (descriptor.ImplementationFactory != null)
 			{
@@ -80,7 +77,9 @@ namespace Ninject.Web.AspNetCore
 				result = bindingToSyntax.ToMethod(context => descriptor.ImplementationInstance as T).InSingletonScope();
 			}
 
-			return result.WithMetadata(nameof(BindingIndex), bindingIndex.Next());
+			return result
+				.WithMetadata(nameof(ServiceDescriptor), descriptor)
+				.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType));
 		}
 
 		private IBindingNamedWithOrOnSyntax<T> ConfigureLifecycle<T>(
@@ -90,11 +89,20 @@ namespace Ninject.Web.AspNetCore
 			switch (lifecycleKind)
 			{
 				case ServiceLifetime.Singleton:
-					return bindingInSyntax.InSingletonScope();
+					// Microsoft.Extensions.DependencyInjection expects its singletons to be disposed when the root service scope
+					// and/or the root IServiceProvider is disposed.
+					return bindingInSyntax.InScope(context => {
+						return (context.Kernel as AspNetCoreKernel).RootScope;
+					});
 				case ServiceLifetime.Scoped:
 					return bindingInSyntax.InRequestScope();
 				case ServiceLifetime.Transient:
-					return bindingInSyntax.InTransientScope();
+					// Microsoft.Extensions.DependencyInjection expects transient services to be disposed when the IServiceScope
+					// in which they were created is disposed. See the compliance tests for more details.
+					return bindingInSyntax.InScope(context => {
+						var scope = context.Parameters.OfType<ServiceProviderScopeParameter>().SingleOrDefault();
+						return scope?.DeriveTransientScope();
+					});
 				default:
 					throw new NotSupportedException();
 			}

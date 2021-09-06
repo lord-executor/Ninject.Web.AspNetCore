@@ -16,7 +16,7 @@ namespace Ninject.Web.AspNetCore
 		/// <returns>The service collection.</returns>
 		public static IServiceCollection AddNinject(this IServiceCollection services, IKernel kernel)
 		{
-			return services.AddSingleton<IServiceProviderFactory<NinjectServiceProviderBuilder>>(new NinjectServiceProviderFactory(kernel));
+			return services.AddSingleton<IServiceProviderFactory<NinjectServiceProviderBuilder>>(new NinjectServiceProviderFactory((AspNetCoreKernel)kernel));
 		}
 	}
 }

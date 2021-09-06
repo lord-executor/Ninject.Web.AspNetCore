@@ -1,16 +1,19 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Infrastructure.Disposal;
+using Ninject.Web.AspNetCore.Components;
 
 namespace Ninject.Web.AspNetCore
 {
 	public class NinjectServiceScope : DisposableObject, IServiceScope
 	{
-		public NinjectServiceScope(IKernel kernel)
+		private readonly IDisposalManager _disposalManager;
+
+		public NinjectServiceScope(IKernel kernel, bool isRootScope)
 		{
-			var resolutionRoot = new ServiceProviderScopeResolutionRoot(kernel);
-			ServiceProvider = new NinjectServiceProvider(resolutionRoot);
-			Disposed += (_, _) => resolutionRoot.Dispose();
+			_disposalManager = kernel.Components.Get<IDisposalManager>();
+			var resolutionRoot = new ServiceProviderScopeResolutionRoot(kernel, this);
+			ServiceProvider = new NinjectServiceProvider(resolutionRoot, isRootScope ? this : null);
 		}
 
 		// Note that we can't return the IKernel directly here, although it would implement IServiceProvider.
@@ -21,5 +24,12 @@ namespace Ninject.Web.AspNetCore
 		// root implementation.
 		public IServiceProvider ServiceProvider { get; }
 
+		public override void Dispose(bool disposing)
+		{
+			using (_disposalManager.CreateArea())
+			{
+				base.Dispose(disposing);
+			}
+		}
 	}
 }

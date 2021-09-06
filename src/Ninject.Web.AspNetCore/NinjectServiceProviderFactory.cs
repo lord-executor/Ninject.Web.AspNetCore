@@ -5,20 +5,16 @@ namespace Ninject.Web.AspNetCore
 {
 	public class NinjectServiceProviderFactory : IServiceProviderFactory<NinjectServiceProviderBuilder>
 	{
-		private readonly IKernel _kernel;
+		private readonly AspNetCoreKernel _kernel;
 
 
 		public NinjectServiceProviderFactory() : this(new AspNetCoreKernel())
 		{
 		}
 
-		public NinjectServiceProviderFactory(IKernel kernel)
+		public NinjectServiceProviderFactory(AspNetCoreKernel kernel)
 		{
 			_kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-			if (!(kernel is AspNetCoreKernel))
-			{
-				throw new ArgumentException($"The kernel used for ASP.NET Core must be derived from AspNetCoreKernel", nameof(kernel));
-			}
 		}
 
 		public NinjectServiceProviderBuilder CreateBuilder(IServiceCollection services)

@@ -5,24 +5,23 @@ namespace Ninject.Web.AspNetCore
 {
 	public class NinjectServiceProviderBuilder
 	{
+		private readonly AspNetCoreKernel _kernel;
 		private readonly IServiceCollection _services;
-		private readonly IKernel _kernel;
 
-		public NinjectServiceProviderBuilder(IKernel kernel, IServiceCollection services)
+		public NinjectServiceProviderBuilder(AspNetCoreKernel kernel, IServiceCollection services)
 		{
 			_kernel = kernel;
 			_services = services;
 		}
 
-		public NinjectServiceProvider Build()
+		public IServiceProvider Build()
 		{
-			var result = new NinjectServiceProvider(_kernel);
-			_kernel.Bind<IServiceProvider>().ToConstant(result); // needed for factory methods in IServiceCollection
+			_kernel.Bind<IServiceProvider>().ToConstant(_kernel.RootScope.ServiceProvider);
 
 			var adapter = new ServiceCollectionAdapter();
 			adapter.Populate(_kernel, _services);
 
-			return result;
+			return _kernel.RootScope.ServiceProvider;
 		}
 
 	}
