@@ -1,0 +1,19 @@
+name: .NET 5 CI
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-dotnet@v1
+        name: Setup .NET SDK
+        with:
+          dotnet-version: '5.0.x'
+
+      - name: Build
+        run: dotnet build src/Ninject.Web.AspNetCore.sln -c Release
+      - name: Test
+        run: dotnet test src/Ninject.Web.AspNetCore.sln -c Release

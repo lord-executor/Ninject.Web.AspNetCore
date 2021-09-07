@@ -1,4 +1,4 @@
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/blob/master/LICENSE) [![Build Status](https://app.travis-ci.com/lord-executor/Ninject.Web.AspNetCore.svg?branch=main)](https://app.travis-ci.com/lord-executor/Ninject.Web.AspNetCore)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/blob/master/LICENSE) [![.NET 5 CI](https://github.com/lord-executor/Ninject.Web.AspNetCore/actions/workflows/ci.yml/badge.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/actions/workflows/ci.yml)
 
 
 # Overview
