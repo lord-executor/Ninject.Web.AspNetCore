@@ -43,7 +43,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			first.Should().Be(second);
 		}
 
-			[Fact]
+		[Fact]
 		public void ServiceProvider_TransientService_CreatesNewInstanceEveryTime()
 		{
 			var provider = CreateServiceProvider();
