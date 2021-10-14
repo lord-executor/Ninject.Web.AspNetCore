@@ -3,6 +3,8 @@ using Ninject.Components;
 using Ninject.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Xml.Linq;
 
 namespace Ninject.Web.AspNetCore.Components
 {
@@ -20,26 +22,30 @@ namespace Ninject.Web.AspNetCore.Components
 	public class DisposalManager : NinjectComponent, IDisposalManager
 	{
 		private readonly LinkedList<ReferenceEqualWeakReference> activeInstances = new LinkedList<ReferenceEqualWeakReference>();
-		private IDisposalCollectorArea _area;
+		private readonly AsyncLocal<IDisposalCollectorArea> _area = new AsyncLocal<IDisposalCollectorArea>();
+		private readonly object _collectionLock = new object();
 
 		public void AddInstance(InstanceReference instanceReference)
 		{
-			activeInstances.AddLast(new ReferenceEqualWeakReference(instanceReference.Instance));
+			lock (_collectionLock)
+			{
+				activeInstances.AddLast(new ReferenceEqualWeakReference(instanceReference.Instance));
+			}
 		}
 
 		public void RemoveInstance(InstanceReference instanceReference)
 		{
-			(_area as IDisposalCollector ?? ImmediateDisposal.Instance).Register(instanceReference);
+			(_area.Value as IDisposalCollector ?? ImmediateDisposal.Instance).Register(instanceReference);
 		}
 
 		public IDisposalCollectorArea CreateArea()
 		{
-			if (_area == null)
+			if (_area.Value == null)
 			{
-				return _area = new OrderedAggregateDisposalArea(this);
+				return _area.Value = new OrderedAggregateDisposalArea(this);
 			}
 
-			return new InnerDisposalArea(_area);
+			return new InnerDisposalArea(_area.Value);
 		}
 
 
@@ -61,32 +67,39 @@ namespace Ninject.Web.AspNetCore.Components
 			}
 
 			public void Dispose()
-			{
-				var node = _manager.activeInstances.Last;
-
-				if (node == null || _disposals.Count == 0)
+{
+				if (_disposals.Count == 0)
 				{
 					return;
 				}
 
-				do
+				lock (_manager._collectionLock)
 				{
-					var current = node;
-					node = node.Previous;
-					if (_disposals.Contains(current.Value))
+					var node = _manager.activeInstances.Last;
+					if (node == null)
 					{
-						_manager.activeInstances.Remove(current);
-						(current.Value.Target as IDisposable)?.Dispose();
-					}
-					else if (!current.Value.IsAlive)
-					{
-						// It is always possible that a service went out of scope that wasn't managed by an IServiceScope,
-						// so we also prune dead service references from the list here.
-						_manager.activeInstances.Remove(current);
-					}
-				} while (node != null);
+						return;
+					}					
 
-				_manager._area = null;
+					do
+					{
+						var current = node;
+						node = node.Previous;
+						if (_disposals.Contains(current.Value))
+						{
+							_manager.activeInstances.Remove(current);
+							(current.Value.Target as IDisposable)?.Dispose();
+						}
+						else if (!current.Value.IsAlive)
+						{
+							// It is always possible that a service went out of scope that wasn't managed by an IServiceScope,
+							// so we also prune dead service references from the list here.
+							_manager.activeInstances.Remove(current);
+						}
+					} while (node != null);
+
+					_manager._area.Value = null;
+				}
 			}
 
 			public void Register(InstanceReference instanceReference)
