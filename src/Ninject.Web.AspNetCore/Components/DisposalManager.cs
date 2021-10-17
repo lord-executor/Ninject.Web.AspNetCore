@@ -59,6 +59,8 @@ namespace Ninject.Web.AspNetCore.Components
 		{
 			public ReferenceEqualWeakReference Value { get; }
 			public ListNode Next { get; set; }
+			// only used for debugging
+			public int Count => (Next?.Count ?? 0) + 1;
 
 			public ListNode(ReferenceEqualWeakReference value)
 			{
