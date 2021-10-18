@@ -3,7 +3,9 @@ using Ninject.Activation.Caching;
 using Ninject.Components;
 using Ninject.Infrastructure;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -39,6 +41,18 @@ namespace Ninject.Web.AspNetCore.Components
 			(_area.Value as IDisposalCollector ?? ImmediateDisposal.Instance).Register(instanceReference);
 		}
 
+		/// <summary>
+		/// This is meant as a debugging tool to allow an application to analyze which services are remaining
+		/// active that maybe should not be. In particular in high-load scenarios where many services are created
+		/// for each request, this can be useful to analze scoping issues.
+		/// </summary>
+		/// <returns>The list of all currently tracked references - note, that any weak reference can become "dead"
+		/// at any poing in time.</returns>
+		public IList<ReferenceEqualWeakReference> GetActiveReferences()
+		{
+			return _head.DebugList;
+		}
+
 		public IDisposalCollectorArea CreateArea()
 		{
 			if (_area.Value == null)
@@ -55,12 +69,16 @@ namespace Ninject.Web.AspNetCore.Components
 		/// new items to the queue while we are also cleaning up the tail of the queue since we only have to lock the head
 		/// while removing items directly following the head.
 		/// </summary>
-		private class ListNode
+		[DebuggerDisplay("{DebugList}")]
+		private class ListNode : IEnumerable<ReferenceEqualWeakReference>
 		{
 			public ReferenceEqualWeakReference Value { get; }
+
 			public ListNode Next { get; set; }
+
 			// only used for debugging
-			public int Count => (Next?.Count ?? 0) + 1;
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			public IList<ReferenceEqualWeakReference> DebugList => new List<ReferenceEqualWeakReference>(this);
 
 			public ListNode(ReferenceEqualWeakReference value)
 			{
@@ -113,6 +131,21 @@ namespace Ninject.Web.AspNetCore.Components
 				}
 
 				return current;
+			}
+
+			public IEnumerator<ReferenceEqualWeakReference> GetEnumerator()
+			{
+				var current = this;
+				while (current != null)
+				{
+					yield return current.Value;
+					current = current.Next;
+				}
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
 			}
 		}
 
