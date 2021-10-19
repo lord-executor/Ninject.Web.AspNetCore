@@ -5,7 +5,9 @@ using Microsoft.Extensions.Options;
 using Ninject;
 using Ninject.Web.AspNetCore;
 using Ninject.Web.AspNetCore.Hosting;
+using Ninject.Web.Common;
 using Ninject.Web.Common.SelfHost;
+using SampleApplication.Controllers;
 using SampleApplication.Service;
 using System;
 using System.Linq;
@@ -61,6 +63,7 @@ namespace SampleApplication
 			settings.LoadExtensions = false;
 
 			var kernel = new AspNetCoreKernel(settings);
+			kernel.DisableAutomaticSelfBinding();
 
 			kernel.Load(typeof(AspNetCoreHostConfiguration).Assembly);
 			kernel.Load(Assembly.GetExecutingAssembly());
@@ -69,6 +72,8 @@ namespace SampleApplication
 				new Lazy<IModelMetadataProvider>(() => x.Kernel.Get<IModelMetadataProvider>()));
 			kernel.Bind<PublishInstructionApplicationModelConvention>().ToSelf().InTransientScope();
 			kernel.Bind<IConfigureOptions<MvcOptions>>().To<PublishInstructionApplicationModelConfiguration>().InTransientScope();
+
+			kernel.Bind<HomeController>().ToSelf().InRequestScope();
 
 			return kernel;
 		}

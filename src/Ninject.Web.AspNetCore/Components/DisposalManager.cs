@@ -1,8 +1,13 @@
 ﻿using Ninject.Activation;
+using Ninject.Activation.Caching;
 using Ninject.Components;
 using Ninject.Infrastructure;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Ninject.Web.AspNetCore.Components
 {
@@ -19,29 +24,130 @@ namespace Ninject.Web.AspNetCore.Components
 	/// </summary>
 	public class DisposalManager : NinjectComponent, IDisposalManager
 	{
-		private readonly LinkedList<ReferenceEqualWeakReference> activeInstances = new LinkedList<ReferenceEqualWeakReference>();
-		private IDisposalCollectorArea _area;
+		private readonly ListNode _head = new ListNode(null);
+		private readonly AsyncLocal<IDisposalCollectorArea> _area = new AsyncLocal<IDisposalCollectorArea>();
+		private readonly object _disposalLock = new object();
 
 		public void AddInstance(InstanceReference instanceReference)
 		{
-			activeInstances.AddLast(new ReferenceEqualWeakReference(instanceReference.Instance));
+			lock (_head)
+			{
+				_head.Insert(new ListNode(new ReferenceEqualWeakReference(instanceReference.Instance)));
+			}
 		}
 
 		public void RemoveInstance(InstanceReference instanceReference)
 		{
-			(_area as IDisposalCollector ?? ImmediateDisposal.Instance).Register(instanceReference);
+			(_area.Value as IDisposalCollector ?? ImmediateDisposal.Instance).Register(instanceReference);
+		}
+
+		/// <summary>
+		/// This is meant as a debugging tool to allow an application to analyze which services are remaining
+		/// active that maybe should not be. In particular in high-load scenarios where many services are created
+		/// for each request, this can be useful to analze scoping issues.
+		/// </summary>
+		/// <returns>The list of all currently tracked references - note, that any weak reference can become "dead"
+		/// at any poing in time.</returns>
+		public IList<ReferenceEqualWeakReference> GetActiveReferences()
+		{
+			return _head.DebugList;
 		}
 
 		public IDisposalCollectorArea CreateArea()
 		{
-			if (_area == null)
+			if (_area.Value == null)
 			{
-				return _area = new OrderedAggregateDisposalArea(this);
+				return _area.Value = new OrderedAggregateDisposalArea(this);
 			}
 
-			return new InnerDisposalArea(_area);
+			return new InnerDisposalArea(_area.Value);
 		}
 
+		/// <summary>
+		/// To help with concurrency of creating and disposing services in a multi-threaded environment, we use a single-lined
+		/// "queue" with a dedicated head that does not hold a value where we can add items. This means that we can still add
+		/// new items to the queue while we are also cleaning up the tail of the queue since we only have to lock the head
+		/// while removing items directly following the head.
+		/// </summary>
+		[DebuggerDisplay("{DebugList}")]
+		private class ListNode : IEnumerable<ReferenceEqualWeakReference>
+		{
+			public ReferenceEqualWeakReference Value { get; }
+
+			public ListNode Next { get; set; }
+
+			// only used for debugging
+			[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+			public IList<ReferenceEqualWeakReference> DebugList => new List<ReferenceEqualWeakReference>(this);
+
+			public ListNode(ReferenceEqualWeakReference value)
+			{
+				Value = value;
+			}
+
+			public void Insert(ListNode node)
+			{
+				node.Next = Next;
+				Next = node;
+			}
+
+			/// <summary>
+			/// This is a (hopefully) clever algorithm that removes all nodes _directly following_ the current one
+			/// that are either already dead or need to be disposed. At the end, <see cref="Next"/> will point to
+			/// the next queue entry that is still alive and does not need to be disposed.
+			/// </summary>
+			public ListNode PruneAndDispose(Func<ReferenceEqualWeakReference, bool> disposalCondition)
+			{
+				if (Next == null)
+				{
+					// nothing to do here by definition
+					return null;
+				}
+
+				var current = Next;
+
+				var needsDisposal = disposalCondition(current.Value);
+				// It is always possible that a service went out of scope that wasn't managed by an IServiceScope,
+				// so we also prune dead service references from the queue here.
+				while (needsDisposal || !current.Value.IsAlive)
+				{
+					if (needsDisposal)
+					{
+						(current.Value.Target as IDisposable)?.Dispose();
+					}
+					current = current.Next;
+					if (current == null)
+					{
+						// early exit if we have reached the end of the queue - everything from "this" to the end
+						// of the very end of the queue can be removed.
+						break;
+					}
+					needsDisposal = disposalCondition(current.Value);
+				}
+
+				if (Next != current)
+				{
+					Next = current;
+				}
+
+				return current;
+			}
+
+			public IEnumerator<ReferenceEqualWeakReference> GetEnumerator()
+			{
+				var current = this;
+				while (current != null)
+				{
+					yield return current.Value;
+					current = current.Next;
+				}
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+		}
 
 		#region IDisposalCollectorArea Implementations
 
@@ -53,7 +159,14 @@ namespace Ninject.Web.AspNetCore.Components
 		private class OrderedAggregateDisposalArea : IDisposalCollectorArea
 		{
 			private readonly DisposalManager _manager;
-			private readonly HashSet<ReferenceEqualWeakReference> _disposals = new HashSet<ReferenceEqualWeakReference>();
+			/// <summary>
+			/// The disposal area should be a very limited scope (see <see cref="NinjectServiceScope.Dispose(bool)"/>)
+			/// which should allow us to avoid having to create yet another weak reference for every service that is being
+			/// disposed. At the end of the <see cref="Dispose"/>, all of the (hard) references that are held in the
+			/// <see cref="_disposals"/> set go out of scope and have been disposed (if they are disposable). We can still
+			/// find the correct entry in the hash set by using <see cref="UnwrappingReferenceEqualityComparer"/>
+			/// </summary>
+			private readonly HashSet<object> _disposals = new HashSet<object>(new UnwrappingReferenceEqualityComparer());
 
 			public OrderedAggregateDisposalArea(DisposalManager manager)
 			{
@@ -61,37 +174,36 @@ namespace Ninject.Web.AspNetCore.Components
 			}
 
 			public void Dispose()
-			{
-				var node = _manager.activeInstances.Last;
-
-				if (node == null || _disposals.Count == 0)
+{
+				if (_disposals.Count == 0)
 				{
 					return;
 				}
 
-				do
+				lock (_manager._disposalLock)
 				{
-					var current = node;
-					node = node.Previous;
-					if (_disposals.Contains(current.Value))
-					{
-						_manager.activeInstances.Remove(current);
-						(current.Value.Target as IDisposable)?.Dispose();
-					}
-					else if (!current.Value.IsAlive)
-					{
-						// It is always possible that a service went out of scope that wasn't managed by an IServiceScope,
-						// so we also prune dead service references from the list here.
-						_manager.activeInstances.Remove(current);
-					}
-				} while (node != null);
+					ListNode current;
 
-				_manager._area = null;
+					// while we are operating on the _head, it must be locked because of potential concurrency with AddInstance,
+					// but as soon as we have moved past the head, we only need to keep the tail lock.
+					lock (_manager._head)
+					{
+						current = _manager._head.PruneAndDispose(weakReference => _disposals.Contains(weakReference));
+					}
+
+					while (current != null)
+					{
+						current = current.PruneAndDispose(weakReference => _disposals.Contains(weakReference));
+					}
+				}
+
+				_manager._area.Value = null;
+				_disposals.Clear();
 			}
 
 			public void Register(InstanceReference instanceReference)
 			{
-				_disposals.Add(new ReferenceEqualWeakReference(instanceReference.Instance));
+				_disposals.Add(instanceReference.Instance);
 			}
 		}
 
@@ -110,7 +222,8 @@ namespace Ninject.Web.AspNetCore.Components
 
 		/// <summary>
 		/// When disposal collection areas are nested, everything is delegated to the outermost area
-		/// and services are only disposed with the disposal of the outermost <see cref="OrderedAggregateDisposalArea"/>.
+		/// and services are only disposed with the disposal of the outermost <see cref="OrderedAggregateDisposalArea"/>
+		/// because only there do we know all the services that need to be disposed.
 		/// </summary>
 		private class InnerDisposalArea : IDisposalCollectorArea
 		{

@@ -52,6 +52,11 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IActivationStrategy, OrderedDisposalStrategy>();
 		}
 
+		public void DisableAutomaticSelfBinding()
+		{
+			Components.Remove<IMissingBindingResolver, SelfBindingResolver>();
+		}
+
 		public override void Dispose(bool disposing)
 		{
 			if (disposing && !IsDisposed)

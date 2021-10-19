@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0</TargetFrameworks>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Ninject.Web.AspNetCore.snk</AssemblyOriginatorKeyFile>
-    <Configurations>Debug;Release</Configurations>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="Ninject.Web.Common" Version="3.3.2" />
     <PackageReference Include="Ninject.Web.Common.SelfHost" Version="3.3.2" />

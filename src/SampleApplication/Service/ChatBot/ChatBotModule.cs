@@ -1,4 +1,5 @@
 ﻿using Ninject.Modules;
+using Ninject.Web.Common;
 
 namespace SampleApplication.Service.ChatBot
 {
@@ -6,7 +7,7 @@ namespace SampleApplication.Service.ChatBot
 	{
 		public override void Load()
 		{
-			Kernel.Bind<IChatBotService>().To<ChatBotService>();
+			Kernel.Bind<IChatBotService>().To<ChatBotService>().InRequestScope();
 			Kernel.Bind<PublishInstruction>().ToConstant(new PublishInstruction(typeof(IChatBotService), "/api/ChatBot"));
 		}
 	}
