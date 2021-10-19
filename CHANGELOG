@@ -7,6 +7,13 @@ The major and minor parts of the version number indicate the compatibility
 with the ASP.NET Core framework version (2.2.*, 3.0.*, 5.0.*) and only
 the build part is actually indicating the release version of the project.
 
+## 5.1.1 - 2021-10-19
+* `RequestScopeMiddleware` no longer implements `IMiddleware` so that it is instantiated as a singleton
+* Fixed concurrency issues with `DisposalManager.CreateArea()` and disposal
+  * This could lead to undefined behavior in high load situations
+* Improved debugging support of `DisposalManager` to allow (public) inspection of the weak references to activated services
+* Added `AspNetCoreKernel.DisableAutomaticSelfBinding()` as a convenience method
+
 ## 5.1.0 - 2021-09-07
 
 ### Added
