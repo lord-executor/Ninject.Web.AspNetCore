@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Ninject.Activation;
+using Ninject.Activation.Caching;
 using Ninject.Activation.Strategies;
 using Ninject.Modules;
 using Ninject.Planning.Bindings;
@@ -42,6 +43,8 @@ namespace Ninject.Web.AspNetCore
 		protected override void AddComponents()
 		{
 			base.AddComponents();
+			Components.RemoveAll<IActivationCache>();
+			Components.Add<IActivationCache, WeakTableActivationCache>();
 			Components.Remove<IBindingResolver, OpenGenericBindingResolver>();
 			Components.Add<IBindingResolver, ConstrainedGenericBindingResolver>();
 			Components.Remove<IBindingPrecedenceComparer, BindingPrecedenceComparer>();
