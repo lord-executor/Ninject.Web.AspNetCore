@@ -1,9 +1,7 @@
-﻿using System;
-using FluentAssertions;
-using Moq;
-using Ninject.Activation.Caching;
-using ReplacementActivationCache = Ninject.Web.AspNetCore.Components.ActivationCache;
+﻿using FluentAssertions;
+using Ninject.Web.AspNetCore.Components;
 using Ninject.Web.AspNetCore.Test.Fakes;
+using System;
 using Xunit;
 
 namespace Ninject.Web.AspNetCore.Test.Unit
@@ -14,11 +12,11 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 	/// </summary>
 	public class ActivationCacheTests
 	{
-		private readonly ReplacementActivationCache testee;
+		private readonly WeakTableActivationCache testee;
 
 		public ActivationCacheTests()
 		{
-			testee = new ReplacementActivationCache(new Mock<ICachePruner>().Object);
+			testee = new WeakTableActivationCache();
 		}
 
 		[Fact]
@@ -105,7 +103,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		/// * https://github.com/dotnet/runtime/blob/9900dfb4b2e32cf02ca846adaf11e93211629ede/docs/design/features/tiered-compilation.md
 		/// </summary>
 		/// <param name="activationCache"></param>
-		private void CreateCollectableInstances(ReplacementActivationCache activationCache)
+		private void CreateCollectableInstances(WeakTableActivationCache activationCache)
 		{
 			activationCache.AddActivatedInstance(new TestObject(42));
 			activationCache.AddDeactivatedInstance(new TestObject(42));
