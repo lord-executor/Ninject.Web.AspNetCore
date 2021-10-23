@@ -1,10 +1,8 @@
 ﻿using Ninject.Activation.Caching;
 using Ninject.Components;
-using Ninject.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Ninject.Web.AspNetCore.Components
 {

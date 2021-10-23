@@ -17,8 +17,8 @@ namespace Ninject.Web.AspNetCore.Components
 	/// * DisposesInReverseOrderOfCreation
 	/// * DisposingScopeDisposesService
 	/// 
-	/// This is accomplished by tracking the active service instances in an ordered linked list through hooking into the
-	/// service activation pipeline with <see cref="OrderedDisposalStrategy"/>.
+	/// This is accomplished with a customized implementation of the <see cref="IActivationCache"/> that also exposes some
+	/// additional APIs in the form of <see cref="IActivationCacheAccessor"/>.
 	/// </summary>
 	public class DisposalManager : NinjectComponent, IDisposalManager
 	{
