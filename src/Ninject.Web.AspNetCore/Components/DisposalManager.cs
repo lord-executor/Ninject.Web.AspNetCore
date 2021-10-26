@@ -51,7 +51,7 @@ namespace Ninject.Web.AspNetCore.Components
 		/// for each request, this can be useful to analze scoping issues.
 		/// </summary>
 		/// <returns>The list of all currently tracked references - note, that any weak reference can become "dead"
-		/// at any poing in time.</returns>
+		/// at any point in time.</returns>
 		public IList<ReferenceEqualWeakReference> GetActiveReferences()
 		{
 			return _cacheAccessor.GetAllEntries().Select(entry => entry.Reference).ToList();

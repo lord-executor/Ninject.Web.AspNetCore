@@ -61,7 +61,9 @@ namespace Ninject.Web.AspNetCore.Components
 		/// <param name="instance">The instance to be added.</param>
 		public void AddActivatedInstance(object instance)
 		{
-			_trackedInstances.Add(instance, new ActivationEntry(instance));
+			// we don't actually care about the value that may already be in there, but we only
+			// want to create a new one if there isn't one already
+			_trackedInstances.GetValue(instance, inst => new ActivationEntry(inst));
 		}
 
 		/// <summary>
