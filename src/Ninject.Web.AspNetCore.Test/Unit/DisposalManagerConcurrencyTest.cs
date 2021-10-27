@@ -13,7 +13,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void CreateArea_FromDifferentConcurrentThreads_ShouldCreateSeparateRootAreas()
 		{
-			var disposalManager = new DisposalManager();
+			var disposalManager = new DisposalManager(new FakeActivationCacheAccessor(Enumerable.Empty<object>()));
 			var barrier = new Barrier(2);
 
 			var tasks = Enumerable.Range(0, 2).Select(_ => Task.Run<string>(() =>
@@ -43,36 +43,30 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var taskCount = 7;
 			var serviceCount = 100;
-			var disposalManager = new DisposalManager();
-			var barrier = new Barrier(taskCount);
-
 			// just create a long list of disposable services and add them to the disposal manager
-			var references = Enumerable.Range(0, serviceCount).Select(_ => new Activation.InstanceReference { Instance = new NotifiesWhenDisposed() }).ToList();
-			foreach (var r in references)
-			{
-				disposalManager.AddInstance(r);
-			}
+			var references = Enumerable.Range(0, serviceCount).Select(_ => new NotifiesWhenDisposed()).ToList();
+			var activationCache = new FakeActivationCacheAccessor(references);
+			var disposalManager = new DisposalManager(activationCache);
+			var barrier = new Barrier(taskCount);
 
 			var tasks = Enumerable.Range(0, taskCount).Select(index => Task.Run(() =>
 			{
-				IDisposalCollectorArea area = null;
-
 				barrier.SignalAndWait();
-				area = disposalManager.CreateArea();
-				barrier.SignalAndWait();
-
-				foreach (var r in references.Where((_, referenceIndex) => referenceIndex % (taskCount + 1) == index))
+				using (var area = disposalManager.CreateArea())
 				{
-					area.Register(r);
-				}
+					barrier.SignalAndWait();
 
-				area.Dispose();
+					foreach (var r in references.Where((_, referenceIndex) => referenceIndex % (taskCount + 1) == index))
+					{
+						disposalManager.RemoveInstance(new Activation.InstanceReference { Instance = r });
+					}
+				}
 			})).ToList();
 
 			Task.WaitAll(tasks.ToArray());
 
-			references.Where((_, index) => index % (taskCount + 1) < taskCount).All(r => ((NotifiesWhenDisposed)r.Instance).IsDisposed).Should().BeTrue();
-			references.Where((_, index) => index % (taskCount + 1) == taskCount).All(r => ((NotifiesWhenDisposed)r.Instance).IsDisposed).Should().BeFalse();
+			references.Where((_, index) => index % (taskCount + 1) < taskCount).All(r => r.IsDisposed).Should().BeTrue();
+			references.Where((_, index) => index % (taskCount + 1) == taskCount).All(r => r.IsDisposed).Should().BeFalse();
 		}
 	}
 }

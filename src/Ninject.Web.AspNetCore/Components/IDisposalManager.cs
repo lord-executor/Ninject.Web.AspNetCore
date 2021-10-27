@@ -6,8 +6,6 @@ namespace Ninject.Web.AspNetCore.Components
 {
 	public interface IDisposalManager : INinjectComponent
 	{
-		void AddInstance(InstanceReference instanceReference);
-
 		void RemoveInstance(InstanceReference instanceReference);
 
 		IDisposalCollectorArea CreateArea();
@@ -15,7 +13,7 @@ namespace Ninject.Web.AspNetCore.Components
 
 	public interface IDisposalCollector
 	{
-		void Register(InstanceReference instanceReference);
+		void Register(IActivationEntry activationEntry);
 	}
 
 	public interface IDisposalCollectorArea : IDisposalCollector, IDisposable { }

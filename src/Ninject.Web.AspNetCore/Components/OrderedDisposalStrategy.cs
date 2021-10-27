@@ -19,7 +19,7 @@ namespace Ninject.Web.AspNetCore.Components
 
 		public void Activate(IContext context, InstanceReference reference)
 		{
-			DisposalManager.AddInstance(reference);
+			// do nothing - activated services are tracked in the WeakTableActivationCache
 		}
 
 		public void Deactivate(IContext context, InstanceReference reference)
