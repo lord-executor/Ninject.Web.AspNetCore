@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Memory Usage Information";
+}
+<h1>@ViewData["Title"]</h1>
+
+<h2>Memory</h2>
+<ul>
+    @foreach (var key in ((System.Collections.IDictionary)ViewData["Memory"]).Keys)
+    {
+        <li>@key = @(((System.Collections.IDictionary)ViewData["Memory"])[key])</li>
+    }
+</ul>
+
+<h2>Services</h2>
+<ul>
+    @foreach (var key in ((System.Collections.IDictionary)ViewData["ServiceReferences"]).Keys)
+    {
+        <li>@key = @(((System.Collections.IDictionary)ViewData["ServiceReferences"])[key])</li>
+    }
+
+</ul>
+
+<a href='@Url.Action("RunGC", "Home")'>Run GC</a>
