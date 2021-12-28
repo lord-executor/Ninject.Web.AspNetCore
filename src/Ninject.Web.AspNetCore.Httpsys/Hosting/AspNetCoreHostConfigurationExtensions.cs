@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.HttpSys;
 using System;
+using System.Runtime.Versioning;
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
+	[SupportedOSPlatform("windows")]
 	public static class AspNetCoreHostConfigurationExtensions
 	{
 		public static T UseHttpSys<T>(this T config)

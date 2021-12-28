@@ -38,7 +38,9 @@ namespace SampleApplication
 					break;
 
 				case "HttpSys":
+#pragma warning disable CA1416 // Validate platform compatibility
 					hostConfiguration.UseHttpSys();
+#pragma warning restore CA1416 // Validate platform compatibility
 					break;
 
 				case "IIS":

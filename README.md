@@ -270,6 +270,7 @@ The package version numbers are chosen to align with the version of ASP.NET Core
 
 | Version | ASP.NET Core Version | Ninject Version | Target Frameworks  | Notes |
 |---------|----------------------|-----------------|--------------------|-------|
-| 5.0.*   | 5.0                  | 3.3.4           | net5.0                        | The current _mainline_ version for use together with ASP.NET Core 5 |
+| 6.*     | 6.0                  | 3.3.4           | net6.0, net5.0     | The current _mainline_ version for use together with ASP.NET Core 6 or 5 |
+| 5.*     | 5.0                  | 3.3.4           | net5.0             | Old NET 5 version. Obsolete now and included in 6.* line |
 | 3.0.*   | 3.0.*, 3.1.*         | 3.3.4           | netcoreapp3.0, netcoreapp3.1  | The last .NET Core version. |
 | 2.2.*   | 2.2.*                | 3.3.4           | netstandard2.0, netcoreapp2.2 | Should only be used as a "transitional" version when migrating to more recent .NET Core versions. Only receives updates for critical bugfixes. |

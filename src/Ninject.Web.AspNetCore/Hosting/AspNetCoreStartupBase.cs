@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ninject.Web.AspNetCore.Hosting
@@ -22,8 +21,7 @@ namespace Ninject.Web.AspNetCore.Hosting
 
 		IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
 		{
-			var mvcBuilder = services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+			var mvcBuilder = services.AddMvc();
 
 			ConfigureMvcOptions(mvcBuilder);
 			ConfigureServices(services); // allow to customize the services before conversion to Ninject bindings happen.
