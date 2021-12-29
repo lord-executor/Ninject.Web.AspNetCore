@@ -118,6 +118,22 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			action.Should().Throw<ActivationException>().WithMessage("*More than one matching bindings are available*");
 		}
 
+		[Fact]
+		public void RequestServiceProviderFromScopedServiceProviderReturnsScopedServiceProvider()
+		{
+			var kernel = CreateTestKernel();
+			var provider = CreateServiceProvider(kernel);
+
+			provider.GetService<IServiceProvider>().Should().Be(provider);
+
+			using (var scope = provider.CreateScope())
+			{
+				scope.ServiceProvider.Should().NotBe(provider);
+				// Requesting an IServiceProvider from a scoped service provider should return that same scoped service provider.
+				scope.ServiceProvider.GetService<IServiceProvider>().Should().Be(scope.ServiceProvider);
+			}
+		}
+
 		private IServiceProvider CreateServiceProvider(AspNetCoreKernel kernel)
 		{
 			NinjectServiceProviderBuilder builder = CreateServiceProviderBuilder(kernel);
