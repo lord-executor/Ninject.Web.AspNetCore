@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject.Web.AspNetCore.ComplianceTest", "Ninject.Web.AspNetCore.ComplianceTest\Ninject.Web.AspNetCore.ComplianceTest.csproj", "{238FACAF-E2C4-445A-9C63-C3A0AC59B098}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleBlazorApplication", "SampleBlazorApplication\SampleBlazorApplication.csproj", "{50A0305B-72C1-418C-8515-A7193F7FEA5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{238FACAF-E2C4-445A-9C63-C3A0AC59B098}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{238FACAF-E2C4-445A-9C63-C3A0AC59B098}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{238FACAF-E2C4-445A-9C63-C3A0AC59B098}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50A0305B-72C1-418C-8515-A7193F7FEA5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50A0305B-72C1-418C-8515-A7193F7FEA5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50A0305B-72C1-418C-8515-A7193F7FEA5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50A0305B-72C1-418C-8515-A7193F7FEA5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
