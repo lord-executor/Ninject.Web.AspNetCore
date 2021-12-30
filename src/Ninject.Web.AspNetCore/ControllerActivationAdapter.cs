@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Web.AspNetCore.Hosting;
-using System;
 
 namespace Ninject.Web.AspNetCore
 {
-	public class FixServicesForPublicatonAdapter : IPopulateAdapter
+	public class ControllerActivationAdapter : IPopulateAdapter
 	{
 		private AspNetCoreHostConfiguration _configuration;
 
-		public FixServicesForPublicatonAdapter(AspNetCoreHostConfiguration configuration)
+		public ControllerActivationAdapter(AspNetCoreHostConfiguration configuration)
 		{
 			_configuration = configuration;
 		}
