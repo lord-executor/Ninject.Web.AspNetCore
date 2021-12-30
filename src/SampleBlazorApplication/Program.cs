@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Ninject;
 using Ninject.Web.AspNetCore;
-using Ninject.Web.AspNetCore.Hosting;
 using SampleBlazorApplication.Data;
 
 namespace SampleBlazorApplication;
@@ -50,7 +47,7 @@ public class Program
 		var kernel = new AspNetCoreKernel(settings);
 		kernel.DisableAutomaticSelfBinding();
 
-		kernel.Load(typeof(AspNetCoreHostConfiguration).Assembly);
+		kernel.Load(new AspNetCoreModule());
 
 		return kernel;
 	}
