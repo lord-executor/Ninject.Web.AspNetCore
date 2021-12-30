@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Ninject.Web.Common.SelfHost;
 
 
@@ -23,18 +24,19 @@ namespace Ninject.Web.AspNetCore.Hosting
 			// * Loading appsettings.json files and environment variables configuration source
 			// * Logging configuration (from appsettings.json)
 			// * AllowedHosts configuration (from appsettings.json)
-			var host = _configuration.WebHostBuilderFactory()
+			var builder = _configuration.WebHostBuilderFactory()
 				.ConfigureServices(s => { s.AddNinject(_kernel); });
-			_configuration.Apply(host);
+			_configuration.Apply(builder);
 
-			var builder = host.Build();
-			
-			if (_configuration.BlockOnStart)
+			var host = builder.Build();
+
+			if (_configuration == null || _configuration.BlockOnStart)
 			{
-				builder.Run();
-			} else
+				host.Run();
+			}
+			else
 			{
-				builder.RunAsync(_configuration.CancellationToken);
+				host.RunAsync(_configuration.CancellationToken);
 			}
 		}
 	}

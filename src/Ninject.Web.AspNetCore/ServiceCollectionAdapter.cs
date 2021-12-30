@@ -59,7 +59,6 @@ namespace Ninject.Web.AspNetCore
 			if (descriptor.ImplementationType != null)
 			{
 				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
-				result.WithMetadata("BoundType", descriptor.ImplementationType);
 			}
 			else if (descriptor.ImplementationFactory != null)
 			{
