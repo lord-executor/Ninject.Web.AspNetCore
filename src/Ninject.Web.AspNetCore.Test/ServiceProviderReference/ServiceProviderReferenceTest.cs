@@ -81,6 +81,30 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			instances.Aggregate((a, b) => a == b ? b : null).Should().NotBeNull();
 		}
 
+		[Fact]
+		public void ServiceProvider_ScopedServiceResolveServiceProvider_ReturnsScopedServiceProvider()
+		{
+			// Interesting side-note here: The ServiceProvider that is created is not actually the same object as when
+			// the IServiceProvider is requested from that provider.
+			var provider = CreateServiceProvider();
+
+			var rootProvider = provider.GetService<IServiceProvider>();
+			// Yes, requesting IServiceProvider will actually return a ServiceProviderEngineScope which is the root
+			// scope of this provider.
+			rootProvider.Should().BeAssignableTo<IServiceScope>();
+			var rootScope = rootProvider as IServiceScope;
+
+			using (var scope = provider.CreateScope())
+			{
+				scope.Should().NotBe(rootScope);
+				scope.ServiceProvider.Should().NotBe(provider);
+				scope.ServiceProvider.Should().NotBe(rootProvider);
+				// Requesting an IServiceProvider from a scoped service provider will return that same scoped
+				// service provider.
+				scope.ServiceProvider.GetService<IServiceProvider>().Should().Be(scope.ServiceProvider);
+			}
+		}
+
 		private IServiceProvider CreateServiceProvider(Action<ServiceCollection> serviceConfig = null)
 		{
 			var collection = new ServiceCollection();

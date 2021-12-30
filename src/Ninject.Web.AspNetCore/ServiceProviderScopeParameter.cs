@@ -1,15 +1,18 @@
 ﻿using Ninject.Infrastructure.Disposal;
 using Ninject.Parameters;
+using System;
 using System.Collections.Generic;
 
 namespace Ninject.Web.AspNetCore
 {
 	public class ServiceProviderScopeParameter : Parameter
 	{
-		private readonly DisposableObject _scope;
+		private readonly NinjectServiceScope _scope;
 		private readonly IList<TransientScope> _children = new List<TransientScope>();
 
-		public ServiceProviderScopeParameter(DisposableObject scope)
+		public IServiceProvider SourceServiceProvider => _scope.ServiceProvider;
+
+		public ServiceProviderScopeParameter(NinjectServiceScope scope)
 			: base(nameof(ServiceProviderScopeParameter), scope, true)
 		{
 			_scope = scope;
