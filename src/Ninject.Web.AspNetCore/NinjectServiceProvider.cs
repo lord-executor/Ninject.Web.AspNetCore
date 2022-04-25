@@ -5,14 +5,18 @@ using System;
 namespace Ninject.Web.AspNetCore
 {
 	/// <summary>
-	/// We have to wrap IKernel here as an IServiceProvider,
-	/// although Ninject would itself implement this interface (but with a wrong semantic for the not found case) 
-	/// and additionally we want to implement the optional ISupportRequiredService.
+	/// We wrap the <see cref="IResolutionRoot" /> here to explicitly implement both the <see cref="IServiceProvider" /> and
+	/// <see cref="ISupportRequiredService" /> to give us more control.
 	/// 
 	/// Note: ASP.NET Core wants to use a method from ISupportRequiredService to resolve a non-optional service.
 	/// Although it's implemented on Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions in a generic way
-	/// we implement it here to have the nicer exceptions from NInject so that it's possible to distinguish the "not registered at all"
+	/// we implement it here to have the nicer exceptions from Ninject so that it's possible to distinguish the "not registered at all"
 	/// vs the "ambigious matches found" cases.
+	/// 
+	/// Also, even though <see cref="IServiceProvider"/> does NOT implement <see cref="IDisposable"/>,
+	/// Microsoft.Extensions.DependencyInjection assumes that the service provider does implement it and disposes all of its
+	/// instances that are associated with the root scope. This is why we implement <see cref="IDisposable"/> and this is why
+	/// we pass an <see cref="IServiceScope"/> constructor argument when creating the root service provider.
 	/// </summary>
 	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
 	{

@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="Ninject" Version="3.3.5" />
     <PackageReference Include="Ninject.Web.Common" Version="3.3.2" />
     <PackageReference Include="Ninject.Web.Common.SelfHost" Version="3.3.2" />
   </ItemGroup>

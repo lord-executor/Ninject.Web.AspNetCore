@@ -16,12 +16,10 @@ namespace Ninject.Web.AspNetCore
 			ServiceProvider = new NinjectServiceProvider(resolutionRoot, isRootScope ? this : null);
 		}
 
-		// Note that we can't return the IKernel directly here, although it would implement IServiceProvider.
-		// The problem is, that Ninject incorrectly throws an exception if no binding resolvable whereas
-		// IServiceProvider.GetService requires to return null in this case.
-		// see https://docs.microsoft.com/en-us/dotnet/api/system.iserviceprovider.getservice?view=netcore-3.1.
-		// Additionally, emulating the scope mechanism of IServiceProvider also requires a different resolution
-		// root implementation.
+		/// <summary>
+		/// Note that we can't return the IKernel directly here, although it would implement IServiceProvider.
+		/// Emulating the scope mechanism of IServiceProvider also requires a different resolution root implementation.
+		/// </summary>
 		public IServiceProvider ServiceProvider { get; }
 
 		public override void Dispose(bool disposing)
