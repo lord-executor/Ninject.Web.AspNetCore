@@ -7,6 +7,11 @@ The major and minor parts of the version number indicate the compatibility
 with the ASP.NET Core framework version (2.2.*, 3.0.*, 5.0.*) and only
 the build part is actually indicating the release version of the project.
 
+## 6.1.1
+
+### Changed
+* Referencing Ninject version 3.3.6 which includes an important bugfix for 3.3.5
+
 ## 6.1.0
 
 ### Added
