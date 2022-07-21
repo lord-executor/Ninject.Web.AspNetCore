@@ -7,7 +7,24 @@ The major and minor parts of the version number indicate the compatibility
 with the ASP.NET Core framework version (2.2.*, 3.0.*, 5.0.*) and only
 the build part is actually indicating the release version of the project.
 
-## 5.1.2 - soon
+## 6.1.0
+
+### Added
+* Support for running Blazor applications with Ninject.Web.AspNetCore
+
+### Changed
+* Improved `IServiceProvider` binding to be compliant with Microsoft.Extensions.DI assumptions specifically with regards to injecting the `IServiceProvider` into singletons
+
+## 6.0.0
+
+### Added
+* New page for sample application that shows memory usage
+
+### Changed
+* Updated projects to multi-target .NET 5 and .NET 6
+* Small .NET 6 compatibility updates
+
+## 5.1.2 - 2021-10-27
 
 ### Changed
 * More improvements with memory management
