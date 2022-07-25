@@ -16,6 +16,9 @@ public class Program
 		// Add services to the container.
 		builder.Services.AddRazorPages();
 		builder.Services.AddServerSideBlazor();
+		// SignalR of course brings its own "complications" when it comes to dependency injection
+		// See https://github.com/lord-executor/Ninject.Web.AspNetCore/issues/10 for example.
+		builder.Services.AddSignalR();
 		builder.Services.AddSingleton<WeatherForecastService>();
 
 		var app = builder.Build();
