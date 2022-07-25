@@ -24,27 +24,45 @@ namespace Ninject.Web.AspNetCore.Components
 				return Enumerable.Empty<IBinding>();
 			}
 
-			// TODO: since reflection is pretty inefficient, we should probably cache this information
+			// We don't need to do any caching here since the resolved bindings are automatically placed in the binding cache of Ninject so
+			// that the next request for the same service type doesn't need to resolve this again.
 			return bindings[service.GetGenericTypeDefinition()].Where(binding => {
+				// If the binding has a ServiceDescriptor in its metadata, then we 
 				if (binding.Target == BindingTarget.Type && binding.Metadata.Has(nameof(ServiceDescriptor)))
 				{
-					var boundType = binding.Metadata.Get<ServiceDescriptor>(nameof(ServiceDescriptor)).ImplementationType;
-					var genericArguments = boundType.GetGenericArguments();
-					var realArguments = service.GenericTypeArguments;
-					for (var i = 0; i < genericArguments.Length; i++)
-					{
-						foreach (var constraint in genericArguments[i].GetGenericParameterConstraints())
-						{
-							if (!constraint.IsAssignableFrom(realArguments[i]))
-							{
-								return false;
-							}
-						}
-					}
+					return SatisfiesGenericTypeConstraints(service, binding.Metadata.Get<ServiceDescriptor>(nameof(ServiceDescriptor)).ImplementationType);
 				}
 
+				// ... otherwise we default to the OpenGenericBindingResolver which returns _all_ the bindings without regard for their generic constraints
 				return true;
 			});
+		}
+
+		/// <summary>
+		/// This method checks if the <paramref name="boundType"/> which is supposed to be a generic type definition can accept the <paramref name="requestedType"/>s
+		/// generic arguments. If such a constructed generic type is valid and can be assigned to the <paramref name="requestedType"/>, then the constrained generic
+		/// binding resolver considers the corresponding binding to be a match for the requested service.
+		/// </summary>
+		/// <returns><c>true</c> if and only if the bound open generic type can be used to create an instance compatible with the requested type</returns>
+		/// <exception cref="ArgumentException">Thrown if the bound type is not a generic type definition</exception>
+		public bool SatisfiesGenericTypeConstraints(Type requestedType, Type boundType)
+		{
+			if (!boundType.IsGenericTypeDefinition)
+			{
+				throw new ArgumentException("Bound type must be a generic type definition", nameof(boundType));
+			}
+
+			try
+			{
+				var genericArguments = requestedType.GetGenericArguments();
+				var constructedType = boundType.MakeGenericType(genericArguments);
+
+				return constructedType.IsAssignableTo(requestedType);
+			}
+			catch (ArgumentException)
+			{
+				return false;
+			}
 		}
 	}
 }
