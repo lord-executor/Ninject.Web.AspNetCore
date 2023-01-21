@@ -4,8 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 The major and minor parts of the version number indicate the compatibility
-with the ASP.NET Core framework version (2.2.*, 3.0.*, 5.0.*) and only
+with the ASP.NET Core framework version (2.2.\*, 3.0.\*, 5.0.\*, 7.0.\*) and only
 the build part is actually indicating the release version of the project.
+
+## 7.0.0 - 2023-01-21
+
+### Changed
+* Updated projects to multi-target .NET 7, 6 and 5
+* Updated sample project ports since Chrome considered the old ones unsafe
 
 ## 6.1.2
 
