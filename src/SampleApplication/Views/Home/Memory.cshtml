@@ -13,7 +13,7 @@
 
 <h2>Services</h2>
 <ul>
-    @foreach (var key in ((System.Collections.IDictionary)ViewData["ServiceReferences"]).Keys)
+    @foreach (var key in ((System.Collections.IDictionary)ViewData["ServiceReferences"])!.Keys)
     {
         <li>@key = @(((System.Collections.IDictionary)ViewData["ServiceReferences"])[key])</li>
     }

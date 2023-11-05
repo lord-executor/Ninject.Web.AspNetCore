@@ -15,7 +15,7 @@
     <li>
         Environment Variables:
         <ul>
-            @foreach (var key in ((System.Collections.IDictionary)ViewData["Environment"]).Keys)
+            @foreach (var key in ((System.Collections.IDictionary)ViewData["Environment"])!.Keys)
             {
                 <li>@key = @(((System.Collections.IDictionary)ViewData["Environment"])[key])</li>
             }
