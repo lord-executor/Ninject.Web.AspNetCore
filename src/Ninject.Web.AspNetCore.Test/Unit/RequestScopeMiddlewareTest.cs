@@ -10,7 +10,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 	public class RequestScopeMiddlewareTest
 	{
 		[Fact]
-		public void Middleware_WhenInvoked_CreatesAndDestroysRequestScope()
+		public async Task Middleware_WhenInvoked_CreatesAndDestroysRequestScope()
 		{
 			var callCount = 0;
 			var middleware = new RequestScopeMiddleware(_ =>
@@ -25,7 +25,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var httpContextMock = new Mock<HttpContext>();
 
 			RequestScope.Current.Should().BeNull();
-			middleware.InvokeAsync(httpContextMock.Object).Wait();
+			await middleware.InvokeAsync(httpContextMock.Object);
 			callCount.Should().Be(1);
 			RequestScope.Current.Should().BeNull();
 		}
