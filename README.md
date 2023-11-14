@@ -1,4 +1,4 @@
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/blob/master/LICENSE) [![.NET 5 CI](https://github.com/lord-executor/Ninject.Web.AspNetCore/actions/workflows/ci.yml/badge.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/actions/workflows/ci.yml)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/blob/master/LICENSE) [![.NET 8 CI](https://github.com/lord-executor/Ninject.Web.AspNetCore/actions/workflows/ci.yml/badge.svg)](https://github.com/lord-executor/Ninject.Web.AspNetCore/actions/workflows/ci.yml)
 
 
 # Overview
@@ -270,7 +270,7 @@ The package version numbers are chosen to align with the version of ASP.NET Core
 
 | Version | ASP.NET Core Version | Ninject Version | Target Frameworks  | Notes |
 |---------|----------------------|-----------------|--------------------|-------|
-| 7.*     | 7.0                  | 3.3.4           | net7.0, net6.0, net5.0     | The current _mainline_ version for use together with ASP.NET Core 7, 6 or 5 |
+| 8.*     | 8.0                  | 3.3.4           | net8.0, net7.0, net6.0, net5.0     | The current _mainline_ version for use together with ASP.NET Core 8, 7, 6 or 5 |
 | 5.*     | 5.0                  | 3.3.4           | net5.0             | Old NET 5 version. Obsolete now and included in 7.* line |
 | 3.0.*   | 3.0.*, 3.1.*         | 3.3.4           | netcoreapp3.0, netcoreapp3.1  | The last .NET Core version. No longer maintained. |
 | 2.2.*   | 2.2.*                | 3.3.4           | netstandard2.0, netcoreapp2.2 | Should only be used as a "transitional" version when migrating to more recent .NET Core versions. No longer maintained. |

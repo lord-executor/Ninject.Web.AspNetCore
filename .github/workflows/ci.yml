@@ -1,4 +1,4 @@
-name: .NET 7 CI
+name: .NET 8 CI
 on: [push]
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-dotnet@v3
         name: Setup .NET SDK
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
 
       - name: Build
         run: dotnet build src/Ninject.Web.AspNetCore.sln -c Release
