@@ -25,7 +25,7 @@ namespace Ninject.Web.AspNetCore
 				// It essentially always injects the instance that is being used for the instantiation
 				// which kinda makes sense, but is not documented ANYWHERE, not tested ANYWHERE and was really quite difficult to
 				// figure out.
-				var scopeProvider = context.Parameters.OfType<ServiceProviderScopeParameter>().SingleOrDefault()?.SourceServiceProvider;
+				var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider;
 				if (scopeProvider != null)
 				{
 					var descriptor = context.Request.ParentContext?.Binding.Metadata.Get<ServiceDescriptor>(nameof(ServiceDescriptor));
