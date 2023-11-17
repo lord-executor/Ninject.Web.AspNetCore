@@ -19,7 +19,7 @@ namespace Ninject.Web.AspNetCore
 			// when being instantiated through the ServiceProviderScopeResolutionRoot, the parameter for explicit nested scopes
 			// created through IServiceScopeFactory.CreateScope has precedence in order to preserve the behavior that is expected
 			// from IServiceProvider with scoped services.
-			var scope = context.Parameters.OfType<ServiceProviderScopeParameter>().SingleOrDefault()?.GetValue(context, null);
+			var scope = context.GetServiceProviderScopeParameter()?.GetValue(context, null);
 			// returns the currently active request scope. Used when binding with scope InRequestScope.
 			return scope ?? RequestScope.Current ?? throw new ActivationException("Trying to activate a service InRequestScope without a request scope present");
 		}

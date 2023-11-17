@@ -66,8 +66,11 @@ namespace Ninject.Web.AspNetCore
 				result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
 					=>
 				{
-					var provider = context.Kernel.Get<IServiceProvider>();
-					return descriptor.ImplementationFactory(provider) as T;
+					// When resolved through the ServiceProviderScopeResolutionRoot which adds this parameter, the
+					// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
+					// through a NinjectServiceProvider (some tests do this to prove a point)
+					var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ?? context.Kernel.Get<IServiceProvider>();
+					return descriptor.ImplementationFactory(scopeProvider) as T;
 				}), descriptor.Lifetime);
 			}
 			else
@@ -99,7 +102,7 @@ namespace Ninject.Web.AspNetCore
 					// Microsoft.Extensions.DependencyInjection expects transient services to be disposed when the IServiceScope
 					// in which they were created is disposed. See the compliance tests for more details.
 					return bindingInSyntax.InScope(context => {
-						var scope = context.Parameters.OfType<ServiceProviderScopeParameter>().SingleOrDefault();
+						var scope = context.GetServiceProviderScopeParameter();
 						return scope?.DeriveTransientScope();
 					});
 				default:
