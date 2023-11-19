@@ -7,6 +7,17 @@ The major and minor parts of the version number indicate the compatibility
 with the ASP.NET Core framework version (2.2.\*, 3.0.\*, 5.0.\*, 7.0.\*) and only
 the build part is actually indicating the release version of the project.
 
+## 8.0.1 - 2023-11-19
+
+### Fixed
+* [First call to Blazor app fails with InvalidOperationException: 'RemoteNavigationManager' has not been initialized](https://github.com/lord-executor/Ninject.Web.AspNetCore/issues/12)
+  * This fixes a pre-existing issue with the wrong scope provider being used for ImplementationFactory services
+
+## 8.0.0 - 2023-11-14
+
+### Changed
+* Updated projects to multi-target .NET 8, 7, 6 and 5
+
 ## 7.0.0 - 2023-01-21
 
 ### Changed
