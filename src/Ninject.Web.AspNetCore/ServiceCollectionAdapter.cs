@@ -56,28 +56,65 @@ namespace Ninject.Web.AspNetCore
 			BindingIndex bindingIndex) where T : class
 		{
 			IBindingNamedWithOrOnSyntax<T> result;
-			if (descriptor.ImplementationType != null)
-			{
-				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
-			}
-			else if (descriptor.ImplementationFactory != null)
-			{
 
-				result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
-					=>
+#if NET8_0_OR_GREATER
+			if (descriptor.IsKeyedService)
+			{
+				if (descriptor.KeyedImplementationType != null)
 				{
-					// When resolved through the ServiceProviderScopeResolutionRoot which adds this parameter, the
-					// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
-					// through a NinjectServiceProvider (some tests do this to prove a point)
-					var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ?? context.Kernel.Get<IServiceProvider>();
-					return descriptor.ImplementationFactory(scopeProvider) as T;
-				}), descriptor.Lifetime);
+					result = ConfigureLifecycle(bindingToSyntax.To(descriptor.KeyedImplementationType), descriptor.Lifetime);
+				}
+				else if (descriptor.KeyedImplementationFactory != null)
+				{
+					result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
+						=>
+					{
+						// When resolved through the ServiceProviderScopeResolutionRoot which adds this parameter, the
+						// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
+						// through a NinjectServiceProvider (some tests do this to prove a point)
+						var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ??
+						                    context.Kernel.Get<IServiceProvider>();
+						return descriptor.KeyedImplementationFactory(scopeProvider, descriptor.ServiceKey) as T;
+					}), descriptor.Lifetime);
+				}
+				else
+				{
+					// use ToMethod here as ToConstant has the wrong return type.
+					result = bindingToSyntax.ToMethod(context => descriptor.KeyedImplementationInstance as T)
+						.InSingletonScope();
+				}
+
+				result.WithMetadata("ServiceKey", descriptor.ServiceKey);
 			}
 			else
 			{
-				// use ToMethod here as ToConstant has the wrong return type.
-				result = bindingToSyntax.ToMethod(context => descriptor.ImplementationInstance as T).InSingletonScope();
+#endif
+				if (descriptor.ImplementationType != null)
+				{
+					result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
+				}
+				else if (descriptor.ImplementationFactory != null)
+				{
+					result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
+						=>
+					{
+						// When resolved through the ServiceProviderScopeResolutionRoot which adds this parameter, the
+						// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
+						// through a NinjectServiceProvider (some tests do this to prove a point)
+						var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ??
+						                    context.Kernel.Get<IServiceProvider>();
+						return descriptor.ImplementationFactory(scopeProvider) as T;
+					}), descriptor.Lifetime);
+				}
+				else
+				{
+					// use ToMethod here as ToConstant has the wrong return type.
+					result = bindingToSyntax.ToMethod(context => descriptor.ImplementationInstance as T)
+						.InSingletonScope();
+				}
+#if NET8_0_OR_GREATER
 			}
+#endif
 
 			return result
 				.WithMetadata(nameof(ServiceDescriptor), descriptor)

@@ -18,7 +18,7 @@ namespace Ninject.Web.AspNetCore
 	/// instances that are associated with the root scope. This is why we implement <see cref="IDisposable"/> and this is why
 	/// we pass an <see cref="IServiceScope"/> constructor argument when creating the root service provider.
 	/// </summary>
-	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
+	public partial class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
 	{
 		private readonly IResolutionRoot _resolutionRoot;
 		private readonly IServiceScope _scope;
@@ -31,13 +31,13 @@ namespace Ninject.Web.AspNetCore
 
 		public object GetRequiredService(Type serviceType)
 		{
-			var result = _resolutionRoot.Get(serviceType);
+			var result = _resolutionRoot.Get(serviceType, metadata => metadata.Get<object>("ServiceKey") == null);
 			return result;
 		}
 
 		public object GetService(Type serviceType)
 		{
-			var result = _resolutionRoot.TryGet(serviceType);
+			var result = _resolutionRoot.TryGet(serviceType, metadata => metadata.Get<object>("ServiceKey") == null);
 			return result;
 		}
 
