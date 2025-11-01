@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Ninject.Activation;
 using Ninject.Parameters;
 using Ninject.Planning.Bindings;
