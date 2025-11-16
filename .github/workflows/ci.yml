@@ -1,4 +1,4 @@
-name: .NET 9 CI
+name: .NET 10 CI
 on: [push]
 
 jobs:
@@ -6,12 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Test
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v5
         name: Setup .NET SDK
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Build
         run: dotnet build src/Ninject.Web.AspNetCore.sln -c Release
