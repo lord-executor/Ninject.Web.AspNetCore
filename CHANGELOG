@@ -7,6 +7,12 @@ The major and minor parts of the version number indicate the compatibility
 with the ASP.NET Core framework version (2.2.\*, 3.0.\*, 5.0.\*, 7.0.\*) and only
 the build part is actually indicating the release version of the project.
 
+## 10.0.0 - 2025-11-16
+
+### Changed
+* Update to .NET 10
+* Updated all dependencies to their latest versions
+
 ## 8.0.1 - 2023-11-19
 
 ### Fixed

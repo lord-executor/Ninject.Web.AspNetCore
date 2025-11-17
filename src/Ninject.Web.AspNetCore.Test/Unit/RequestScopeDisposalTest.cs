@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Ninject.Parameters;
 using Ninject.Web.AspNetCore.Test.Fakes;
 using System.Linq;
