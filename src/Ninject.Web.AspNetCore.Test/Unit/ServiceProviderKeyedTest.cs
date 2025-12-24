@@ -20,13 +20,17 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var collection = new ServiceCollection();
 			collection.Add(new ServiceDescriptor(typeof(IWarrior),"Samurai", typeof(Samurai), ServiceLifetime.Transient));
-			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja", new Ninja("test")));
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja1", new Ninja("test")));
+			collection.Add(new ServiceDescriptor(typeof(IWarrior),"Ninja2",
+				(provider, key) => new Ninja("test:" + key.ToString()), ServiceLifetime.Transient));
 			var kernel = CreateTestKernel(collection);
 			var provider = CreateServiceProvider(kernel);
 
-			provider.GetKeyedService(typeof(IWarrior), "Ninja").Should().NotBeNull().And.BeOfType(typeof(Ninja));
 			provider.GetKeyedService(typeof(IWarrior), "Samurai").Should().NotBeNull().And.BeOfType(typeof(Samurai));
-
+			provider.GetKeyedService(typeof(IWarrior), "Ninja1").Should().NotBeNull().And.BeOfType(typeof(Ninja)).
+				And.Match(x => ((Ninja)x).Name == "test");
+			provider.GetKeyedService(typeof(IWarrior), "Ninja2").Should().NotBeNull().And.BeOfType(typeof(Ninja)).
+				And.Match(x => ((Ninja)x).Name == "test:Ninja2");
 		}
 
 		[Fact]
