@@ -55,23 +55,23 @@ namespace Ninject.Web.AspNetCore
 			ServiceDescriptor descriptor,
 			BindingIndex bindingIndex) where T : class
 		{
-			IBindingNamedWithOrOnSyntax<T> result;
+			IDescriptorAdapter adapter;
 #if NET8_0_OR_GREATER
 			if (descriptor.IsKeyedService)
 			{
-				result = ConfigureImplementationAndLifecycleKeyed(bindingToSyntax, descriptor); 
+				adapter = new KeyedDescriptorAdapter(descriptor);
 			}
 #endif
 #if NET8_0_OR_GREATER
 			else
 			{
 #endif
-				result = ConfigureImplementationAndLifecycleNonKeyed(bindingToSyntax, descriptor);
+				adapter = new DefaultDescriptorAdapter(descriptor);
 #if NET8_0_OR_GREATER
 			}
 #endif
 
-			var resultWithMetadata = result
+			var resultWithMetadata = ConfigureImplementationAndLifecycleWithAdapter(bindingToSyntax, adapter)
 				.WithMetadata(nameof(ServiceDescriptor), descriptor)
 				.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType));
 
@@ -84,15 +84,15 @@ namespace Ninject.Web.AspNetCore
 			return resultWithMetadata;
 		}
 
-		private IBindingNamedWithOrOnSyntax<T> ConfigureImplementationAndLifecycleNonKeyed<T>(IBindingToSyntax<T> bindingToSyntax,
-			ServiceDescriptor descriptor) where T : class
+		private IBindingNamedWithOrOnSyntax<T> ConfigureImplementationAndLifecycleWithAdapter<T>(IBindingToSyntax<T> bindingToSyntax,
+			IDescriptorAdapter adapter) where T : class
 		{
 			IBindingNamedWithOrOnSyntax<T> result;
-			if (descriptor.ImplementationType != null)
+			if (adapter.ImplementationType != null)
 			{
-				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
+				result = ConfigureLifecycle(bindingToSyntax.To(adapter.ImplementationType), adapter.Lifetime);
 			}
-			else if (descriptor.ImplementationFactory != null)
+			else if (adapter.UseServiceFactory)
 			{
 
 				result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
@@ -102,49 +102,17 @@ namespace Ninject.Web.AspNetCore
 					// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
 					// through a NinjectServiceProvider (some tests do this to prove a point)
 					var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ?? context.Kernel.Get<IServiceProvider>();
-					return descriptor.ImplementationFactory(scopeProvider) as T;
-				}), descriptor.Lifetime);
+					return adapter.InstantiateFromServiceFactory(scopeProvider) as T;
+				}), adapter.Lifetime);
 			}
 			else
 			{
 				// use ToMethod here as ToConstant has the wrong return type.
-				result = bindingToSyntax.ToMethod(context => descriptor.ImplementationInstance as T).InSingletonScope();
+				result = bindingToSyntax.ToMethod(context => adapter.ImplementationInstance as T).InSingletonScope();
 			}
 
 			return result;
 		}
-
-#if NET8_0_OR_GREATER
-		private IBindingNamedWithOrOnSyntax<T> ConfigureImplementationAndLifecycleKeyed<T>(IBindingToSyntax<T> bindingToSyntax,
-			ServiceDescriptor descriptor) where T : class
-		{
-			IBindingNamedWithOrOnSyntax<T> result;
-			if (descriptor.KeyedImplementationType != null)
-			{
-				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.KeyedImplementationType), descriptor.Lifetime);
-			}
-			else if (descriptor.KeyedImplementationFactory != null)
-			{
-
-				result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
-					=>
-				{
-					// When resolved through the ServiceProviderScopeResolutionRoot which adds this parameter, the
-					// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
-					// through a NinjectServiceProvider (some tests do this to prove a point)
-					var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ?? context.Kernel.Get<IServiceProvider>();
-					return descriptor.KeyedImplementationFactory(scopeProvider, descriptor.ServiceKey) as T;
-				}), descriptor.Lifetime);
-			}
-			else
-			{
-				// use ToMethod here as ToConstant has the wrong return type.
-				result = bindingToSyntax.ToMethod(context => descriptor.KeyedImplementationInstance as T).InSingletonScope();
-			}
-
-			return result;
-		}
-#endif
 
 		private IBindingNamedWithOrOnSyntax<T> ConfigureLifecycle<T>(
 			IBindingInSyntax<T> bindingInSyntax,
