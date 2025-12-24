@@ -19,6 +19,9 @@ namespace Ninject.Web.AspNetCore
 	/// we pass an <see cref="IServiceScope"/> constructor argument when creating the root service provider.
 	/// </summary>
 	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
+#if NET8_0_OR_GREATER
+	, IKeyedServiceProvider
+#endif
 	{
 		private readonly IResolutionRoot _resolutionRoot;
 		private readonly IServiceScope _scope;
@@ -45,5 +48,17 @@ namespace Ninject.Web.AspNetCore
 		{
 			_scope?.Dispose();
 		}
+
+#if NET8_0_OR_GREATER
+		public object GetKeyedService(Type serviceType, object serviceKey)
+		{
+			return _resolutionRoot.TryGet(serviceType, metadata => metadata.Get<ServiceKey>(nameof(ServiceKey))?.Key == serviceKey);
+		}
+
+		public object GetRequiredKeyedService(Type serviceType, object serviceKey)
+		{
+			throw new NotImplementedException();
+		}
+#endif
 	}
 }
