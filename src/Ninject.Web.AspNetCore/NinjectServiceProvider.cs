@@ -40,7 +40,6 @@ namespace Ninject.Web.AspNetCore
 
 		public object GetRequiredService(Type serviceType)
 		{
-			object result = null;
 			if (!IsListType(serviceType, out var elementType))
 			{
 				return _resolutionRoot.Get(serviceType);
@@ -56,7 +55,7 @@ namespace Ninject.Web.AspNetCore
 
 		public object GetService(Type serviceType)
 		{
-			object result = null;
+			object result;
 			if (!IsListType(serviceType, out var elementType))
 			{
 				result = _resolutionRoot.TryGet(serviceType);
@@ -80,7 +79,7 @@ namespace Ninject.Web.AspNetCore
 #if NET8_0_OR_GREATER
 		public object GetKeyedService(Type serviceType, object serviceKey)
 		{
-			object result = null;
+			object result;
 			if (!IsListType(serviceType, out var elementType))
 			{
 				result = _resolutionRoot.TryGet(serviceType,
