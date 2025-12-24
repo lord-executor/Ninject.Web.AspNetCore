@@ -63,6 +63,23 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void OptionalExistingMultipleKeydServices_ResolvedQueriedAsList()
 		{
 			var kernel = CreateTestKernel();
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));;
+			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));
+			var provider = CreateServiceProvider(kernel);
+
+			var result = provider.GetKeyedService(typeof(IList<IWarrior>), "Warrior") as IEnumerable<IWarrior>;
+
+			result.Should().NotBeNull();
+			var resultList = result.ToList();
+			resultList.Should().HaveCount(2);
+			resultList.Should().Contain(x => x is Samurai);
+			resultList.Should().Contain(x => x is Ninja);
+		}
+
+		[Fact]
+		public void OptionalExistingMultipleKeydServices_NotResolvedAsListNonKeyed()
+		{
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));;
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Ninja"));
 			var provider = CreateServiceProvider(kernel);
@@ -71,9 +88,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 			result.Should().NotBeNull();
 			var resultList = result.ToList();
-			resultList.Should().HaveCount(2);
-			resultList.Should().Contain(x => x is Samurai);
-			resultList.Should().Contain(x => x is Ninja);
+			resultList.Should().HaveCount(0);
 		}
 
 		[Fact]
@@ -127,6 +142,23 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void RequiredExistingMultipleKeydServices_ResolvedQueriedAsList()
 		{
 			var kernel = CreateTestKernel();
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));;
+			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));
+			var provider = CreateServiceProvider(kernel);
+
+			var result = provider.GetRequiredKeyedService(typeof(IList<IWarrior>), "Warrior") as IEnumerable<IWarrior>;
+
+			result.Should().NotBeNull();
+			var resultList = result.ToList();
+			resultList.Should().HaveCount(2);
+			resultList.Should().Contain(x => x is Samurai);
+			resultList.Should().Contain(x => x is Ninja);
+		}
+
+		[Fact]
+		public void RequiredExistingMultipleKeydServices_NotResolvedAsListNonKeyed()
+		{
+			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));;
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Ninja"));
 			var provider = CreateServiceProvider(kernel);
@@ -135,9 +167,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 			result.Should().NotBeNull();
 			var resultList = result.ToList();
-			resultList.Should().HaveCount(2);
-			resultList.Should().Contain(x => x is Samurai);
-			resultList.Should().Contain(x => x is Ninja);
+			resultList.Should().HaveCount(0);
 		}
 
 		[Fact]

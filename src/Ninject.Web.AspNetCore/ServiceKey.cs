@@ -3,10 +3,9 @@ using System;
 namespace Ninject.Web.AspNetCore
 {
 
-#if NET8_0_OR_GREATER
-
 	/// <summary>
 	/// Used to store ServiceDescriptor.ServiceKey as metadata of the Ninject binding.
+	/// Only supported with .NET >= 8.0
 	/// </summary>
 	public class ServiceKey
 	{
@@ -17,6 +16,5 @@ namespace Ninject.Web.AspNetCore
 			Key = key;
 		}
 	}
-#endif
 
 }
