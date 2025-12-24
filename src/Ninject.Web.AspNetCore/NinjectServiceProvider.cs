@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Ninject.Syntax;
 using System;
+using Ninject.Planning.Bindings;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -52,12 +53,18 @@ namespace Ninject.Web.AspNetCore
 #if NET8_0_OR_GREATER
 		public object GetKeyedService(Type serviceType, object serviceKey)
 		{
-			return _resolutionRoot.TryGet(serviceType, metadata => metadata.Get<ServiceKey>(nameof(ServiceKey))?.Key == serviceKey);
+			var result = _resolutionRoot.TryGet(serviceType, metadata => DoesMetadataMatchServiceKey(serviceKey, metadata));
+			return result;
 		}
 
 		public object GetRequiredKeyedService(Type serviceType, object serviceKey)
 		{
-			throw new NotImplementedException();
+			return _resolutionRoot.Get(serviceType, metadata => DoesMetadataMatchServiceKey(serviceKey, metadata));
+		}
+
+		private static bool DoesMetadataMatchServiceKey(object serviceKey, IBindingMetadata metadata)
+		{
+			return metadata.Get<ServiceKey>(nameof(ServiceKey))?.Key == serviceKey;
 		}
 #endif
 	}
