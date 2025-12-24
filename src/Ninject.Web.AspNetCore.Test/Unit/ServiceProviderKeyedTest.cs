@@ -29,8 +29,13 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			provider.GetKeyedService(typeof(IWarrior), "Samurai").Should().NotBeNull().And.BeOfType(typeof(Samurai));
 			provider.GetKeyedService(typeof(IWarrior), "Ninja1").Should().NotBeNull().And.BeOfType(typeof(Ninja)).
 				And.Match(x => ((Ninja)x).Name == "test");
-			provider.GetKeyedService(typeof(IWarrior), "Ninja2").Should().NotBeNull().And.BeOfType(typeof(Ninja)).
+			var ninja2First = provider.GetKeyedService(typeof(IWarrior), "Ninja2");
+			var ninja2Second = provider.GetKeyedService(typeof(IWarrior), "Ninja2");
+			ninja2First.Should().NotBeNull().And.BeOfType(typeof(Ninja)).
 				And.Match(x => ((Ninja)x).Name == "test:Ninja2");
+			ninja2Second.Should().NotBeNull().And.BeOfType(typeof(Ninja)).
+				And.Match(x => ((Ninja)x).Name == "test:Ninja2");
+			ninja2First.Should().NotBeSameAs(ninja2Second);
 		}
 
 		[Fact]
