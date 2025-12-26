@@ -32,7 +32,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			return binding => {
 				var latest = true;
-				if (request.IsUnique && request.Constraint == null)
+				if (request.IsUnique)
 				{
 					latest = binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true;
 				}
