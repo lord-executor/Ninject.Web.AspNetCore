@@ -42,7 +42,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			if (!IsListType(serviceType, out var elementType))
 			{
-				return _resolutionRoot.Get(serviceType);
+				return _resolutionRoot.Get(serviceType, metadata => !HasServiceKeyMetadata(metadata));
 			}
 			else
 			{
@@ -58,7 +58,7 @@ namespace Ninject.Web.AspNetCore
 			object result;
 			if (!IsListType(serviceType, out var elementType))
 			{
-				result = _resolutionRoot.TryGet(serviceType);
+				result = _resolutionRoot.TryGet(serviceType, metadata => !HasServiceKeyMetadata(metadata));
 			}
 			else
 			{

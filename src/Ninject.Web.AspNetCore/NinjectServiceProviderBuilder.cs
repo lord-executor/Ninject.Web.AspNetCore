@@ -40,6 +40,9 @@ namespace Ninject.Web.AspNetCore
 #if NET6_0_OR_GREATER
 			_kernel.Bind<IServiceProviderIsService>().To<NinjectServiceProviderIsService>().InSingletonScope();
 #endif
+#if NET8_0_OR_GREATER
+			_kernel.Bind<IServiceProviderIsKeyedService>().To<NinjectServiceProviderIsService>().InSingletonScope();
+#endif
 
 			var adapter = new ServiceCollectionAdapter();
 			adapter.Populate(_kernel, _services);
