@@ -82,6 +82,7 @@ namespace Ninject.Web.AspNetCore
 			object result;
 			if (!IsListType(serviceType, out var elementType))
 			{
+				EnsureNotAnyKey(serviceKey, serviceType);
 				result = _resolutionRoot.TryGet(serviceType,
 					metadata => DoesMetadataMatchServiceKey(serviceKey, metadata));
 			}
@@ -100,6 +101,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			if (!IsListType(serviceType, out var elementType))
 			{
+				EnsureNotAnyKey(serviceKey, serviceType);
 				return _resolutionRoot.Get(serviceType, metadata => DoesMetadataMatchServiceKey(serviceKey, metadata));
 			}
 			else
@@ -111,8 +113,22 @@ namespace Ninject.Web.AspNetCore
 			}
 		}
 
+		private void EnsureNotAnyKey(object serviceKey, Type serviceType)
+		{
+			if (serviceKey == KeyedService.AnyKey)
+			{
+				throw new InvalidOperationException($"Not allowed to resolve a service {serviceType} with the KeyedService.AnyKey. " +
+				                                    $"That's only supported when resolving collections of services.");
+			}
+		}
+
+
 		private static bool DoesMetadataMatchServiceKey(object serviceKey, IBindingMetadata metadata)
 		{
+			if (serviceKey == KeyedService.AnyKey)
+			{
+				return HasServiceKeyMetadata(metadata);
+			}
 			return metadata.Get<ServiceKey>(nameof(ServiceKey))?.Key == serviceKey;
 		}
 #endif
