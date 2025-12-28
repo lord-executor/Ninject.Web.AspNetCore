@@ -49,7 +49,7 @@ namespace Ninject.Web.AspNetCore.Planning
 
 				if (metadata.HasServiceKeyMetadata())
 				{
-					result = result && metadata.DoesMetadataMatchServiceKey(keyedattributes[0].Key);
+					result = result && metadata.DoesMetadataMatchServiceKey(keyedattributes[0].Key, true);
 				}
 
 				return result;
@@ -70,7 +70,14 @@ namespace Ninject.Web.AspNetCore.Planning
 			var serviceKeyAttributes = GetCustomAttributes(typeof (ServiceKeyAttribute), true) as ServiceKeyAttribute[];
 			if (serviceKeyAttributes?.Length > 0)
 			{
-				return parent.Binding.Metadata.GetServiceKey();
+				var result = parent.Binding.Metadata.GetServiceKey();
+				if (result == KeyedService.AnyKey && this.Type == typeof(string))
+				{
+					// expected to automatically convert from AnyKey to string representation
+					result = KeyedService.AnyKey.ToString();
+				}
+
+				return result;
 			}
 #endif
 			return base.ResolveWithin(parent);

@@ -14,6 +14,19 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 	public class ServiceProviderKeyedTest
 	{
+
+		[Fact]
+		public void OptionalExising_ServiceKeyNullResolvedAsUnkeyed()
+		{
+			var collection = new ServiceCollection();
+			collection.Add(new ServiceDescriptor(typeof(IWarrior),null, typeof(Samurai), ServiceLifetime.Transient));
+			var kernel = CreateTestKernel(collection);
+			var provider = CreateServiceProvider(kernel);
+
+			var warrior = provider.GetKeyedService(typeof(Samurai), null);
+			warrior.Should().NotBeNull().And.BeOfType(typeof(Samurai));
+		}
+
 		[Fact]
 		public void OptionalExising_SingleServiceInjectedServiceKeyResolved()
 		{

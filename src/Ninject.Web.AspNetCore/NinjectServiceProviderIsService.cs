@@ -52,7 +52,7 @@ namespace Ninject.Web.AspNetCore
 			}
 
 			return _kernel.CanResolve(serviceType, metadata =>
-				metadata.DoesMetadataMatchServiceKey(serviceKey));
+				metadata.DoesMetadataMatchServiceKey(serviceKey, true));
 		}
 #endif
 	}
