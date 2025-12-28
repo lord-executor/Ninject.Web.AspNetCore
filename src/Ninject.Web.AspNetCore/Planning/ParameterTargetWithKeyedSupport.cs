@@ -34,7 +34,11 @@ namespace Ninject.Web.AspNetCore.Planning
 #if NET8_0_OR_GREATER
 			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
 			var baseFunc = base.ReadConstraintFromTarget();
-			if (keyedattributes == null || keyedattributes.Length == 0)
+			if (keyedattributes == null || keyedattributes.Length == 0
+#if NET10_0_OR_GREATER
+				|| (keyedattributes[0].LookupMode == ServiceKeyLookupMode.NullKey)
+#endif
+			)
 			{
 				return baseFunc;
 			}
@@ -50,6 +54,12 @@ namespace Ninject.Web.AspNetCore.Planning
 				if (metadata.HasServiceKeyMetadata())
 				{
 					result = result && metadata.DoesMetadataMatchServiceKey(keyedattributes[0].Key, true);
+				}
+				else
+				{
+					// we can't match bindings here which don't have a servicekey. If FromKeyServiceAttribute is present
+					// the match fails if no servicekey available.
+					result = false;
 				}
 
 				return result;
