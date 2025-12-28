@@ -28,7 +28,7 @@ namespace Ninject.Web.AspNetCore
 				var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider;
 				if (scopeProvider != null)
 				{
-					var descriptor = context.Request.ParentContext?.Binding.Metadata.Get<ServiceDescriptor>(nameof(ServiceDescriptor));
+					var descriptor = context.Request.ParentContext?.Binding.Metadata.Get<IDescriptorAdapter>(nameof(ServiceDescriptor));
 					if (descriptor == null || descriptor.Lifetime != ServiceLifetime.Singleton)
 					{
 						return scopeProvider;

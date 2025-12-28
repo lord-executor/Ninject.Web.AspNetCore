@@ -30,7 +30,7 @@ namespace Ninject.Web.AspNetCore.Components
 				// If the binding has a ServiceDescriptor in its metadata, then we 
 				if (binding.Target == BindingTarget.Type && binding.Metadata.Has(nameof(ServiceDescriptor)))
 				{
-					return SatisfiesGenericTypeConstraints(service, binding.Metadata.Get<ServiceDescriptor>(nameof(ServiceDescriptor)).ImplementationType);
+					return SatisfiesGenericTypeConstraints(service, binding.Metadata.Get<IDescriptorAdapter>(nameof(ServiceDescriptor)).ImplementationType);
 				}
 
 				// ... otherwise we default to the OpenGenericBindingResolver which returns _all_ the bindings without regard for their generic constraints

@@ -72,7 +72,7 @@ namespace Ninject.Web.AspNetCore
 #endif
 
 			var resultWithMetadata = ConfigureImplementationAndLifecycleWithAdapter(bindingToSyntax, adapter)
-				.WithMetadata(nameof(ServiceDescriptor), descriptor);
+				.WithMetadata(nameof(ServiceDescriptor), adapter);
 
 			object indexKey = BindingIndex.DefaultIndexKey;
 #if NET8_0_OR_GREATER
