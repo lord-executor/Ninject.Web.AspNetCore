@@ -7,6 +7,8 @@ using Ninject.Planning.Bindings;
 using Ninject.Planning.Bindings.Resolvers;
 using Ninject.Web.AspNetCore.Components;
 using System;
+using Ninject.Planning.Strategies;
+using Ninject.Web.AspNetCore.Planning;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -49,6 +51,8 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IBindingResolver, ConstrainedGenericBindingResolver>();
 			Components.Remove<IBindingPrecedenceComparer, BindingPrecedenceComparer>();
 			Components.Add<IBindingPrecedenceComparer, IndexedBindingPrecedenceComparer>();
+			Components.Remove<IPlanningStrategy, ConstructorReflectionStrategy>();
+			Components.Add<IPlanningStrategy, ConstructorReflectionStrategyWithKeyedSupport>();
 
 			Components.Add<IDisposalManager, DisposalManager>();
 			Components.Remove<IActivationStrategy, DisposableStrategy>();

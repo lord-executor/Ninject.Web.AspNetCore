@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using Ninject.Web.AspNetCore.Planning;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -51,7 +52,7 @@ namespace Ninject.Web.AspNetCore
 			}
 
 			return _kernel.CanResolve(serviceType, metadata =>
-				metadata.Get<ServiceKey>(nameof(ServiceKey))?.Key == serviceKey);
+				metadata.DoesMetadataMatchServiceKey(serviceKey));
 		}
 #endif
 	}

@@ -14,6 +14,30 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 	public class ServiceProviderKeyedTest
 	{
+		[Fact]
+		public void OptionalExising_SingleServiceInjectedServiceKeyResolved()
+		{
+			var collection = new ServiceCollection();
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja", typeof(KeyedNinja), ServiceLifetime.Transient));
+			var kernel = CreateTestKernel(collection);
+			var provider = CreateServiceProvider(kernel);
+
+			var warrior = provider.GetKeyedService(typeof(IWarrior), "Ninja");
+			warrior.Should().NotBeNull().And.BeOfType(typeof(KeyedNinja)).And.Match(x => ((KeyedNinja)x).Key.ToString() == "Ninja");
+		}
+
+		[Fact]
+		public void OptionalExisingWithKeyedChild_SingleServiceResolved()
+		{
+			var collection = new ServiceCollection();
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja", typeof(NinjaWithKeyedWaepon), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IWeapon), "Longsword", typeof(Longsword), ServiceLifetime.Transient));
+			var kernel = CreateTestKernel(collection);
+			var provider = CreateServiceProvider(kernel);
+
+			var warrior = provider.GetKeyedService(typeof(IWarrior), "Ninja");
+			warrior.Should().NotBeNull().And.BeOfType(typeof(NinjaWithKeyedWaepon)).And.Match(x => ((NinjaWithKeyedWaepon)x).Weapon.Type == nameof(Longsword));
+		}
 
 		[Fact]
 		public void OptionalKeyedServiceCollectionExisting_CorrectServiceResolved()
