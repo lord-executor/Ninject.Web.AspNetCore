@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Activation;
 using Ninject.Planning.Bindings;
 using Ninject.Planning.Targets;
+using Ninject.Web.AspNetCore.Parameters;
 
 namespace Ninject.Web.AspNetCore.Planning
 {
@@ -81,10 +83,25 @@ namespace Ninject.Web.AspNetCore.Planning
 			if (serviceKeyAttributes?.Length > 0)
 			{
 				var result = parent.Binding.Metadata.GetServiceKey();
-				if (result == KeyedService.AnyKey && this.Type == typeof(string))
+				var serviceKeyParameter = parent.Parameters.LastOrDefault(x => x is ServiceKeyParameter) as ServiceKeyParameter;
+				if (serviceKeyParameter != null)
 				{
-					// expected to automatically convert from AnyKey to string representation
-					result = KeyedService.AnyKey.ToString();
+					result = serviceKeyParameter.ServiceKey;
+				}
+
+				var asConvertible = result as IConvertible;
+				if (asConvertible != null)
+				{
+					try
+					{
+						result = Convert.ChangeType(asConvertible, this.Type);
+					}
+					catch (InvalidCastException)
+					{
+						// we have to throw and InvalidOperationException in this case, a InvalidCastException
+						// is not passing the tests
+						throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + this.Type);
+					}
 				}
 
 				return result;

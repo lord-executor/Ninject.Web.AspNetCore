@@ -5,7 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Ninject.Parameters;
 using Ninject.Planning.Bindings;
+using Ninject.Web.AspNetCore.Parameters;
 using Ninject.Web.AspNetCore.Planning;
 
 namespace Ninject.Web.AspNetCore
@@ -91,14 +93,16 @@ namespace Ninject.Web.AspNetCore
 			{
 				EnsureNotAnyKey(serviceKey, serviceType);
 				result = _resolutionRoot.TryGet(serviceType,
-					metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, true));
+					metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, true),
+					new ServiceKeyParameter(serviceKey));
 			}
 			else
 			{
 				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
 				// Therefore, need to implement a workaround to not instantiate here bindings with a different servicekey value
 				result = ConvertToTypedEnumerable(elementType,
-					_resolutionRoot.GetAll(elementType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, false)));
+					_resolutionRoot.GetAll(elementType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, false),
+						new ServiceKeyParameter(serviceKey)));
 			}
 
 			return result;
@@ -115,14 +119,16 @@ namespace Ninject.Web.AspNetCore
 			if (!IsListType(serviceType, out var elementType))
 			{
 				EnsureNotAnyKey(serviceKey, serviceType);
-				return _resolutionRoot.Get(serviceType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, true));
+				return _resolutionRoot.Get(serviceType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, true),
+					new ServiceKeyParameter(serviceKey));
 			}
 			else
 			{
 				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
 				// Therefore, need to implement a workaround to not instantiate here bindings with a different servicekey value
 				return ConvertToTypedEnumerable(elementType,
-					_resolutionRoot.GetAll(elementType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, false)));
+					_resolutionRoot.GetAll(elementType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, false),
+						new ServiceKeyParameter(serviceKey)));
 			}
 		}
 

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Ninject.Activation;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -19,7 +20,7 @@ namespace Ninject.Web.AspNetCore
 		public Type ImplementationType => _descriptor.ImplementationType;
 		public object ImplementationInstance => _descriptor.ImplementationInstance;
 		public bool UseServiceFactory => _descriptor.ImplementationFactory != null;
-		public object InstantiateFromServiceFactory(IServiceProvider provider)
+		public object InstantiateFromServiceFactory(IServiceProvider provider, IContext context)
 		{
 			return _descriptor.ImplementationFactory(provider);
 		}

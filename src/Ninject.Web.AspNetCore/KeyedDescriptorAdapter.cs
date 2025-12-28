@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Ninject.Activation;
+using Ninject.Web.AspNetCore.Parameters;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -20,9 +23,15 @@ namespace Ninject.Web.AspNetCore
 		public Type ImplementationType => _descriptor.KeyedImplementationType;
 		public object ImplementationInstance => _descriptor.KeyedImplementationInstance;
 		public bool UseServiceFactory => _descriptor.KeyedImplementationFactory != null;
-		public object InstantiateFromServiceFactory(IServiceProvider provider)
+		public object InstantiateFromServiceFactory(IServiceProvider provider, IContext context)
 		{
-			return _descriptor.KeyedImplementationFactory(provider, _descriptor.ServiceKey);
+			object serviceKey = _descriptor.ServiceKey;
+			var keyParameter = context.Parameters.LastOrDefault(x => x is ServiceKeyParameter) as ServiceKeyParameter;
+			if (keyParameter != null)
+			{
+				serviceKey = keyParameter.ServiceKey;
+			}
+			return _descriptor.KeyedImplementationFactory(provider, serviceKey);
 		}
 
 		public ServiceLifetime Lifetime => _descriptor.Lifetime;

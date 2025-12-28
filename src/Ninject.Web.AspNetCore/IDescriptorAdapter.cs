@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Ninject.Activation;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -27,7 +28,7 @@ namespace Ninject.Web.AspNetCore
 		/// <summary>
 		/// If UseServiceFactory returns true, use this method to instantiate via factory.
 		/// </summary>
-		object InstantiateFromServiceFactory(IServiceProvider provider);
+		object InstantiateFromServiceFactory(IServiceProvider provider, IContext context);
 
 		/// <summary>
 		/// The lifetime coonfigured for the service descriptor

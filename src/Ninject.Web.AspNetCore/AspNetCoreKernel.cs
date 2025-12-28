@@ -7,7 +7,9 @@ using Ninject.Planning.Bindings;
 using Ninject.Planning.Bindings.Resolvers;
 using Ninject.Web.AspNetCore.Components;
 using System;
+using System.Linq;
 using Ninject.Planning.Strategies;
+using Ninject.Web.AspNetCore.Parameters;
 using Ninject.Web.AspNetCore.Planning;
 
 namespace Ninject.Web.AspNetCore
@@ -39,7 +41,16 @@ namespace Ninject.Web.AspNetCore
 					// as we can't register constraints via microsoft.extensions.dependencyinjection, 
 					// we always check for the latest binding
 					// Note that we have at least one constraint for the servicekey >= .NET 8.0
-					latest = binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true;
+					object requestIndexKey = null;
+#if NET8_0_OR_GREATER
+					var serviceKeyParameter = request.Parameters.LastOrDefault(x => x is ServiceKeyParameter) 
+						as ServiceKeyParameter;
+					if (serviceKeyParameter != null)
+					{
+						requestIndexKey = serviceKeyParameter.ServiceKey;
+					}
+#endif
+					latest = binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest(requestIndexKey) ?? true;
 				}
 				return binding.Matches(request) && request.Matches(binding) && latest;
 			};

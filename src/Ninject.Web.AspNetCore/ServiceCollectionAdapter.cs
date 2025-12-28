@@ -104,7 +104,7 @@ namespace Ninject.Web.AspNetCore
 					// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
 					// through a NinjectServiceProvider (some tests do this to prove a point)
 					var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ?? context.Kernel.Get<IServiceProvider>();
-					return adapter.InstantiateFromServiceFactory(scopeProvider) as T;
+					return adapter.InstantiateFromServiceFactory(scopeProvider, context) as T;
 				}), adapter.Lifetime);
 			}
 			else
