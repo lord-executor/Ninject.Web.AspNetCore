@@ -104,6 +104,11 @@ namespace Ninject.Web.AspNetCore.Planning
 					}
 				}
 
+				if (result != null && !this.Type.IsAssignableFrom(result.GetType()))
+				{
+					throw new InvalidOperationException("Cannot convert " + result + " to " + this.Type);
+				}
+
 				return result;
 			}
 #endif
