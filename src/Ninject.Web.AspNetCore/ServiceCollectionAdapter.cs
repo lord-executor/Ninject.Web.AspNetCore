@@ -72,15 +72,17 @@ namespace Ninject.Web.AspNetCore
 #endif
 
 			var resultWithMetadata = ConfigureImplementationAndLifecycleWithAdapter(bindingToSyntax, adapter)
-				.WithMetadata(nameof(ServiceDescriptor), descriptor)
-				.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType));
+				.WithMetadata(nameof(ServiceDescriptor), descriptor);
 
+			object indexKey = BindingIndex.DefaultIndexKey;
 #if NET8_0_OR_GREATER
 			if (descriptor.IsKeyedService)
 			{
 				resultWithMetadata = resultWithMetadata.WithMetadata(nameof(ServiceKey), new ServiceKey(descriptor.ServiceKey));
+				indexKey = descriptor.ServiceKey;
 			}
 #endif
+			resultWithMetadata = resultWithMetadata.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType, indexKey));
 			return resultWithMetadata;
 		}
 

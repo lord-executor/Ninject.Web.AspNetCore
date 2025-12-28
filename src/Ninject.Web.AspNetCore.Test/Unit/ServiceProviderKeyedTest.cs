@@ -203,7 +203,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var provider = CreateServiceProvider(kernel);
 
 			Action action = () => provider.GetRequiredService(typeof(IWarrior));
-			action.Should().Throw<ActivationException>().WithMessage("*More than one matching bindings are available*");
+			action.Should().Throw<ActivationException>().WithMessage("*No matching bindings are available, and the type is not self-bindable.*");
 		}
 
 		private IServiceProvider CreateServiceProvider(AspNetCoreKernel kernel)

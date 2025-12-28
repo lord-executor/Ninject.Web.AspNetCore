@@ -5,7 +5,8 @@ namespace Ninject.Web.AspNetCore
 {
 	public class BindingIndex
 	{
-		private readonly IDictionary<Type, Item> _bindingIndexMap = new Dictionary<Type, Item>();
+		private readonly IDictionary<ServiceTypeKey, Item> _bindingIndexMap = new Dictionary<ServiceTypeKey, Item>();
+		public const string DefaultIndexKey = "NonKeyed";
 
 		public int Count { get; private set; }
 
@@ -13,20 +14,20 @@ namespace Ninject.Web.AspNetCore
 		{
 		}
 
-		public Item Next(Type serviceType)
+		public Item Next(Type serviceType, object indexKey)
 		{
-			
-			_bindingIndexMap.TryGetValue(serviceType, out var previous);
+			var serviceTypeKey = new ServiceTypeKey(serviceType, indexKey);
+			_bindingIndexMap.TryGetValue(serviceTypeKey, out var previous);
 
-			var next = new Item(this, serviceType, Count++, previous?.TypeIndex + 1 ?? 0);
-			_bindingIndexMap[serviceType] = next;
+			var next = new Item(this, serviceType, indexKey, Count++, previous?.TypeIndex + 1 ?? 0);
+			_bindingIndexMap[serviceTypeKey] = next;
 
 			return next;
 		}
 
-		private bool IsLatest(Type serviceType, Item item)
+		private bool IsLatest(Type serviceType, object indexKey, Item item)
 		{
-			return _bindingIndexMap[serviceType] == item;
+			return _bindingIndexMap[new ServiceTypeKey(serviceType, indexKey)] == item;
 		}
 
 		public class Item
@@ -36,16 +37,55 @@ namespace Ninject.Web.AspNetCore
 
 			public int TotalIndex { get; }
 			public int TypeIndex { get; }
+			public object IndexKey { get; }
 
-			public bool IsLatest => _root.IsLatest(_serviceType, this);
+			public bool IsLatest => _root.IsLatest(_serviceType, IndexKey, this);
 			public int Precedence => _root.Count - TotalIndex;
 
-			public Item(BindingIndex root, Type serviceType, int totalIndex, int typeIndex)
+			public Item(BindingIndex root, Type serviceType, object indexKey, int totalIndex, int typeIndex)
 			{
 				_root = root;
 				_serviceType = serviceType;
 				TotalIndex = totalIndex;
 				TypeIndex = typeIndex;
+				IndexKey = indexKey;
+			}
+		}
+
+		/// <summary>
+		/// We have to to separate the precedence by servicekey.
+		/// This ensures that a binding with a different servicekey
+		/// can't override a binding with a non-matching servicekey
+		/// </summary>
+		public class ServiceTypeKey : IEquatable<ServiceTypeKey>
+		{
+			public Type ServiceType { get; }
+			public object IndexKey { get; }
+
+			public ServiceTypeKey(Type serviceType, object indexKey)
+			{
+				ServiceType = serviceType;
+				IndexKey = indexKey;
+			}
+
+			public bool Equals(ServiceTypeKey other)
+			{
+				if (other is null) return false;
+				if (ReferenceEquals(this, other)) return true;
+				return Equals(ServiceType, other.ServiceType) && Equals(IndexKey, other.IndexKey);
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj is null) return false;
+				if (ReferenceEquals(this, obj)) return true;
+				if (obj.GetType() != GetType()) return false;
+				return Equals((ServiceTypeKey)obj);
+			}
+
+			public override int GetHashCode()
+			{
+				return HashCode.Combine(ServiceType, IndexKey);
 			}
 		}
 	}

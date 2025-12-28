@@ -7,8 +7,9 @@ using Ninject.Planning;
 using Ninject.Planning.Directives;
 using Ninject.Planning.Strategies;
 using Ninject.Selection;
+using Ninject.Web.AspNetCore.Planning;
 
-namespace Ninject.Web.AspNetCore.Planning
+namespace Ninject.Web.AspNetCore.Components
 {
 	/// <summary>
 	/// Adds a directive to plans indicating which constructor should be injected during activation.

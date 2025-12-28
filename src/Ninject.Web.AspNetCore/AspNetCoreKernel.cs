@@ -36,6 +36,9 @@ namespace Ninject.Web.AspNetCore
 				var latest = true;
 				if (request.IsUnique)
 				{
+					// as we can't register constraints via microsoft.extensions.dependencyinjection, 
+					// we always check for the latest binding
+					// Note that we have at least one constraint for the servicekey >= .NET 8.0
 					latest = binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true;
 				}
 				return binding.Matches(request) && request.Matches(binding) && latest;
