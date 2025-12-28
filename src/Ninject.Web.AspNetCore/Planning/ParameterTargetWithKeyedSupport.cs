@@ -13,6 +13,22 @@ namespace Ninject.Web.AspNetCore.Planning
 		{
 		}
 
+		public override bool HasDefaultValue
+		{
+			get
+			{
+				var result = this.Site.HasDefaultValue;
+#if NET8_0_OR_GREATER
+				// ensure that constructor scorer knows that we have a default value for parameters decorated with ServiceKey
+				// as the DefaultValueBindingResolver is only a MissingBindingResolver, the
+				// ParameterTargetWithKeyedSupport.ResolveWithin method already
+				// provided a default value before any Ninject resolution for the value happens.
+				result = result || GetCustomAttributes(typeof (ServiceKeyAttribute), true)?.Length > 0;
+#endif
+				return result;
+			}
+		}
+
 		protected override Func<IBindingMetadata, bool> ReadConstraintFromTarget()
 		{
 #if NET8_0_OR_GREATER

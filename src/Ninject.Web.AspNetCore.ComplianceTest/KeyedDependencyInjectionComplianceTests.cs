@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Ninject.Planning.Bindings.Resolvers;
 
 namespace Ninject.Web.AspNetCore.ComplianceTest;
 
@@ -13,6 +14,8 @@ public class KeyedDependencyInjectionComplianceTests : Microsoft.Extensions.Depe
 	protected override IServiceProvider CreateServiceProvider(IServiceCollection serviceCollection)
 	{
 		var kernel = new AspNetCoreKernel();
+		// remove autobinding as CreateServiceWithKeyedParameter e.g. tests that no autobinding happens.
+		kernel.Components.Remove<IMissingBindingResolver, SelfBindingResolver>();
 		var factory = new NinjectServiceProviderFactory(kernel);
 
 		return factory.CreateBuilder(serviceCollection).Build();
