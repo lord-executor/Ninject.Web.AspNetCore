@@ -50,7 +50,7 @@ namespace Ninject.Web.AspNetCore
 						requestIndexKey = serviceKeyParameter.ServiceKey;
 					}
 #endif
-					latest = binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest(requestIndexKey) ?? true;
+					latest = binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true;
 				}
 				return binding.Matches(request) && request.Matches(binding) && latest;
 			};
@@ -71,6 +71,10 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IDisposalManager, DisposalManager>();
 			Components.Remove<IActivationStrategy, DisposableStrategy>();
 			Components.Add<IActivationStrategy, OrderedDisposalStrategy>();
+
+#if NET8_0_OR_GREATER
+			Components.Add<IMissingBindingResolver, AnyBindingResolver>();
+#endif
 		}
 
 		public void DisableAutomaticSelfBinding()

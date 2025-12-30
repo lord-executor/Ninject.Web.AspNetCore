@@ -26,17 +26,9 @@ namespace Ninject.Web.AspNetCore
 			return next;
 		}
 
-		private bool IsLatest(Type serviceType, object registeredIndexKey, object requestIndexKey, Item item)
+		private bool IsLatest(Type serviceType, object registeredIndexKey, Item item)
 		{
 			var match = _bindingIndexMap[new ServiceTypeKey(serviceType, registeredIndexKey)] == item;
-#if NET8_0_OR_GREATER
-			if (registeredIndexKey == KeyedService.AnyKey)
-			{
-				// if the binding is registered with anykey, it should only be considered as latest if there is no
-				// exact match with the requestIndexKey
-				match = !_bindingIndexMap.TryGetValue(new ServiceTypeKey(serviceType, requestIndexKey), out _);
-			}
-#endif
 			return match;
 		}
 
@@ -60,7 +52,7 @@ namespace Ninject.Web.AspNetCore
 				IndexKey = indexKey;
 			}
 			
-			public bool IsLatest(object requestIndexKey) => _root.IsLatest(_serviceType, IndexKey, requestIndexKey, this);
+			public bool IsLatest => _root.IsLatest(_serviceType, IndexKey, this);
 		}
 
 		/// <summary>

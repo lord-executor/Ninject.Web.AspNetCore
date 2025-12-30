@@ -6,6 +6,7 @@ using Ninject.Activation;
 using Ninject.Planning.Bindings;
 using Ninject.Planning.Targets;
 using Ninject.Web.AspNetCore.Parameters;
+using Ninject.Web.AspNetCore.RequestActivation;
 
 namespace Ninject.Web.AspNetCore.Planning
 {
@@ -55,7 +56,13 @@ namespace Ninject.Web.AspNetCore.Planning
 
 				if (metadata.HasServiceKeyMetadata())
 				{
-					result = result && metadata.DoesMetadataMatchServiceKey(keyedattributes[0].Key, true);
+					object keyToCompareWith = keyedattributes[0].Key;
+#if NET10_0_OR_GREATER
+					if (keyedattributes[0].LookupMode == ServiceKeyLookupMode.InheritKey) {
+						// here we would need the request!
+					}
+#endif
+					result = result && metadata.DoesMetadataMatchServiceKey(keyToCompareWith);
 				}
 				else
 				{
@@ -110,6 +117,14 @@ namespace Ninject.Web.AspNetCore.Planning
 				}
 
 				return result;
+			}
+
+			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
+			if (keyedattributes?.Length > 0)
+			{
+				var child = parent.Request.CreateKeyedChildRequest(Type, keyedattributes[0].Key, parent, this);
+				child.IsUnique = true;
+				return parent.Kernel.Resolve(child).SingleOrDefault();
 			}
 #endif
 			return base.ResolveWithin(parent);

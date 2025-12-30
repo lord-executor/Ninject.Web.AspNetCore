@@ -9,6 +9,7 @@ using Ninject.Parameters;
 using Ninject.Planning.Bindings;
 using Ninject.Web.AspNetCore.Parameters;
 using Ninject.Web.AspNetCore.Planning;
+using Ninject.Web.AspNetCore.RequestActivation;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -92,17 +93,14 @@ namespace Ninject.Web.AspNetCore
 			if (!IsListType(serviceType, out var elementType))
 			{
 				EnsureNotAnyKey(serviceKey, serviceType);
-				result = _resolutionRoot.TryGet(serviceType,
-					metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, true),
-					new ServiceKeyParameter(serviceKey));
+				return ResolveKeyedService<object>(serviceType, serviceKey, true, true);
 			}
 			else
 			{
 				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
 				// Therefore, need to implement a workaround to not instantiate here bindings with a different servicekey value
 				result = ConvertToTypedEnumerable(elementType,
-					_resolutionRoot.GetAll(elementType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, false),
-						new ServiceKeyParameter(serviceKey)));
+					ResolveKeyedService<IEnumerable<object>>(elementType, serviceKey, false, true));
 			}
 
 			return result;
@@ -119,16 +117,29 @@ namespace Ninject.Web.AspNetCore
 			if (!IsListType(serviceType, out var elementType))
 			{
 				EnsureNotAnyKey(serviceKey, serviceType);
-				return _resolutionRoot.Get(serviceType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, true),
-					new ServiceKeyParameter(serviceKey));
+				return ResolveKeyedService<object>(serviceType, serviceKey, true, false);
 			}
 			else
 			{
 				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
 				// Therefore, need to implement a workaround to not instantiate here bindings with a different servicekey value
 				return ConvertToTypedEnumerable(elementType,
-					_resolutionRoot.GetAll(elementType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey, false),
-						new ServiceKeyParameter(serviceKey)));
+					ResolveKeyedService<IEnumerable<object>>(elementType, serviceKey, false, true));
+			}
+		}
+
+		private T ResolveKeyedService<T>(Type serviceType, object serviceKey, bool isUnique, bool isOptional) where T : class
+		{
+			var standardRequest = _resolutionRoot.CreateRequest(serviceType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey), Array.Empty<Parameter>(), isOptional, isUnique);
+			var keyedRequest = standardRequest.ToKeyedRequest(serviceKey);
+			var result = _resolutionRoot.Resolve(keyedRequest);
+			if (isUnique)
+			{
+				return (result as object[]).FirstOrDefault() as T;
+			}
+			else
+			{
+				return result as T;
 			}
 		}
 
@@ -180,6 +191,7 @@ namespace Ninject.Web.AspNetCore
 		{
 			var castMethod = EnumerableCastMethod.MakeGenericMethod(elementType);
 			var result = (IEnumerable)castMethod.Invoke(null, new object[] { objectList });
+
 			return result;
 		}
 		

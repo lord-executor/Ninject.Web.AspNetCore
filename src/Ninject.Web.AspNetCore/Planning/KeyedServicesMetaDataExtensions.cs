@@ -12,7 +12,7 @@ namespace Ninject.Web.AspNetCore.Planning
 	{
 
 #if NET8_0_OR_GREATER
-		internal static bool DoesMetadataMatchServiceKey(this IBindingMetadata metadata, object serviceKey, bool isUniqueRequest)
+		internal static bool DoesMetadataMatchServiceKey(this IBindingMetadata metadata, object serviceKey)
 		{
 			if (serviceKey == KeyedService.AnyKey)
 			{
@@ -20,10 +20,11 @@ namespace Ninject.Web.AspNetCore.Planning
 				// see CombinationalRegistration compliancetest
 				return HasServiceKeyMetadata(metadata) && !Object.Equals(metadata.GetServiceKey(), KeyedService.AnyKey);
 			}
-			return Object.Equals(metadata.GetServiceKey(), serviceKey)
-		       // if we query with a key different to KeyedService.AnyKey but registired with AnyKey, we have to return it as well
-		       // see ResolveKeyedServiceSingletonInstanceWithAnyKey compliancetest. But only if we resolve a unique instance
-				|| (isUniqueRequest && Object.Equals(metadata.GetServiceKey(), KeyedService.AnyKey));
+
+			return Object.Equals(metadata.GetServiceKey(), serviceKey);
+			// if we query with a key different to KeyedService.AnyKey but registired with AnyKey, we have to instantiate it in the end
+			// but we do this with a missingbinding resolver, the AnyBindingResolver. But only if we resolve a unique instance
+			// see ResolveKeyedServiceSingletonInstanceWithAnyKey compliancetest. 
 		}
 
 		internal static object GetServiceKey(this IBindingMetadata metadata)
