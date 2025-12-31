@@ -74,6 +74,11 @@ namespace Ninject.Web.AspNetCore.Planning
 			}
 			catch (ActivationException ex)
 			{
+				if (Site.HasDefaultValue)
+				{
+					// in case we have a default value for the constructor parameter, we don't throw but use the default instead.
+					return Site.DefaultValue;
+				}
 				throw new InvalidOperationException(
 					$"Can't resolve keyed service of Type {Type} with key {fromKeyedServiceValue}", ex);
 			}
