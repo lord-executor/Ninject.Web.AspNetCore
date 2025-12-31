@@ -10,10 +10,15 @@ using Ninject.Web.AspNetCore.Parameters;
 
 namespace Ninject.Web.AspNetCore.RequestActivation
 {
+	/// <summary>
+	/// Use a specific request class for keyed requests so that we can get the ServiceKey in the <see cref="AnyBindingResolver"/> class.
+	/// Additionally, handle the ServiceKey parameter as well as allow to add additional constraints during resolution required for
+	/// FromKeyedServices attribute handling.
+	/// </summary>
 	public class KeyedRequest : IRequest
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Request"/> class.
+		/// Initializes a new instance of the <see cref="KeyedRequest"/> class.
 		/// </summary>
 		/// <param name="service">The service that was requested.</param>
 		/// <param name="constraint">The constraint that will be applied to filter the bindings used for the request.</param>
@@ -38,7 +43,7 @@ namespace Ninject.Web.AspNetCore.RequestActivation
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Request"/> class.
+		/// Initializes a new instance of the <see cref="KeyedRequest"/> class.
 		/// </summary>
 		/// <param name="parentContext">The parent context.</param>
 		/// <param name="service">The service that was requested.</param>
