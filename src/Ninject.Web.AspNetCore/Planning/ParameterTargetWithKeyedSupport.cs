@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Activation;
+using Ninject.Parameters;
 using Ninject.Planning.Bindings;
 using Ninject.Planning.Targets;
 using Ninject.Web.AspNetCore.Parameters;
@@ -32,52 +34,6 @@ namespace Ninject.Web.AspNetCore.Planning
 			}
 		}
 
-		protected override Func<IBindingMetadata, bool> ReadConstraintFromTarget()
-		{
-#if NET8_0_OR_GREATER
-			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
-			var baseFunc = base.ReadConstraintFromTarget();
-			if (keyedattributes == null || keyedattributes.Length == 0
-#if NET10_0_OR_GREATER
-				|| (keyedattributes[0].LookupMode == ServiceKeyLookupMode.NullKey)
-#endif
-			)
-			{
-				return baseFunc;
-			}
-
-			return metadata =>
-			{
-				var result = true;
-				if (baseFunc != null)
-				{
-					result = baseFunc(metadata);
-				}
-
-				if (metadata.HasServiceKeyMetadata())
-				{
-					object keyToCompareWith = keyedattributes[0].Key;
-#if NET10_0_OR_GREATER
-					if (keyedattributes[0].LookupMode == ServiceKeyLookupMode.InheritKey) {
-						// here we would need the request!
-					}
-#endif
-					result = result && metadata.DoesMetadataMatchServiceKey(keyToCompareWith);
-				}
-				else
-				{
-					// we can't match bindings here which don't have a servicekey. If FromKeyServiceAttribute is present
-					// the match fails if no servicekey available.
-					result = false;
-				}
-
-				return result;
-			};
-#else
-			return base.ReadConstraintFromTarget();
-#endif
-		}
-
 		/// <summary>
 		/// MethodInjectionStrategy.GetMethodArguments calls ITarget.ResolveWithin.
 		/// As we can't override the base implementation as it is not virtual, the
@@ -89,45 +45,79 @@ namespace Ninject.Web.AspNetCore.Planning
 			var serviceKeyAttributes = GetCustomAttributes(typeof (ServiceKeyAttribute), true) as ServiceKeyAttribute[];
 			if (serviceKeyAttributes?.Length > 0)
 			{
-				var result = parent.Binding.Metadata.GetServiceKey();
-				var serviceKeyParameter = parent.Parameters.LastOrDefault(x => x is ServiceKeyParameter) as ServiceKeyParameter;
-				if (serviceKeyParameter != null)
-				{
-					result = serviceKeyParameter.ServiceKey;
-				}
-
-				var asConvertible = result as IConvertible;
-				if (asConvertible != null)
-				{
-					try
-					{
-						result = Convert.ChangeType(asConvertible, this.Type);
-					}
-					catch (InvalidCastException)
-					{
-						// we have to throw and InvalidOperationException in this case, a InvalidCastException
-						// is not passing the tests
-						throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + this.Type);
-					}
-				}
-
-				if (result != null && !this.Type.IsAssignableFrom(result.GetType()))
-				{
-					throw new InvalidOperationException("Cannot convert " + result + " to " + this.Type);
-				}
-
-				return result;
+				return ResolveServiceKeyValue(parent);
 			}
 
 			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
 			if (keyedattributes?.Length > 0)
 			{
-				var child = parent.Request.CreateKeyedChildRequest(Type, keyedattributes[0].Key, parent, this);
-				child.IsUnique = true;
-				return parent.Kernel.Resolve(child).SingleOrDefault();
+				return ResolveFromKeyedService(parent, keyedattributes[0]);
 			}
 #endif
 			return base.ResolveWithin(parent);
 		}
+
+#if NET8_0_OR_GREATER
+		private object ResolveFromKeyedService(IContext parent, FromKeyedServicesAttribute keyedattribute)
+		{
+			var fromKeyedServiceValue = DeterimeFromKeyedServiceValue(keyedattribute, parent.Parameters);
+			var additionalConstraint = fromKeyedServiceValue != null
+				? metadata => metadata.DoesMetadataMatchServiceKey(fromKeyedServiceValue)
+				: (Func<IBindingMetadata, bool>) null;
+			var child = parent.Request.CreateKeyedChildRequest(Type, fromKeyedServiceValue, parent, this, additionalConstraint);
+			child.IsUnique = true;
+			return parent.Kernel.Resolve(child).SingleOrDefault();
+		}
+
+		private object DeterimeFromKeyedServiceValue(
+			FromKeyedServicesAttribute keyedattribute, ICollection<IParameter> parameters)
+		{
+#if NET10_0_OR_GREATER
+			if (keyedattribute.LookupMode == ServiceKeyLookupMode.NullKey)
+			{
+				// means no constraint, resolve normally.
+				return null;
+			}
+			if (keyedattribute.LookupMode == ServiceKeyLookupMode.InheritKey)
+			{
+				var serviceKeyParam = parameters.LastOrDefault(x => x is ServiceKeyParameter) as ServiceKeyParameter;
+				return serviceKeyParam?.ServiceKey;
+			}
+#endif
+			return keyedattribute.Key;
+		}
+
+		private object ResolveServiceKeyValue(IContext parent)
+		{
+			var result = parent.Binding.Metadata.GetServiceKey();
+			var serviceKeyParameter = parent.Parameters.LastOrDefault(x => x is ServiceKeyParameter) as ServiceKeyParameter;
+			if (serviceKeyParameter != null)
+			{
+				result = serviceKeyParameter.ServiceKey;
+			}
+
+			var asConvertible = result as IConvertible;
+			if (asConvertible != null)
+			{
+				try
+				{
+					result = Convert.ChangeType(asConvertible, this.Type);
+				}
+				catch (InvalidCastException)
+				{
+					// we have to throw and InvalidOperationException in this case, a InvalidCastException
+					// is not passing the tests
+					throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + this.Type);
+				}
+			}
+
+			if (result != null && !this.Type.IsAssignableFrom(result.GetType()))
+			{
+				throw new InvalidOperationException("Cannot convert " + result + " to " + this.Type);
+			}
+
+			return result;
+		}
+#endif
 	}
 }

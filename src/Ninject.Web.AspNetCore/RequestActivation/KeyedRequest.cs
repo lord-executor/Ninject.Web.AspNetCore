@@ -44,13 +44,15 @@ namespace Ninject.Web.AspNetCore.RequestActivation
 		/// <param name="service">The service that was requested.</param>
 		/// <param name="target">The target that will receive the injection.</param>
 		/// <param name="scopeCallback">The scope callback, if an external scope was specified.</param>
-		public KeyedRequest(IContext parentContext, Type service, object serviceKey, ITarget target, Func<object> scopeCallback)
+		public KeyedRequest(IContext parentContext, Type service, object serviceKey, ITarget target, Func<object> scopeCallback, Func<IBindingMetadata, bool> additionalConstraint = null)
 		{
 			ParentContext = parentContext;
 			ParentRequest = parentContext.Request;
 			Service = service;
 			Target = target;
-			Constraint = target.Constraint;
+			Constraint = additionalConstraint == null
+				? target.Constraint
+				: metadata => (target.Constraint?.Invoke(metadata) ?? true) && additionalConstraint(metadata);
 			IsOptional = target.IsOptional;
 			Parameters = new List<IParameter>(parentContext.Parameters.Where(x => x.ShouldInherit));
 			var parametersToRemove = Parameters.Where(x => x is ServiceKeyParameter).ToList();
