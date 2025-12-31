@@ -172,7 +172,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var provider = CreateServiceProvider(kernel);
 
 			Action action = () => provider.GetRequiredKeyedService(typeof(IWarrior), "Samurai");
-			action.Should().Throw<ActivationException>().WithMessage("*No matching bindings are available*");
+			action.Should().Throw<InvalidOperationException>().WithInnerException<ActivationException>().WithMessage("*No matching bindings are available*");
 		}
 
 		[Fact]
@@ -216,7 +216,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var provider = CreateServiceProvider(kernel);
 
 			Action action = () => provider.GetRequiredService(typeof(IWarrior));
-			action.Should().Throw<ActivationException>().WithMessage("*No matching bindings are available, and the type is not self-bindable.*");
+			action.Should().Throw<InvalidOperationException>().WithInnerException<ActivationException>().WithMessage("*No matching bindings are available, and the type is not self-bindable.*");
 		}
 
 		private IServiceProvider CreateServiceProvider(AspNetCoreKernel kernel)

@@ -63,10 +63,20 @@ namespace Ninject.Web.AspNetCore.Planning
 			var fromKeyedServiceValue = DeterimeFromKeyedServiceValue(keyedattribute, parent.Parameters);
 			var additionalConstraint = fromKeyedServiceValue != null
 				? metadata => metadata.DoesMetadataMatchServiceKey(fromKeyedServiceValue)
-				: (Func<IBindingMetadata, bool>) null;
-			var child = parent.Request.CreateKeyedChildRequest(Type, fromKeyedServiceValue, parent, this, additionalConstraint);
+				: (Func<IBindingMetadata, bool>)null;
+			var child = parent.Request.CreateKeyedChildRequest(Type, fromKeyedServiceValue, parent, this,
+				additionalConstraint);
 			child.IsUnique = true;
-			return parent.Kernel.Resolve(child).SingleOrDefault();
+			child.IsOptional = false; // constructor arguments marked with FromKeyedServices must always resolve, otherwise an InvalidOperationException is expected.
+			try
+			{
+				return parent.Kernel.Resolve(child).SingleOrDefault();
+			}
+			catch (ActivationException ex)
+			{
+				throw new InvalidOperationException(
+					$"Can't resolve keyed service of Type {Type} with key {fromKeyedServiceValue}", ex);
+			}
 		}
 
 		private object DeterimeFromKeyedServiceValue(

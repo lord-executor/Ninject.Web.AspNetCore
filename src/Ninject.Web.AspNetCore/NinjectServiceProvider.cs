@@ -46,7 +46,14 @@ namespace Ninject.Web.AspNetCore
 		{
 			if (!IsListType(serviceType, out var elementType))
 			{
-				return _resolutionRoot.Get(serviceType, metadata => !metadata.HasServiceKeyMetadata());
+				try
+				{
+					return _resolutionRoot.Get(serviceType, metadata => !metadata.HasServiceKeyMetadata());
+				}
+				catch (ActivationException ex)
+				{
+					throw new InvalidOperationException($"Can't resolve service of Type {serviceType}", ex);
+				}
 			}
 			else
 			{
@@ -117,7 +124,14 @@ namespace Ninject.Web.AspNetCore
 			if (!IsListType(serviceType, out var elementType))
 			{
 				EnsureNotAnyKey(serviceKey, serviceType);
-				return ResolveKeyedService<object>(serviceType, serviceKey, true, false);
+				try
+				{
+					return ResolveKeyedService<object>(serviceType, serviceKey, true, false);
+				}
+				catch (ActivationException ex)
+				{
+					throw new InvalidOperationException($"Can't resolve service of Type {serviceType} with service key {serviceKey}", ex);
+				}
 			}
 			else
 			{
