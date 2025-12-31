@@ -183,14 +183,9 @@ namespace Ninject.Web.AspNetCore
 			if (type.IsGenericType)
 			{
 				Type genericTypeDefinition = type.GetGenericTypeDefinition();
-				if (genericTypeDefinition == typeof(List<>) || genericTypeDefinition == typeof(IList<>) ||
+				if (genericTypeDefinition == typeof(IEnumerable<>) ||
+				    genericTypeDefinition == typeof(List<>) || genericTypeDefinition == typeof(IList<>) ||
 				    genericTypeDefinition == typeof(ICollection<>))
-				{
-					elementType = type.GenericTypeArguments[0];
-					return true;
-				}
-
-				if (genericTypeDefinition == typeof(IEnumerable<>))
 				{
 					elementType = type.GenericTypeArguments[0];
 					return true;
