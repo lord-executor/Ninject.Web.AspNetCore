@@ -28,9 +28,9 @@ namespace Ninject.Web.AspNetCore.Components
 			// that the next request for the same service type doesn't need to resolve this again.
 			return bindings[service.GetGenericTypeDefinition()].Where(binding => {
 				// If the binding has a ServiceDescriptor in its metadata, then we 
-				if (binding.Target == BindingTarget.Type && binding.Metadata.Has(nameof(ServiceDescriptor)))
+				if (binding.Target == BindingTarget.Type && binding.Metadata.Has(nameof(IDescriptorAdapter)))
 				{
-					return SatisfiesGenericTypeConstraints(service, binding.Metadata.Get<IDescriptorAdapter>(nameof(ServiceDescriptor)).ImplementationType);
+					return SatisfiesGenericTypeConstraints(service, binding.Metadata.Get<IDescriptorAdapter>(nameof(IDescriptorAdapter)).ImplementationType);
 				}
 
 				// ... otherwise we default to the OpenGenericBindingResolver which returns _all_ the bindings without regard for their generic constraints

@@ -68,7 +68,7 @@ namespace Ninject.Web.AspNetCore.Planning
 				var bindingIndex = new BindingIndex();
 				resultBinding.Metadata.Set(nameof(BindingIndex), bindingIndex.Next(service, keyedRequest.ServiceKey));
 				resultBinding.Metadata.Set(nameof(ServiceKey), new ServiceKey(keyedRequest.ServiceKey));
-				resultBinding.Metadata.Set(nameof(ServiceDescriptor), matchingAnyBinding.Metadata.Get<IDescriptorAdapter>(nameof(ServiceDescriptor)));
+				resultBinding.Metadata.Set(nameof(IDescriptorAdapter), matchingAnyBinding.Metadata.Get<IDescriptorAdapter>(nameof(IDescriptorAdapter)));
 
 				return new Binding[1]
 				{
