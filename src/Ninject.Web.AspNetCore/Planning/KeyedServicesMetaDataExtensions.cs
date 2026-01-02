@@ -23,7 +23,7 @@ namespace Ninject.Web.AspNetCore.Planning
 
 			return Object.Equals(metadata.GetServiceKey(), serviceKey);
 			// if we query with a key different to KeyedService.AnyKey but registired with AnyKey, we have to instantiate it in the end
-			// but we do this with a missingbinding resolver, the AnyBindingResolver. But only if we resolve a unique instance
+			// but we do this with a missingbinding resolver, the KeyedServiceAnyKeyResolver. But only if we resolve a unique instance
 			// see ResolveKeyedServiceSingletonInstanceWithAnyKey compliancetest. 
 		}
 

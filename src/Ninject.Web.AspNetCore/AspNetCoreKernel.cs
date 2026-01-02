@@ -73,7 +73,7 @@ namespace Ninject.Web.AspNetCore
 			Components.Add<IActivationStrategy, OrderedDisposalStrategy>();
 
 #if NET8_0_OR_GREATER
-			Components.Add<IMissingBindingResolver, AnyBindingResolver>();
+			Components.Add<IMissingBindingResolver, KeyedServiceAnyKeyResolver>();
 #endif
 		}
 

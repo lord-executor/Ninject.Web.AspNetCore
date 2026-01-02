@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Activation;
-using Ninject.Activation.Providers;
 using Ninject.Components;
 using Ninject.Infrastructure;
 using Ninject.Planning.Bindings;
@@ -13,7 +12,15 @@ using Ninject.Web.AspNetCore.RequestActivation;
 namespace Ninject.Web.AspNetCore.Planning
 {
 #if NET8_0_OR_GREATER	
-	public class AnyBindingResolver : NinjectComponent, IMissingBindingResolver
+	/// <summary>
+	/// This class is used to handle keyed services registrations with service key equal to
+	/// KeyedService.AnyKey.
+	/// If such a binding is resolved unique with a key different to KeyedService.AnyKey,
+	/// we need to dynamically add a new matching binding with this service key.
+	/// The missing binding resolver adds a binding with the metadata for this service key, so that
+	/// it can be resolved in this resolution and in potential next resolutions as well. 
+	/// </summary>
+	public class KeyedServiceAnyKeyResolver : NinjectComponent, IMissingBindingResolver
 	{
 		public IEnumerable<IBinding> Resolve(Multimap<Type, IBinding> bindings, IRequest request)
 		{
