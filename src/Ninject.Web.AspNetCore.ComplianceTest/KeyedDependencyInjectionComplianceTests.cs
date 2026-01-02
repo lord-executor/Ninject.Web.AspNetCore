@@ -22,7 +22,7 @@ public class KeyedDependencyInjectionComplianceTests : Microsoft.Extensions.Depe
 		return factory.CreateBuilder(serviceCollection).Build();
 	}
 
-#pragma warning disable xUnit1024
+#pragma warning disable xUnit1024, xUnit1026
 
 	[Theory(Skip = "Wrong implementation of the test, should use Assert.Equal and not Assert.Same")]
 	[InlineData(true)]
@@ -37,5 +37,5 @@ public class KeyedDependencyInjectionComplianceTests : Microsoft.Extensions.Depe
 	public new void ResolveWithAnyKeyQuery_Constructor_Duplicates(bool anyKeyQueryBeforeSingletonQueries)
 	{
 	}
-#pragma warning restore xUnit1024
+#pragma warning restore xUnit1024, xUnit1026
 }
