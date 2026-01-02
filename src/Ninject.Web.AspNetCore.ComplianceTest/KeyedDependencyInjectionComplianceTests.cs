@@ -37,5 +37,5 @@ public class KeyedDependencyInjectionComplianceTests : Microsoft.Extensions.Depe
 	public new void ResolveWithAnyKeyQuery_Constructor_Duplicates(bool anyKeyQueryBeforeSingletonQueries)
 	{
 	}
-#pragma warning enable xUnit1024
+#pragma warning restore xUnit1024
 }
