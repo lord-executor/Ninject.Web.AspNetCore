@@ -40,16 +40,20 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		}
 
 		[Fact]
-		public void OptionalExisingWithKeyedChild_SingleServiceResolved()
+		public void OptionalExisingWithKeyedChildren_SingleServiceResolved()
 		{
 			var collection = new ServiceCollection();
-			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja", typeof(NinjaWithKeyedWaepon), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja", typeof(NinjaWithKeyedWeapon), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IKeyedWeaponStorage), "Storage", typeof(KeyedWeaponStorage), ServiceLifetime.Transient));
 			collection.Add(new ServiceDescriptor(typeof(IWeapon), "Longsword", typeof(Longsword), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IWeapon), "Lance", typeof(Lance), ServiceLifetime.Transient));
 			var kernel = CreateTestKernel(collection);
 			var provider = CreateServiceProvider(kernel);
 
 			var warrior = provider.GetKeyedService(typeof(IWarrior), "Ninja");
-			warrior.Should().NotBeNull().And.BeOfType(typeof(NinjaWithKeyedWaepon)).And.Match(x => ((NinjaWithKeyedWaepon)x).Weapon.Type == nameof(Longsword));
+			warrior.Should().NotBeNull().And.BeOfType(typeof(NinjaWithKeyedWeapon)).And.Match(x => ((NinjaWithKeyedWeapon)x).Weapon.Type == nameof(Longsword));
+			((NinjaWithKeyedWeapon)warrior).Storage.Should().NotBeNull().And.BeOfType(typeof(KeyedWeaponStorage)).And
+				.Match(x => ((KeyedWeaponStorage)x).Weapon.Type == nameof(Lance));
 		}
 
 		[Fact]
