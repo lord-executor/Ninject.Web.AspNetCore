@@ -37,7 +37,7 @@ namespace Ninject.Web.AspNetCore.Planning
 				// as the DefaultValueBindingResolver is only a MissingBindingResolver, the
 				// ParameterTargetWithKeyedSupport.ResolveWithin method already
 				// provided a default value before any Ninject resolution for the value happens.
-				result = result || GetCustomAttributes(typeof (ServiceKeyAttribute), true)?.Length > 0;
+				result = result || _serviceKeyAttribute.Value != null;
 #endif
 				return result;
 			}
