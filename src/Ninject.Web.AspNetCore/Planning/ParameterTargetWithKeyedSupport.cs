@@ -14,8 +14,17 @@ namespace Ninject.Web.AspNetCore.Planning
 {
 	public class ParameterTargetWithKeyedSupport : ParameterTarget, ITarget
 	{
+#if NET8_0_OR_GREATER
+		private readonly Lazy<ServiceKeyAttribute> _serviceKeyAttribute;
+		private readonly Lazy<FromKeyedServicesAttribute> _fromKeyedServicesAttribute;
+#endif
+
 		public ParameterTargetWithKeyedSupport(MethodBase method, ParameterInfo site) : base(method, site)
 		{
+#if NET8_0_OR_GREATER
+			_serviceKeyAttribute = new Lazy<ServiceKeyAttribute>(ReadServiceKeyAttribute);
+			_fromKeyedServicesAttribute = new Lazy<FromKeyedServicesAttribute>(ReadFromKeyedServicesAttribute);
+#endif
 		}
 
 		public override bool HasDefaultValue
@@ -42,22 +51,32 @@ namespace Ninject.Web.AspNetCore.Planning
 		object ITarget.ResolveWithin(IContext parent)
 		{
 #if NET8_0_OR_GREATER
-			var serviceKeyAttributes = GetCustomAttributes(typeof (ServiceKeyAttribute), true) as ServiceKeyAttribute[];
-			if (serviceKeyAttributes?.Length > 0)
+			if (_serviceKeyAttribute.Value != null) 
 			{
 				return ResolveServiceKeyValue(parent);
 			}
-
-			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
-			if (keyedattributes?.Length > 0)
+			
+			if (_fromKeyedServicesAttribute.Value != null)
 			{
-				return ResolveFromKeyedService(parent, keyedattributes[0]);
+				return ResolveFromKeyedService(parent, _fromKeyedServicesAttribute.Value);
 			}
 #endif
 			return base.ResolveWithin(parent);
 		}
 
 #if NET8_0_OR_GREATER
+		private ServiceKeyAttribute ReadServiceKeyAttribute()
+		{
+			var serviceKeyAttributes = GetCustomAttributes(typeof(ServiceKeyAttribute), true) as ServiceKeyAttribute[];
+			return serviceKeyAttributes?.Length > 0 ? serviceKeyAttributes[0] : null;
+		}
+
+		private FromKeyedServicesAttribute ReadFromKeyedServicesAttribute()
+		{
+			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
+			return keyedattributes?.Length > 0 ? keyedattributes[0] : null;
+		}
+
 		private object ResolveFromKeyedService(IContext parent, FromKeyedServicesAttribute keyedattribute)
 		{
 			var fromKeyedServiceValue = DeterimeFromKeyedServiceValue(keyedattribute, parent.Parameters);
