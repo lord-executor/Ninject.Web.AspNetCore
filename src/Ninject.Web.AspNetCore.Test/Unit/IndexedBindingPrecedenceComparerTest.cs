@@ -86,7 +86,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 
 			public DummyBinding WithIndex(BindingIndex index)
 			{
-				Metadata.Set(nameof(BindingIndex), index.Next(Service, BindingIndex.DefaultIndexKey));
+				Metadata.Set(nameof(BindingIndex), index.Next(Service, BindingIndex.UnkeyedIndexKey.Instance));
 				return this;
 			}
 

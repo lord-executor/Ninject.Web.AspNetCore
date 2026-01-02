@@ -74,7 +74,7 @@ namespace Ninject.Web.AspNetCore
 			var resultWithMetadata = ConfigureImplementationAndLifecycleWithAdapter(bindingToSyntax, adapter)
 				.WithMetadata(nameof(ServiceDescriptor), adapter);
 
-			object indexKey = BindingIndex.DefaultIndexKey;
+			object indexKey = BindingIndex.UnkeyedIndexKey.Instance;
 #if NET8_0_OR_GREATER
 			if (descriptor.IsKeyedService)
 			{

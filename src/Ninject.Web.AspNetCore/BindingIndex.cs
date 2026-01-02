@@ -6,8 +6,22 @@ namespace Ninject.Web.AspNetCore
 {
 	public class BindingIndex
 	{
+
+		/// <summary>
+		/// Used as key for storing BindingIndex for unkeyed services.
+		/// </summary>
+		public sealed class UnkeyedIndexKey
+		{
+			private UnkeyedIndexKey()
+			{
+			}
+
+			public static UnkeyedIndexKey Instance { get; } = new UnkeyedIndexKey();
+
+			public override string ToString() => nameof(UnkeyedIndexKey);
+		}
+
 		private readonly IDictionary<ServiceTypeKey, Item> _bindingIndexMap = new Dictionary<ServiceTypeKey, Item>();
-		public const string DefaultIndexKey = "NonKeyed";
 
 		public int Count { get; private set; }
 
