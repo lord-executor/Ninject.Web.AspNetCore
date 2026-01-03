@@ -66,7 +66,15 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			else
 			{
 				Action action = () => resolver.Resolve<IWarrior>(kernel);
-				action.Should().Throw<ActivationException>().WithMessage("Error activating IWarrior*");
+				if (resolver.ResolveType == ResolveType.ServiceProviderRequired)
+				{
+					action.Should().Throw<InvalidOperationException>().WithInnerException<ActivationException>()
+						.WithMessage("Error activating IWarrior*");
+				}
+				else
+				{
+					action.Should().Throw<ActivationException>().WithMessage("Error activating IWarrior*");
+				}
 			}
 		}
 
@@ -99,7 +107,15 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			else
 			{
 				Action action = () => resolver.Resolve<IWarrior>(kernel);
-				action.Should().Throw<ActivationException>().WithMessage("Error activating IWeapon*");
+				if (resolver.ResolveType == ResolveType.ServiceProviderRequired)
+				{
+					action.Should().Throw<InvalidOperationException>().WithInnerException<ActivationException>()
+						.WithMessage("Error activating IWeapon*");
+				}
+				else
+				{
+					action.Should().Throw<ActivationException>().WithMessage("Error activating IWeapon*");
+				}
 			}
 		}
 

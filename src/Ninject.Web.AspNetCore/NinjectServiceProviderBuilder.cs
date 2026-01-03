@@ -28,7 +28,7 @@ namespace Ninject.Web.AspNetCore
 				var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider;
 				if (scopeProvider != null)
 				{
-					var descriptor = context.Request.ParentContext?.Binding.Metadata.Get<ServiceDescriptor>(nameof(ServiceDescriptor));
+					var descriptor = context.Request.ParentContext?.Binding.Metadata.Get<IDescriptorAdapter>(nameof(IDescriptorAdapter));
 					if (descriptor == null || descriptor.Lifetime != ServiceLifetime.Singleton)
 					{
 						return scopeProvider;
@@ -39,6 +39,9 @@ namespace Ninject.Web.AspNetCore
 			});
 #if NET6_0_OR_GREATER
 			_kernel.Bind<IServiceProviderIsService>().To<NinjectServiceProviderIsService>().InSingletonScope();
+#endif
+#if NET8_0_OR_GREATER
+			_kernel.Bind<IServiceProviderIsKeyedService>().To<NinjectServiceProviderIsService>().InSingletonScope();
 #endif
 
 			var adapter = new ServiceCollectionAdapter();

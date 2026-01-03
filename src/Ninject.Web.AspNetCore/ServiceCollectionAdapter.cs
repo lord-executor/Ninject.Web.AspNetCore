@@ -55,12 +55,46 @@ namespace Ninject.Web.AspNetCore
 			ServiceDescriptor descriptor,
 			BindingIndex bindingIndex) where T : class
 		{
-			IBindingNamedWithOrOnSyntax<T> result;
-			if (descriptor.ImplementationType != null)
+			IDescriptorAdapter adapter;
+#if NET8_0_OR_GREATER
+			if (descriptor.IsKeyedService)
 			{
-				result = ConfigureLifecycle(bindingToSyntax.To(descriptor.ImplementationType), descriptor.Lifetime);
+				adapter = new KeyedDescriptorAdapter(descriptor);
 			}
-			else if (descriptor.ImplementationFactory != null)
+#endif
+#if NET8_0_OR_GREATER
+			else
+			{
+#endif
+				adapter = new DefaultDescriptorAdapter(descriptor);
+#if NET8_0_OR_GREATER
+			}
+#endif
+
+			var resultWithMetadata = ConfigureImplementationAndLifecycleWithAdapter(bindingToSyntax, adapter)
+				.WithMetadata(nameof(IDescriptorAdapter), adapter);
+
+			object indexKey = BindingIndex.UnkeyedIndexKey.Instance;
+#if NET8_0_OR_GREATER
+			if (descriptor.IsKeyedService)
+			{
+				resultWithMetadata = resultWithMetadata.WithMetadata(nameof(ServiceKey), new ServiceKey(descriptor.ServiceKey));
+				indexKey = descriptor.ServiceKey;
+			}
+#endif
+			resultWithMetadata = resultWithMetadata.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType, indexKey));
+			return resultWithMetadata;
+		}
+
+		private IBindingNamedWithOrOnSyntax<T> ConfigureImplementationAndLifecycleWithAdapter<T>(IBindingToSyntax<T> bindingToSyntax,
+			IDescriptorAdapter adapter) where T : class
+		{
+			IBindingNamedWithOrOnSyntax<T> result;
+			if (adapter.ImplementationType != null)
+			{
+				result = ConfigureLifecycle(bindingToSyntax.To(adapter.ImplementationType), adapter.Lifetime);
+			}
+			else if (adapter.UseServiceFactory)
 			{
 
 				result = ConfigureLifecycle(bindingToSyntax.ToMethod(context
@@ -70,18 +104,16 @@ namespace Ninject.Web.AspNetCore
 					// correct _scoped_ IServiceProvider is used. Fall back to root IServiceProvider when not created
 					// through a NinjectServiceProvider (some tests do this to prove a point)
 					var scopeProvider = context.GetServiceProviderScopeParameter()?.SourceServiceProvider ?? context.Kernel.Get<IServiceProvider>();
-					return descriptor.ImplementationFactory(scopeProvider) as T;
-				}), descriptor.Lifetime);
+					return adapter.InstantiateFromServiceFactory(scopeProvider, context) as T;
+				}), adapter.Lifetime);
 			}
 			else
 			{
 				// use ToMethod here as ToConstant has the wrong return type.
-				result = bindingToSyntax.ToMethod(context => descriptor.ImplementationInstance as T).InSingletonScope();
+				result = bindingToSyntax.ToMethod(context => adapter.ImplementationInstance as T).InSingletonScope();
 			}
 
-			return result
-				.WithMetadata(nameof(ServiceDescriptor), descriptor)
-				.WithMetadata(nameof(BindingIndex), bindingIndex.Next(descriptor.ServiceType));
+			return result;
 		}
 
 		private IBindingNamedWithOrOnSyntax<T> ConfigureLifecycle<T>(

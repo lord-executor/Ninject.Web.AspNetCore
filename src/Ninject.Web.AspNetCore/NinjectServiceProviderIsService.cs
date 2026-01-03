@@ -1,11 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using Ninject.Web.AspNetCore.Planning;
 
 namespace Ninject.Web.AspNetCore
 {
 #if NET6_0_OR_GREATER
 	public class NinjectServiceProviderIsService : IServiceProviderIsService
+#if NET8_0_OR_GREATER
+	, IServiceProviderIsKeyedService
+#endif
 	{
 		private readonly IKernel _kernel;
 
@@ -31,6 +35,26 @@ namespace Ninject.Web.AspNetCore
 
 			return _kernel.CanResolve(serviceType);
 		}
+#if NET8_0_OR_GREATER
+		public bool IsKeyedService(Type serviceType, object serviceKey)
+		{
+			// IsService should only return true if the type can actually be resolved to a service
+			// and open generic types cannot. Except for IEnumerable<T> which should return true
+			// in ANY case (see DependencyInjectionSpecificationTests.IEnumerableWithIsServiceAlwaysReturnsTrue)
+			if (serviceType.IsGenericTypeDefinition)
+			{
+				return false;
+			}
+
+			if (serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			{
+				return true;
+			}
+
+			return _kernel.CanResolve(serviceType, metadata =>
+				metadata.DoesMetadataMatchServiceKey(serviceKey));
+		}
+#endif
 	}
 #endif
 }

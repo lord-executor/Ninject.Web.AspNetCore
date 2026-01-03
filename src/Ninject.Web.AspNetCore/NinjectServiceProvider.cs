@@ -1,6 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Ninject.Syntax;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Ninject.Parameters;
+using Ninject.Planning.Bindings;
+using Ninject.Web.AspNetCore.Parameters;
+using Ninject.Web.AspNetCore.Planning;
+using Ninject.Web.AspNetCore.RequestActivation;
 
 namespace Ninject.Web.AspNetCore
 {
@@ -19,7 +28,11 @@ namespace Ninject.Web.AspNetCore
 	/// we pass an <see cref="IServiceScope"/> constructor argument when creating the root service provider.
 	/// </summary>
 	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
+#if NET8_0_OR_GREATER
+	, IKeyedServiceProvider
+#endif
 	{
+		private static readonly MethodInfo EnumerableCastMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast));
 		private readonly IResolutionRoot _resolutionRoot;
 		private readonly IServiceScope _scope;
 
@@ -31,13 +44,41 @@ namespace Ninject.Web.AspNetCore
 
 		public object GetRequiredService(Type serviceType)
 		{
-			var result = _resolutionRoot.Get(serviceType);
-			return result;
+			if (!IsListType(serviceType, out var elementType))
+			{
+				try
+				{
+					return _resolutionRoot.Get(serviceType, metadata => !metadata.HasServiceKeyMetadata());
+				}
+				catch (ActivationException ex)
+				{
+					throw new InvalidOperationException($"Can't resolve service of Type {serviceType}", ex);
+				}
+			}
+			else
+			{
+				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
+				// Therefore, need to implement a workaround to not instantiate here bindings with servicekey
+				return ConvertToTypedEnumerable(elementType,
+					_resolutionRoot.GetAll(elementType, metadata => !metadata.HasServiceKeyMetadata()));
+			}
 		}
 
 		public object GetService(Type serviceType)
 		{
-			var result = _resolutionRoot.TryGet(serviceType);
+			object result;
+			if (!IsListType(serviceType, out var elementType))
+			{
+				result = _resolutionRoot.TryGet(serviceType, metadata => !metadata.HasServiceKeyMetadata());
+			}
+			else
+			{
+				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
+				// Therefore, need to implement a workaround to not instantiate here bindings with servicekey
+				result = ConvertToTypedEnumerable(elementType,
+					_resolutionRoot.GetAll(elementType, metadata => !metadata.HasServiceKeyMetadata()));
+			}
+
 			return result;
 		}
 
@@ -45,5 +86,123 @@ namespace Ninject.Web.AspNetCore
 		{
 			_scope?.Dispose();
 		}
+
+#if NET8_0_OR_GREATER
+		public object GetKeyedService(Type serviceType, object serviceKey)
+		{
+			if (serviceKey == null)
+			{
+				// serviceKey = null means unkeyed
+				return GetService(serviceType);
+			}
+
+			object result;
+			if (!IsListType(serviceType, out var elementType))
+			{
+				EnsureNotAnyKey(serviceKey, serviceType);
+				return ResolveKeyedService<object>(serviceType, serviceKey, true, true);
+			}
+			else
+			{
+				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
+				// Therefore, need to implement a workaround to not instantiate here bindings with a different servicekey value
+				result = ConvertToTypedEnumerable(elementType,
+					ResolveKeyedService<IEnumerable<object>>(elementType, serviceKey, false, true));
+			}
+
+			return result;
+		}
+
+		public object GetRequiredKeyedService(Type serviceType, object serviceKey)
+		{
+			if (serviceKey == null)
+			{
+				// serviceKey = null means unkeyed
+				return GetRequiredService(serviceType);
+			}
+
+			if (!IsListType(serviceType, out var elementType))
+			{
+				EnsureNotAnyKey(serviceKey, serviceType);
+				try
+				{
+					return ResolveKeyedService<object>(serviceType, serviceKey, true, false);
+				}
+				catch (ActivationException ex)
+				{
+					throw new InvalidOperationException($"Can't resolve service of Type {serviceType} with service key {serviceKey}", ex);
+				}
+			}
+			else
+			{
+				// Ninject is not evaluating metadata constraint when resolving a IEnumerable<T>, see KernelBase.UpdateRequest
+				// Therefore, need to implement a workaround to not instantiate here bindings with a different servicekey value
+				return ConvertToTypedEnumerable(elementType,
+					ResolveKeyedService<IEnumerable<object>>(elementType, serviceKey, false, true));
+			}
+		}
+
+		private T ResolveKeyedService<T>(Type serviceType, object serviceKey, bool isUnique, bool isOptional) where T : class
+		{
+			var standardRequest = _resolutionRoot.CreateRequest(serviceType, metadata => metadata.DoesMetadataMatchServiceKey(serviceKey), Array.Empty<Parameter>(), isOptional, isUnique);
+			var keyedRequest = standardRequest.ToKeyedRequest(serviceKey);
+			var result = _resolutionRoot.Resolve(keyedRequest);
+			if (isUnique)
+			{
+				return (result as object[]).FirstOrDefault() as T;
+			}
+			else
+			{
+				return result as T;
+			}
+		}
+
+		private void EnsureNotAnyKey(object serviceKey, Type serviceType)
+		{
+			if (serviceKey == KeyedService.AnyKey)
+			{
+				throw new InvalidOperationException($"Not allowed to resolve a service {serviceType} with the KeyedService.AnyKey. " +
+				                                    $"That's only supported when resolving collections of services.");
+			}
+		}
+
+#endif
+
+		/// <summary>
+		/// This method extracts the elementtype in the same way as Ninject does
+		/// in KernelBase.Resolve
+		/// </summary>
+		private static bool IsListType(Type type, out Type elementType)
+		{
+			if (type.IsArray)
+			{
+				elementType = type.GetElementType();
+				return true;
+			}
+
+			if (type.IsGenericType)
+			{
+				Type genericTypeDefinition = type.GetGenericTypeDefinition();
+				if (genericTypeDefinition == typeof(IEnumerable<>) ||
+				    genericTypeDefinition == typeof(List<>) || genericTypeDefinition == typeof(IList<>) ||
+				    genericTypeDefinition == typeof(ICollection<>))
+				{
+					elementType = type.GenericTypeArguments[0];
+					return true;
+				}
+			}
+
+			elementType = null;
+			return false;
+		}
+		
+		private static object ConvertToTypedEnumerable(Type elementType, IEnumerable<object> objectList)
+		{
+			var castMethod = EnumerableCastMethod.MakeGenericMethod(elementType);
+			var result = (IEnumerable)castMethod.Invoke(null, new object[] { objectList });
+
+			return result;
+		}
+		
 	}
 }
