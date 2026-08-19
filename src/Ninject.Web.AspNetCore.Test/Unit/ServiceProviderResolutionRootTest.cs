@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Moq;
 using Ninject.Parameters;
 using Ninject.Syntax;

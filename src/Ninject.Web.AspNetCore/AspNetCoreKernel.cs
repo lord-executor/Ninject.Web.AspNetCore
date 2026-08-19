@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject.Activation;
 using Ninject.Activation.Caching;
 using Ninject.Activation.Strategies;
@@ -34,7 +34,8 @@ namespace Ninject.Web.AspNetCore
 
 		protected override Func<IBinding, bool> SatifiesRequest(IRequest request)
 		{
-			return binding => {
+			return binding =>
+			{
 				var latest = true;
 				if (request.IsUnique)
 				{

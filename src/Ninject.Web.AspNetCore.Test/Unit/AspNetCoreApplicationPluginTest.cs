@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Ninject.Activation;
@@ -13,7 +13,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 {
 	public class AspNetCoreApplicationPluginTest : TestKernelContext
 	{
-		
+
 		[Fact]
 		public void ComponentsOfKernel_ContainsApplicationPlugin()
 		{
@@ -29,7 +29,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			(var applicationPlugin, var context, _) = GetApplicationPluginContext();
 
 			using (var requestScope = new RequestScope())
-			{				
+			{
 				var scope = applicationPlugin.GetRequestScope(context);
 				scope.Should().NotBeNull().And.Be(requestScope);
 			}
@@ -39,7 +39,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void GetRequestScope_WithoutRequestScope_ThrowsException()
 		{
 			(var applicationPlugin, var context, _) = GetApplicationPluginContext();
-			
+
 			Action action = () => applicationPlugin.GetRequestScope(context);
 			action.Should().Throw<ActivationException>();
 		}

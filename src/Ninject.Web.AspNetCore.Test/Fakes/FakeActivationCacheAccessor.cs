@@ -1,4 +1,4 @@
-﻿using Ninject.Activation.Caching;
+using Ninject.Activation.Caching;
 using Ninject.Web.AspNetCore.Components;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ninject.Web.AspNetCore.Test.Fakes;
@@ -19,7 +19,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void OptionalExising_ServiceKeyNullResolvedAsUnkeyed()
 		{
 			var collection = new ServiceCollection();
-			collection.Add(new ServiceDescriptor(typeof(IWarrior),null, typeof(Samurai), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), null, typeof(Samurai), ServiceLifetime.Transient));
 			var kernel = CreateTestKernel(collection);
 			var provider = CreateServiceProvider(kernel);
 
@@ -60,9 +60,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void OptionalKeyedServiceCollectionExisting_CorrectServiceResolved()
 		{
 			var collection = new ServiceCollection();
-			collection.Add(new ServiceDescriptor(typeof(IWarrior),"Samurai", typeof(Samurai), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Samurai", typeof(Samurai), ServiceLifetime.Transient));
 			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja1", new Ninja("test")));
-			collection.Add(new ServiceDescriptor(typeof(IWarrior),"Ninja2",
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja2",
 				(provider, key) => new Ninja("test:" + key.ToString()), ServiceLifetime.Transient));
 			var kernel = CreateTestKernel(collection);
 			var provider = CreateServiceProvider(kernel);
@@ -104,7 +104,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void OptionalExistingMultipleKeydServices_ResolvedQueriedAsList()
 		{
 			var kernel = CreateTestKernel();
-			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));;
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));
 			var provider = CreateServiceProvider(kernel);
 
@@ -121,7 +121,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void OptionalExistingMultipleKeydServices_NotResolvedAsListNonKeyed()
 		{
 			var kernel = CreateTestKernel();
-			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));;
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Ninja"));
 			var provider = CreateServiceProvider(kernel);
 
@@ -136,7 +136,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void ExistingMultipleServices_ResolvesNonKeyedToNull()
 		{
 			var kernel = CreateTestKernel();
-			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));;
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Ninja"));
 			var provider = CreateServiceProvider(kernel);
 
@@ -147,7 +147,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void RequiredKeyedServiceCollectionExisting_CorrectServiceResolved()
 		{
 			var collection = new ServiceCollection();
-			collection.Add(new ServiceDescriptor(typeof(IWarrior),"Samurai", typeof(Samurai), ServiceLifetime.Transient));
+			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Samurai", typeof(Samurai), ServiceLifetime.Transient));
 			collection.Add(new ServiceDescriptor(typeof(IWarrior), "Ninja", new Ninja("test")));
 			var kernel = CreateTestKernel(collection);
 			var provider = CreateServiceProvider(kernel);
@@ -183,7 +183,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void RequiredExistingMultipleKeydServices_ResolvedQueriedAsList()
 		{
 			var kernel = CreateTestKernel();
-			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));;
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Warrior"));
 			var provider = CreateServiceProvider(kernel);
 
@@ -200,7 +200,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void RequiredExistingMultipleKeydServices_NotResolvedAsListNonKeyed()
 		{
 			var kernel = CreateTestKernel();
-			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));;
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Ninja"));
 			var provider = CreateServiceProvider(kernel);
 
@@ -215,7 +215,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		public void ExistingMultipleServices_ResolvesNonKeyedToException()
 		{
 			var kernel = CreateTestKernel();
-			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));;
+			kernel.Bind<IWarrior>().To<Samurai>().WithMetadata(nameof(ServiceKey), new ServiceKey("Samurai"));
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test")).WithMetadata(nameof(ServiceKey), new ServiceKey("Ninja"));
 			var provider = CreateServiceProvider(kernel);
 

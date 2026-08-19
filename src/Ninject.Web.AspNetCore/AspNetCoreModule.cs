@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject.Modules;
 using Ninject.Web.AspNetCore.Hosting;
 using Ninject.Web.Common;

@@ -1,4 +1,4 @@
-﻿using Ninject.Activation;
+using Ninject.Activation;
 using Ninject.Activation.Strategies;
 using Ninject.Components;
 

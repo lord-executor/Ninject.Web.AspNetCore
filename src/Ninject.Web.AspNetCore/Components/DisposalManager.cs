@@ -1,4 +1,4 @@
-﻿using Ninject.Activation;
+using Ninject.Activation;
 using Ninject.Activation.Caching;
 using Ninject.Components;
 using Ninject.Infrastructure;
@@ -82,7 +82,7 @@ namespace Ninject.Web.AspNetCore.Components
 			}
 
 			public void Dispose()
-{
+			{
 				if (_disposals == null || _disposals.Count == 0)
 				{
 					return;

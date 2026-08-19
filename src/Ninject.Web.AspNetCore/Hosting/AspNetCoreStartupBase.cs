@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ninject.Web.AspNetCore.Hosting
 {
-    /// <summary>
-    /// Ninject customized startup class similar to Microsoft.AspNetCore.Hosting.StartupBase of TBuilder.
-    /// </summary>
-    public abstract class AspNetCoreStartupBase : IStartup
+	/// <summary>
+	/// Ninject customized startup class similar to Microsoft.AspNetCore.Hosting.StartupBase of TBuilder.
+	/// </summary>
+	public abstract class AspNetCoreStartupBase : IStartup
 	{
 		private readonly IServiceProviderFactory<NinjectServiceProviderBuilder> _providerFactory;
 

@@ -33,6 +33,6 @@ namespace Ninject.Web.AspNetCore
 		/// <summary>
 		/// The lifetime coonfigured for the service descriptor
 		/// </summary>
-		ServiceLifetime  Lifetime { get; }
+		ServiceLifetime Lifetime { get; }
 	}
 }

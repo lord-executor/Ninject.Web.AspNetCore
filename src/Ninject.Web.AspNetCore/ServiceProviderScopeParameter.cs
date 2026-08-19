@@ -1,4 +1,4 @@
-﻿using Ninject.Infrastructure.Disposal;
+using Ninject.Infrastructure.Disposal;
 using Ninject.Parameters;
 using System;
 using System.Collections.Generic;

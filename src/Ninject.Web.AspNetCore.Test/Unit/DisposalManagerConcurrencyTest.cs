@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using AwesomeAssertions;
 using Ninject.Web.AspNetCore.Components;
@@ -23,7 +23,8 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 				IDisposalCollectorArea area = null;
 
 				barrier.SignalAndWait();
-				lock (disposalManager) {
+				lock (disposalManager)
+				{
 					// make sure the two tasks are creating the area one after the other
 					area = disposalManager.CreateArea();
 				}

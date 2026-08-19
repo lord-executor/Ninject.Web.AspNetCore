@@ -5,7 +5,7 @@ namespace Ninject.Web.AspNetCore.Test.Fakes
 #if NET8_0_OR_GREATER
 	public class KeyedNinja : IWarrior
 	{
-		public object Key {get; private set;}
+		public object Key { get; private set; }
 
 		public KeyedNinja([ServiceKey] object key)
 		{

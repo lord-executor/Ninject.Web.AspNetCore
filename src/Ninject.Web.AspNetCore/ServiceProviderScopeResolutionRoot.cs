@@ -1,4 +1,4 @@
-﻿using Ninject.Activation;
+using Ninject.Activation;
 using Ninject.Parameters;
 using Ninject.Planning.Bindings;
 using Ninject.Syntax;

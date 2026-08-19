@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System;
 using System.Threading;
@@ -43,7 +43,8 @@ namespace Ninject.Web.AspNetCore.Hosting
 		{
 			config.ConfigureHostingModel(builder =>
 			{
-				builder.UseKestrel((builderContext, options) => {
+				builder.UseKestrel((builderContext, options) =>
+				{
 					// Defaults from Microsoft.AspNetCore.WebHost.CreateDefaultBuilder
 					options.Configure(builderContext.Configuration.GetSection("Kestrel"));
 					configureAction(options);

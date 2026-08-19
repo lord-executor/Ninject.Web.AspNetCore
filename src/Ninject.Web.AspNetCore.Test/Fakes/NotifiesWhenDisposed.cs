@@ -1,4 +1,4 @@
-﻿using Ninject.Infrastructure.Disposal;
+using Ninject.Infrastructure.Disposal;
 
 namespace Ninject.Web.AspNetCore.Test.Fakes
 {

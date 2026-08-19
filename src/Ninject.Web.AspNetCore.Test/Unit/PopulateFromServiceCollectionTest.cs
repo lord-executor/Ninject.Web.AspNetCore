@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ninject.Web.AspNetCore.Test.Fakes;
@@ -10,7 +10,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 {
 	public class PopulateFromServiceCollectionTest : TestKernelContext
 	{
-		
+
 		[Fact]
 		public void InstancesAreConvertedToConstants()
 		{
@@ -47,7 +47,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var first = kernel.Get<IWarrior>();
 			var second = kernel.Get<IWarrior>();
 			first.Should().NotBeSameAs(second).And.BeOfType(typeof(Samurai));
-		}		
+		}
 
 		[Fact]
 		public void ScopedRegistrationIsConvertedToInRequestScope()

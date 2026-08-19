@@ -1,4 +1,4 @@
-﻿namespace SampleApplication.Service.ChatBot
+namespace SampleApplication.Service.ChatBot
 {
 	public class HelloResponse
 	{

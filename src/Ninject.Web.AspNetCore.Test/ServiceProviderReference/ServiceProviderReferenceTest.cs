@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Ninject.Web.AspNetCore.Test.Fakes;
@@ -16,7 +16,8 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 		{
 			var scopeFactoryMock = new Mock<IServiceScopeFactory>();
 
-			var provider = CreateServiceProvider(collection => {
+			var provider = CreateServiceProvider(collection =>
+			{
 				collection.AddSingleton<IServiceScopeFactory>(scopeFactoryMock.Object);
 			});
 
@@ -26,7 +27,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			// * ServiceProviderEngine.ServiceProviderEngine constructor
 			// * ServiceProviderServiceExtensions.CreateScope
 			var factory = provider.GetRequiredService<IServiceScopeFactory>();
-			
+
 			factory.Should().NotBeNull().And.NotBe(scopeFactoryMock.Object);
 			factory.GetType().Name.Should().Contain("ServiceProviderEngine");
 		}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,7 +54,7 @@ namespace Ninject.Web.AspNetCore
 			public int TotalIndex { get; }
 			public int TypeIndex { get; }
 			public object IndexKey { get; }
-			
+
 			public int Precedence => _root.Count - TotalIndex;
 
 			public Item(BindingIndex root, Type serviceType, object indexKey, int totalIndex, int typeIndex)
@@ -65,7 +65,7 @@ namespace Ninject.Web.AspNetCore
 				TypeIndex = typeIndex;
 				IndexKey = indexKey;
 			}
-			
+
 			public bool IsLatest => _root.IsLatest(_serviceType, IndexKey, this);
 		}
 

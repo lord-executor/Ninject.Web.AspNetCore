@@ -16,7 +16,7 @@ public static class KeyedRequestExtensions
 
 	public static IRequest ToKeyedRequest(this IRequest request, object serviceKey)
 	{
-		return new KeyedRequest(request.Service, serviceKey, request.Constraint, request.Parameters.ToList(), 
+		return new KeyedRequest(request.Service, serviceKey, request.Constraint, request.Parameters.ToList(),
 			request.GetScope, request.IsOptional, request.IsUnique);
 	}
 }

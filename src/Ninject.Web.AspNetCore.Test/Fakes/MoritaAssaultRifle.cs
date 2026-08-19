@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Ninject.Web.AspNetCore.Test.Fakes
 {

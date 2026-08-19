@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Ninject.Web.AspNetCore.Components;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Infrastructure.Disposal;
 using Ninject.Web.AspNetCore.Components;

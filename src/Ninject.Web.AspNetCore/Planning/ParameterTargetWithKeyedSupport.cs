@@ -52,11 +52,11 @@ namespace Ninject.Web.AspNetCore.Planning
 		object ITarget.ResolveWithin(IContext parent)
 		{
 #if NET8_0_OR_GREATER
-			if (_serviceKeyAttribute.Value != null) 
+			if (_serviceKeyAttribute.Value != null)
 			{
 				return ResolveServiceKeyValue(parent);
 			}
-			
+
 			if (_fromKeyedServicesAttribute.Value != null)
 			{
 				return ResolveFromKeyedService(parent, _fromKeyedServicesAttribute.Value);
@@ -74,7 +74,7 @@ namespace Ninject.Web.AspNetCore.Planning
 
 		private FromKeyedServicesAttribute ReadFromKeyedServicesAttribute()
 		{
-			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
+			var keyedattributes = GetCustomAttributes(typeof(FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
 			return keyedattributes?.Length > 0 ? keyedattributes[0] : null;
 		}
 

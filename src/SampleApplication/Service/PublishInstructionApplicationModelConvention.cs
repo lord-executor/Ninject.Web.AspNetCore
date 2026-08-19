@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,8 @@ namespace SampleApplication.Service
 			// this _must_ be injected as Lazy because it does not exist yet when the type is instantiated
 			Lazy<IModelMetadataProvider> modelMetadataProvider,
 			IList<PublishInstruction> apiPublications
-		) {
+		)
+		{
 			_modelMetadataProvider = modelMetadataProvider;
 			_apiPublications = apiPublications;
 		}

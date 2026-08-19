@@ -1,4 +1,4 @@
-﻿using Ninject.Modules;
+using Ninject.Modules;
 using Ninject.Web.Common;
 
 namespace SampleApplication.Service.ChatBot
