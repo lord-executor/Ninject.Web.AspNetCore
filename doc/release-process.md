@@ -3,8 +3,8 @@ Build and package the project with the  _Release_ configuration.
 
 ```
 $version = "5.1.x"
-dotnet build .\src\Ninject.Web.AspNetCore.sln -c Release -p:Version="$version"
-dotnet pack .\src\Ninject.Web.AspNetCore.sln -c Release --include-symbols -p:SymbolPackageFormat=snupkg -p:Version="$version"
+dotnet build .\src\Ninject.Web.AspNetCore.slnx -c Release -p:Version="$version"
+dotnet pack .\src\Ninject.Web.AspNetCore.slnx -c Release --include-symbols -p:SymbolPackageFormat=snupkg -p:Version="$version"
 ```
 
 Publish all three packages with the `publish.ps1` script, replacing the API key and versions as needed.
