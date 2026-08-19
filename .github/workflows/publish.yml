@@ -35,6 +35,9 @@ jobs:
             - name: Restore dependencies
               run: dotnet restore $SOLUTION_FILE
 
+            - name: Verify formatting
+              run: dotnet format $SOLUTION_FILE --verify-no-changes
+
             - name: Build
               run: dotnet build --no-restore $SOLUTION_FILE
 
