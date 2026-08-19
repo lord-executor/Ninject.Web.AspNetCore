@@ -21,7 +21,7 @@ namespace Ninject.Web.AspNetCore
 			public override string ToString() => nameof(UnkeyedIndexKey);
 		}
 
-		private readonly IDictionary<ServiceTypeKey, Item> _bindingIndexMap = new Dictionary<ServiceTypeKey, Item>();
+		private readonly Dictionary<ServiceTypeKey, Item> _bindingIndexMap = new Dictionary<ServiceTypeKey, Item>();
 
 		public int Count { get; private set; }
 

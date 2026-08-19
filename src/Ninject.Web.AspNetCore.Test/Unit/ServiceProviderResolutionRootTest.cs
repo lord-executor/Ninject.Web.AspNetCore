@@ -52,7 +52,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			return new ServiceProviderScopeResolutionRoot(kernel, scope);
 		}
 
-		private IKernel CreateKernel()
+		private AspNetCoreKernel CreateKernel()
 		{
 			var kernel = new AspNetCoreKernel(new NinjectSettings { LoadExtensions = false });
 

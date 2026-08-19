@@ -27,7 +27,7 @@ namespace Ninject.Web.AspNetCore
 	/// instances that are associated with the root scope. This is why we implement <see cref="IDisposable"/> and this is why
 	/// we pass an <see cref="IServiceScope"/> constructor argument when creating the root service provider.
 	/// </summary>
-	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
+	public sealed class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
 #if NET8_0_OR_GREATER
 	, IKeyedServiceProvider
 #endif
@@ -149,7 +149,7 @@ namespace Ninject.Web.AspNetCore
 			var result = _resolutionRoot.Resolve(keyedRequest);
 			if (isUnique)
 			{
-				return (result as object[]).FirstOrDefault() as T;
+				return (result as object[])!.FirstOrDefault() as T;
 			}
 			else
 			{

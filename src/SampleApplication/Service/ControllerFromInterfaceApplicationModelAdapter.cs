@@ -55,7 +55,7 @@ namespace SampleApplication.Service
 			return controllerModel;
 		}
 
-		private ActionModel CreateActionModel(PublishInstruction publication, MethodInfo methodInfo)
+		private static ActionModel CreateActionModel(PublishInstruction publication, MethodInfo methodInfo)
 		{
 			var result = new ActionModel(methodInfo, new List<object>());
 			result.ActionName = methodInfo.Name;

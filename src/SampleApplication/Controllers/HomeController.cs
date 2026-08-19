@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -58,8 +59,8 @@ namespace SampleApplication.Controllers
 
 			ViewData["ServiceReferences"] = new Dictionary<string, string>
 			{
-				["Alive"] = alive.Count.ToString(),
-				["Dead"] = dead.Count.ToString(),
+				["Alive"] = alive.Count.ToString(CultureInfo.InvariantCulture),
+				["Dead"] = dead.Count.ToString(CultureInfo.InvariantCulture),
 			};
 
 			return View();

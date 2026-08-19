@@ -28,7 +28,9 @@ namespace Ninject.Web.AspNetCore.Hosting
 				.ConfigureServices(s => { s.AddNinject(_kernel); });
 			_configuration.Apply(builder);
 
+#pragma warning disable ASPDEPR008
 			var host = builder.Build();
+#pragma warning restore ASPDEPR008
 
 			if (_configuration == null || _configuration.BlockOnStart)
 			{

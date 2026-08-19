@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Ninject.Web.AspNetCore.Test.Unit
 {
-	public  class GenericConstraintValidtorTest
+	public sealed class GenericConstraintValidtorTest : IDisposable
 	{
 		private readonly ConstrainedGenericBindingResolver _resolver = new ConstrainedGenericBindingResolver();
 
@@ -50,15 +50,20 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			result.Should().BeFalse();
 		}
 
-		private class SimpleConstrainedType<T>
+		private sealed class SimpleConstrainedType<T>
 			where T : Exception
 		{
 		}
 
-		private class AdvancedConstrainedType<TContainer, T>
+		private sealed class AdvancedConstrainedType<TContainer, T>
 			where TContainer : IEnumerable<T>
 			where T : class
 		{
+		}
+
+		public void Dispose()
+		{
+			_resolver?.Dispose();
 		}
 	}
 }

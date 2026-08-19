@@ -13,10 +13,7 @@ namespace Ninject.Web.AspNetCore
 
 		public void Populate(IKernel kernel, IServiceCollection serviceCollection)
 		{
-			if (serviceCollection == null)
-			{
-				throw new ArgumentNullException(nameof(serviceCollection));
-			}
+			ArgumentNullException.ThrowIfNull(serviceCollection);
 
 			var adapters = kernel.GetAll<IPopulateAdapter>().ToList();
 			var bindingIndex = new BindingIndex();

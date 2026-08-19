@@ -72,7 +72,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			yield return new DummyBinding { Service = typeof(Predicate<>), IsImplicit = true };
 		}
 
-		private class DummyBinding : IBinding
+		private sealed class DummyBinding : IBinding
 		{
 			public Type Service { get; set; }
 			public bool IsImplicit { get; set; }

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Ninject.Web.AspNetCore.Test.Fakes
 {
-	public class FakeActivationCacheAccessor : IActivationCache, IActivationCacheAccessor
+	public sealed class FakeActivationCacheAccessor : IActivationCache, IActivationCacheAccessor
 	{
 		private readonly ConditionalWeakTable<object, ActivationEntry> _trackedInstances = new ConditionalWeakTable<object, ActivationEntry>();
 

@@ -54,8 +54,8 @@ namespace Ninject.Web.AspNetCore.Components
 
             foreach (ConstructorInfo constructor in constructors)
             {
-                var hasInjectAttribute = constructor.HasAttribute(Settings.InjectAttribute);
-                var hasObsoleteAttribute = constructor.HasAttribute(typeof(ObsoleteAttribute));
+                var hasInjectAttribute = constructor.HasAttribute(Settings!.InjectAttribute);
+                var hasObsoleteAttribute = constructor.HasAttribute<ObsoleteAttribute>();
                 var directive = new ConstructorInjectionDirectiveWithKeyedSupport(constructor, InjectorFactory.Create(constructor))
                 {
                     HasInjectAttribute = hasInjectAttribute,

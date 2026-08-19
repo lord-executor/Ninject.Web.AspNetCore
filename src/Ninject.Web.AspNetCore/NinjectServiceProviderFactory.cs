@@ -24,7 +24,7 @@ namespace Ninject.Web.AspNetCore
 
 		public IServiceProvider CreateServiceProvider(NinjectServiceProviderBuilder containerBuilder)
 		{
-			if (containerBuilder == null) throw new ArgumentNullException(nameof(containerBuilder));
+			ArgumentNullException.ThrowIfNull(containerBuilder);
 
 			return containerBuilder.Build();
 		}

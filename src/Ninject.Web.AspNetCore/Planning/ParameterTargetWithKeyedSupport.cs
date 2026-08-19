@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -135,19 +136,19 @@ namespace Ninject.Web.AspNetCore.Planning
 			{
 				try
 				{
-					result = Convert.ChangeType(asConvertible, this.Type);
+					result = Convert.ChangeType(asConvertible, Type, CultureInfo.InvariantCulture);
 				}
 				catch (InvalidCastException)
 				{
 					// we have to throw and InvalidOperationException in this case, a InvalidCastException
 					// is not passing the tests
-					throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + this.Type);
+					throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + Type);
 				}
 			}
 
 			if (result != null && !this.Type.IsAssignableFrom(result.GetType()))
 			{
-				throw new InvalidOperationException("Cannot convert " + result + " to " + this.Type);
+				throw new InvalidOperationException("Cannot convert " + result + " to " + Type);
 			}
 
 			return result;

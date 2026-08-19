@@ -10,19 +10,19 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 	/// Copy of the ActivationCacheTests from the Ninject core library to ensure that the replacement
 	/// activation cache still behaves as Ninject expects it to.
 	/// </summary>
-	public class ActivationCacheTests
+	public sealed class ActivationCacheTests : IDisposable
 	{
-		private readonly WeakTableActivationCache testee;
+		private readonly WeakTableActivationCache _testee;
 
 		public ActivationCacheTests()
 		{
-			testee = new WeakTableActivationCache();
+			_testee = new WeakTableActivationCache();
 		}
 
 		[Fact]
 		public void IsActivatedReturnsFalseForObjectsNotInTheActivationCache()
 		{
-			var activated = testee.IsActivated(new object());
+			var activated = _testee.IsActivated(new object());
 
 			activated.Should().BeFalse();
 		}
@@ -32,9 +32,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var instance = new TestObject(42);
 
-			testee.AddActivatedInstance(instance);
-			var activated = testee.IsActivated(instance);
-			var activatedObjectCount = testee.ActivatedObjectCount;
+			_testee.AddActivatedInstance(instance);
+			var activated = _testee.IsActivated(instance);
+			var activatedObjectCount = _testee.ActivatedObjectCount;
 
 			activated.Should().BeTrue();
 			activatedObjectCount.Should().Be(1);
@@ -43,7 +43,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void IsDeactivatedReturnsFalseForObjectsNotInTheDeactivationCache()
 		{
-			var activated = testee.IsDeactivated(new object());
+			var activated = _testee.IsDeactivated(new object());
 
 			activated.Should().BeFalse();
 		}
@@ -53,9 +53,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var instance = new TestObject(42);
 
-			testee.AddDeactivatedInstance(instance);
-			var deactivated = testee.IsDeactivated(instance);
-			var deactivatedObjectCount = testee.DeactivatedObjectCount;
+			_testee.AddDeactivatedInstance(instance);
+			var deactivated = _testee.IsDeactivated(instance);
+			var deactivatedObjectCount = _testee.DeactivatedObjectCount;
 
 			deactivated.Should().BeTrue();
 			deactivatedObjectCount.Should().Be(1);
@@ -64,16 +64,16 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		[Fact]
 		public void DeadObjectsAreRemoved()
 		{
-			CreateCollectableInstances(testee);
+			CreateCollectableInstances(_testee);
 
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			GC.Collect();
 
-			testee.Prune();
+			_testee.Prune();
 
-			var activatedObjectCount = testee.ActivatedObjectCount;
-			var deactivatedObjectCount = testee.DeactivatedObjectCount;
+			var activatedObjectCount = _testee.ActivatedObjectCount;
+			var deactivatedObjectCount = _testee.DeactivatedObjectCount;
 
 			activatedObjectCount.Should().Be(0);
 			deactivatedObjectCount.Should().Be(0);
@@ -84,9 +84,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var instance = new TestObject(42);
 
-			testee.AddActivatedInstance(instance);
+			_testee.AddActivatedInstance(instance);
 			instance.ChangeHashCode(43);
-			var isActivated = testee.IsActivated(instance);
+			var isActivated = _testee.IsActivated(instance);
 
 			isActivated.Should().BeTrue();
 		}
@@ -107,6 +107,11 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			activationCache.AddActivatedInstance(new TestObject(42));
 			activationCache.AddDeactivatedInstance(new TestObject(42));
+		}
+
+		public void Dispose()
+		{
+			_testee?.Dispose();
 		}
 	}
 }

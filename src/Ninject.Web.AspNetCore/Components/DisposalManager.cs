@@ -27,17 +27,14 @@ namespace Ninject.Web.AspNetCore.Components
 
 		public DisposalManager(IActivationCache activationCache)
 		{
-			if (activationCache == null)
+			ArgumentNullException.ThrowIfNull(activationCache);
+
+			if (!(activationCache is IActivationCacheAccessor cache))
 			{
-				throw new ArgumentNullException(nameof(activationCache));
+				throw new ArgumentException("DisposalManager expects the activation cache to also implement IActivationCacheAccessor", nameof(activationCache));
 			}
 
-			if (!(activationCache is IActivationCacheAccessor))
-			{
-				throw new ArgumentException(nameof(activationCache), "DisposalManager expects the activation cache to also implement IActivationCacheAccessor");
-			}
-
-			_cacheAccessor = activationCache as IActivationCacheAccessor;
+			_cacheAccessor = cache;
 		}
 
 		public void RemoveInstance(InstanceReference instanceReference)
@@ -74,10 +71,10 @@ namespace Ninject.Web.AspNetCore.Components
 		/// it goes through the active service instances in reverse and disposed all the services that are "marked"
 		/// for disposal.
 		/// </summary>
-		private class OrderedAggregateDisposalArea : IDisposalCollectorArea
+		private sealed class OrderedAggregateDisposalArea : IDisposalCollectorArea
 		{
 			private readonly DisposalManager _manager;
-			private IList<IActivationEntry> _disposals = new List<IActivationEntry>();
+			private List<IActivationEntry> _disposals = new List<IActivationEntry>();
 
 			public OrderedAggregateDisposalArea(DisposalManager manager)
 			{
@@ -112,7 +109,7 @@ namespace Ninject.Web.AspNetCore.Components
 		/// <summary>
 		/// If there is no active disposal collection area, we just immediately dispose as Ninject does normally.
 		/// </summary>
-		private class ImmediateDisposal : IDisposalCollector
+		private sealed class ImmediateDisposal : IDisposalCollector
 		{
 			public static ImmediateDisposal Instance { get; } = new ImmediateDisposal();
 
@@ -127,7 +124,7 @@ namespace Ninject.Web.AspNetCore.Components
 		/// and services are only disposed with the disposal of the outermost <see cref="OrderedAggregateDisposalArea"/>
 		/// because only there do we know all the services that need to be disposed.
 		/// </summary>
-		private class InnerDisposalArea : IDisposalCollectorArea
+		private sealed class InnerDisposalArea : IDisposalCollectorArea
 		{
 			private readonly IDisposalCollectorArea _parent;
 

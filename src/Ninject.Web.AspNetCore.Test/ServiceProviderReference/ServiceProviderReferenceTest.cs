@@ -105,7 +105,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			}
 		}
 
-		private IServiceProvider CreateServiceProvider(Action<ServiceCollection> serviceConfig = null)
+		private ServiceProvider CreateServiceProvider(Action<ServiceCollection> serviceConfig = null)
 		{
 			var collection = new ServiceCollection();
 
@@ -120,7 +120,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			return collection.BuildServiceProvider();
 		}
 
-		private IList<T> CreateInstances<T>(IServiceProvider provider)
+		private List<T> CreateInstances<T>(IServiceProvider provider)
 		{
 			var instances = new List<T>();
 
@@ -139,7 +139,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			return instances;
 		}
 
-		private static IList<string> NinjaNames = new List<string>
+		private static readonly List<string> NinjaNames = new List<string>
 		{
 			"Shadow",
 			"Scorpion",
