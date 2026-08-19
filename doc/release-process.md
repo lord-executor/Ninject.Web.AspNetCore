@@ -1,18 +1,15 @@
 # Release Process
-Build and package the project with the  _Release_ configuration.
+Releases are built, packed and published automatically by the [`NuGet Package Release`](../.github/publish.yml) GitHub Actions workflow.
 
+To ship a release, push a tag matching `v*.*.*` (e.g. `v10.0.1`):
 ```
-$version = "5.1.x"
-dotnet build .\src\Ninject.Web.AspNetCore.slnx -c Release -p:Version="$version"
-dotnet pack .\src\Ninject.Web.AspNetCore.slnx -c Release --include-symbols -p:SymbolPackageFormat=snupkg -p:Version="$version"
-```
-
-Publish all three packages with the `publish.ps1` script, replacing the API key and versions as needed.
-```
-.\doc\publish.ps1 -apiKey "NuGet APIKey" -version "$version"
+git tag v10.0.1
+git push origin v10.0.1
 ```
 
-With the NuGet API key stored in the Windows credential manager, we can do
-```
-.\doc\publish.ps1 -apiKey $((Read-CredentialsStore -Target "NuGet:Ninject.Web.AspNetCore:APIKey").GetNetworkCredential().Password) -version "$version"
-```
+The workflow then:
+1. Restores, builds and tests the solution.
+2. Derives the package version from the tag name (stripping the leading `v`, e.g. `v10.0.1` -> `10.0.1`) and packs all three packages with that version via `-p:Version`.
+3. Exchanges the workflow's GitHub OIDC token for a short-lived NuGet API key ([NuGet Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)) and pushes the packages to nuget.org.
+
+No manual build, pack or publish steps are required.
