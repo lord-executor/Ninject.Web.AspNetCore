@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Ninject.Parameters;
 using Ninject.Web.AspNetCore.Test.Fakes;
 using System.Linq;
@@ -68,7 +68,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var kernel = new StandardKernel(new NinjectSettings() { LoadExtensions = false });
 			kernel.Bind<IWarrior>().To<MobileInfantry>().InScope(ctx => RequestScope.Current).WithParameter(new Parameter("scope", scope, true));
 			kernel.Bind<IWeapon>().To<MoritaAssaultRifle>().InScope(ctx => ((Parameter)ctx.Parameters.First()).ValueCallback(ctx, null));
-			
+
 			using (new RequestScope())
 			{
 				rico = (MobileInfantry)kernel.Get<IWarrior>();

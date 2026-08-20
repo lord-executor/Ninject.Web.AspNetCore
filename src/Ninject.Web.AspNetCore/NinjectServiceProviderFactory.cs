@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ninject.Web.AspNetCore
@@ -24,7 +24,7 @@ namespace Ninject.Web.AspNetCore
 
 		public IServiceProvider CreateServiceProvider(NinjectServiceProviderBuilder containerBuilder)
 		{
-			if (containerBuilder == null) throw new ArgumentNullException(nameof(containerBuilder));
+			ArgumentNullException.ThrowIfNull(containerBuilder);
 
 			return containerBuilder.Build();
 		}

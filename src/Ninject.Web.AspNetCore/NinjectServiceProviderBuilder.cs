@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 
@@ -17,7 +17,8 @@ namespace Ninject.Web.AspNetCore
 
 		public IServiceProvider Build()
 		{
-			_kernel.Bind<IServiceProvider>().ToMethod(context => {
+			_kernel.Bind<IServiceProvider>().ToMethod(context =>
+			{
 				// Another interesting quirk of the Microsoft DI framework is that injecting the IServiceProvider injects a different
 				// instance depending on the context. EXCEPT if the service provider is injected into a singleton in which case the
 				// root service provider is used...

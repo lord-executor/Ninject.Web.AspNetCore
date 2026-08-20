@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Solution Files/">
+    <File Path="../.editorconfig" />
+    <File Path="../.gitignore" />
+    <File Path="../CHANGELOG" />
+    <File Path="../LICENSE" />
+    <File Path="../README.md" />
+  </Folder>
+  <Project Path="Ninject.Web.AspNetCore.ComplianceTest/Ninject.Web.AspNetCore.ComplianceTest.csproj" />
+  <Project Path="Ninject.Web.AspNetCore.Httpsys/Ninject.Web.AspNetCore.HttpSys.csproj" />
+  <Project Path="Ninject.Web.AspNetCore.IIS/Ninject.Web.AspNetCore.IIS.csproj" />
+  <Project Path="Ninject.Web.AspNetCore.Test/Ninject.Web.AspNetCore.Test.csproj" />
+  <Project Path="Ninject.Web.AspNetCore/Ninject.Web.AspNetCore.csproj" />
+  <Project Path="SampleApplication/SampleApplication.csproj">
+    <Build Solution="Release|*" Project="false" />
+  </Project>
+  <Project Path="SampleBlazorApplication/SampleBlazorApplication.csproj" />
+</Solution>

@@ -64,7 +64,7 @@ namespace Ninject.Web.AspNetCore.RequestActivation
 			foreach (var parameter in parametersToRemove)
 			{
 				Parameters.Remove(parameter);
-			} 
+			}
 			Parameters.Add(new ServiceKeyParameter(serviceKey));
 			ScopeCallback = scopeCallback;
 			ActiveBindings = new Stack<IBinding>(this.ParentRequest.ActiveBindings);

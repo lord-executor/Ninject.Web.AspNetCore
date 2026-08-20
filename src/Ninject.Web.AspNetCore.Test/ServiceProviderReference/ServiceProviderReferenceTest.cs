@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Ninject.Web.AspNetCore.Test.Fakes;
@@ -16,7 +16,8 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 		{
 			var scopeFactoryMock = new Mock<IServiceScopeFactory>();
 
-			var provider = CreateServiceProvider(collection => {
+			var provider = CreateServiceProvider(collection =>
+			{
 				collection.AddSingleton<IServiceScopeFactory>(scopeFactoryMock.Object);
 			});
 
@@ -26,7 +27,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			// * ServiceProviderEngine.ServiceProviderEngine constructor
 			// * ServiceProviderServiceExtensions.CreateScope
 			var factory = provider.GetRequiredService<IServiceScopeFactory>();
-			
+
 			factory.Should().NotBeNull().And.NotBe(scopeFactoryMock.Object);
 			factory.GetType().Name.Should().Contain("ServiceProviderEngine");
 		}
@@ -105,7 +106,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			}
 		}
 
-		private IServiceProvider CreateServiceProvider(Action<ServiceCollection> serviceConfig = null)
+		private ServiceProvider CreateServiceProvider(Action<ServiceCollection> serviceConfig = null)
 		{
 			var collection = new ServiceCollection();
 
@@ -120,7 +121,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			return collection.BuildServiceProvider();
 		}
 
-		private IList<T> CreateInstances<T>(IServiceProvider provider)
+		private List<T> CreateInstances<T>(IServiceProvider provider)
 		{
 			var instances = new List<T>();
 
@@ -139,7 +140,7 @@ namespace Ninject.Web.AspNetCore.Test.ServiceProviderReference
 			return instances;
 		}
 
-		private static IList<string> NinjaNames = new List<string>
+		private static readonly List<string> NinjaNames = new List<string>
 		{
 			"Shadow",
 			"Scorpion",

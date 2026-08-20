@@ -1,4 +1,4 @@
-﻿using Ninject.Infrastructure.Disposal;
+using Ninject.Infrastructure.Disposal;
 using System;
 using System.Threading;
 
@@ -17,7 +17,9 @@ namespace Ninject.Web.AspNetCore
 			}
 			else
 			{
+#pragma warning disable CA2201
 				throw new ApplicationException("Nesting of RequestScope is not allowed.");
+#pragma warning restore CA2201
 			}
 		}
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject.Components;
 using Ninject.Infrastructure;
 using Ninject.Planning.Bindings;
@@ -26,7 +26,8 @@ namespace Ninject.Web.AspNetCore.Components
 
 			// We don't need to do any caching here since the resolved bindings are automatically placed in the binding cache of Ninject so
 			// that the next request for the same service type doesn't need to resolve this again.
-			return bindings[service.GetGenericTypeDefinition()].Where(binding => {
+			return bindings[service.GetGenericTypeDefinition()].Where(binding =>
+			{
 				// If the binding has a ServiceDescriptor in its metadata, then we 
 				if (binding.Target == BindingTarget.Type && binding.Metadata.Has(nameof(IDescriptorAdapter)))
 				{

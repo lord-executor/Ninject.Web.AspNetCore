@@ -1,4 +1,4 @@
-﻿using Ninject.Activation;
+using Ninject.Activation;
 using Ninject.Components;
 using Ninject.Web.Common;
 using System.Linq;

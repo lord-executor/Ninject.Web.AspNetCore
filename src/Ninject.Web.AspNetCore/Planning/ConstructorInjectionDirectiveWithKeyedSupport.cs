@@ -17,7 +17,7 @@ namespace Ninject.Web.AspNetCore.Planning
 		protected override ITarget[] CreateTargetsFromParameters(ConstructorInfo method)
 		{
 			return method.GetParameters().
-				Select((Func<ParameterInfo, ParameterTarget>) (parameter => new ParameterTargetWithKeyedSupport(method, parameter))).
+				Select((Func<ParameterInfo, ParameterTarget>)(parameter => new ParameterTargetWithKeyedSupport(method, parameter))).
 				ToArray();
 		}
 	}

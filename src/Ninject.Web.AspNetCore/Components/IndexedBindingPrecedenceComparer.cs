@@ -1,4 +1,4 @@
-﻿using Ninject.Components;
+using Ninject.Components;
 using Ninject.Planning.Bindings;
 using System;
 using System.Collections.Generic;

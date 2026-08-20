@@ -1,4 +1,4 @@
-﻿using Ninject.Infrastructure;
+using Ninject.Infrastructure;
 using System.Collections.Generic;
 
 namespace Ninject.Web.AspNetCore.Components

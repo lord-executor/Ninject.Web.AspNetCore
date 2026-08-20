@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject.Syntax;
 using System;
 using System.Collections;
@@ -27,7 +27,7 @@ namespace Ninject.Web.AspNetCore
 	/// instances that are associated with the root scope. This is why we implement <see cref="IDisposable"/> and this is why
 	/// we pass an <see cref="IServiceScope"/> constructor argument when creating the root service provider.
 	/// </summary>
-	public class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
+	public sealed class NinjectServiceProvider : IServiceProvider, ISupportRequiredService, IDisposable
 #if NET8_0_OR_GREATER
 	, IKeyedServiceProvider
 #endif
@@ -149,7 +149,7 @@ namespace Ninject.Web.AspNetCore
 			var result = _resolutionRoot.Resolve(keyedRequest);
 			if (isUnique)
 			{
-				return (result as object[]).FirstOrDefault() as T;
+				return (result as object[])!.FirstOrDefault() as T;
 			}
 			else
 			{
@@ -162,7 +162,7 @@ namespace Ninject.Web.AspNetCore
 			if (serviceKey == KeyedService.AnyKey)
 			{
 				throw new InvalidOperationException($"Not allowed to resolve a service {serviceType} with the KeyedService.AnyKey. " +
-				                                    $"That's only supported when resolving collections of services.");
+													$"That's only supported when resolving collections of services.");
 			}
 		}
 
@@ -184,8 +184,8 @@ namespace Ninject.Web.AspNetCore
 			{
 				Type genericTypeDefinition = type.GetGenericTypeDefinition();
 				if (genericTypeDefinition == typeof(IEnumerable<>) ||
-				    genericTypeDefinition == typeof(List<>) || genericTypeDefinition == typeof(IList<>) ||
-				    genericTypeDefinition == typeof(ICollection<>))
+					genericTypeDefinition == typeof(List<>) || genericTypeDefinition == typeof(IList<>) ||
+					genericTypeDefinition == typeof(ICollection<>))
 				{
 					elementType = type.GenericTypeArguments[0];
 					return true;
@@ -195,7 +195,7 @@ namespace Ninject.Web.AspNetCore
 			elementType = null;
 			return false;
 		}
-		
+
 		private static object ConvertToTypedEnumerable(Type elementType, IEnumerable<object> objectList)
 		{
 			var castMethod = EnumerableCastMethod.MakeGenericMethod(elementType);
@@ -203,6 +203,6 @@ namespace Ninject.Web.AspNetCore
 
 			return result;
 		}
-		
+
 	}
 }

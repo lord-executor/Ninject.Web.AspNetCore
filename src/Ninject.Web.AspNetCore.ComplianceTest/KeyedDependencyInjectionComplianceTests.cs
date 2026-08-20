@@ -12,14 +12,14 @@ namespace Ninject.Web.AspNetCore.ComplianceTest;
 /// </summary>
 public class KeyedDependencyInjectionComplianceTests : Microsoft.Extensions.DependencyInjection.Specification.KeyedDependencyInjectionSpecificationTests
 {
-	protected override IServiceProvider CreateServiceProvider(IServiceCollection serviceCollection)
+	protected override IServiceProvider CreateServiceProvider(IServiceCollection collection)
 	{
 		var kernel = new AspNetCoreKernel();
 		// remove autobinding as CreateServiceWithKeyedParameter e.g. tests that no autobinding happens.
 		kernel.Components.Remove<IMissingBindingResolver, SelfBindingResolver>();
 		var factory = new NinjectServiceProviderFactory(kernel);
 
-		return factory.CreateBuilder(serviceCollection).Build();
+		return factory.CreateBuilder(collection).Build();
 	}
 
 #pragma warning disable xUnit1024, xUnit1026

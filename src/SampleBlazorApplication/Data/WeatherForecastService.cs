@@ -3,8 +3,8 @@ using SampleBlazorApplication.ChatClient;
 
 namespace SampleBlazorApplication.Data
 {
-    public class WeatherForecastService
-    {
+	public class WeatherForecastService
+	{
 		/// <summary>
 		/// The _chatHubContext is only here to test the _injection of strongly typed SignalR hub contexts as described in
 		/// https://docs.microsoft.com/en-us/aspnet/core/signalr/hubcontext?view=aspnetcore-6.0#inject-a-strongly-typed-hubcontext
@@ -18,19 +18,19 @@ namespace SampleBlazorApplication.Data
 			_chatHubContext = chatHubContext;
 		}
 
-        private static readonly string[] Summaries = new[]
-        {
+		private static readonly string[] Summaries = new[]
+		{
 			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 		};
 
-        public Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
-        {
-            return Task.FromResult(Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = startDate.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            }).ToArray());
-        }
-    }
+		public Task<WeatherForecast[]> GetForecastAsync(DateTime startDate)
+		{
+			return Task.FromResult(Enumerable.Range(1, 5).Select(index => new WeatherForecast
+			{
+				Date = startDate.AddDays(index),
+				TemperatureC = Random.Shared.Next(-20, 55),
+				Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+			}).ToArray());
+		}
+	}
 }

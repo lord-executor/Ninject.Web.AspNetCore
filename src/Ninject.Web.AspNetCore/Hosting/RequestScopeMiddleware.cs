@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 namespace Ninject.Web.AspNetCore.Hosting

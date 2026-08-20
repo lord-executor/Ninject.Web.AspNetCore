@@ -1,4 +1,4 @@
-﻿using Ninject.Activation.Caching;
+using Ninject.Activation.Caching;
 using Ninject.Components;
 using System.Collections.Generic;
 using System.Linq;

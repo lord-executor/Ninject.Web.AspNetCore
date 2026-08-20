@@ -24,7 +24,7 @@ public class ServiceProviderScopeTest : TestKernelContext
 			// a ServiceDescriptor.ImplementationFactory
 			var levelOneKnight = scope.ServiceProvider.GetRequiredService<Knight>();
 			AssertNotSameKnightAndWeapon(levelOneKnight, rootKnight);
-			
+
 			var levelOneKnight2 = scope.ServiceProvider.GetRequiredService<Knight>();
 			AssertSameKnightAndWeapon(levelOneKnight2, levelOneKnight);
 		}
@@ -38,13 +38,13 @@ public class ServiceProviderScopeTest : TestKernelContext
 		value.Should().BeSameAs(expected);
 		value.Weapon.Should().BeSameAs(expected.Weapon);
 	}
-	
+
 	private void AssertNotSameKnightAndWeapon(Knight value, Knight expected)
 	{
 		value.Should().NotBeSameAs(expected);
 		value.Weapon.Should().NotBeSameAs(expected.Weapon);
 	}
-	
+
 	public static TheoryData<ServiceCollection> ServiceConfigurations => new TheoryData<ServiceCollection>
 	{
 		{

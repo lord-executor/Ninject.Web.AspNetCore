@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Ninject.Web.AspNetCore.Test.Fakes
 {
-#if NET8_0_OR_GREATER	
+#if NET8_0_OR_GREATER
 	public class KeyedWeaponStorage : IKeyedWeaponStorage
 	{
 		public IWeapon Weapon { get; private set; }
@@ -11,5 +11,5 @@ namespace Ninject.Web.AspNetCore.Test.Fakes
 			Weapon = lance;
 		}
 	}
-#endif	
+#endif
 }

@@ -1,4 +1,4 @@
-﻿using Ninject.Infrastructure.Disposal;
+using Ninject.Infrastructure.Disposal;
 using Ninject.Parameters;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace Ninject.Web.AspNetCore
 	public class ServiceProviderScopeParameter : Parameter
 	{
 		private readonly NinjectServiceScope _scope;
-		private readonly IList<TransientScope> _children = new List<TransientScope>();
+		private readonly List<TransientScope> _children = new List<TransientScope>();
 
 		public IServiceProvider SourceServiceProvider => _scope.ServiceProvider;
 
@@ -32,7 +32,7 @@ namespace Ninject.Web.AspNetCore
 			return child;
 		}
 
-		private class TransientScope : DisposableObject
+		private sealed class TransientScope : DisposableObject
 		{
 		}
 	}

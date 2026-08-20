@@ -1,4 +1,6 @@
-﻿using AwesomeAssertions;
+using System;
+using System.Globalization;
+using AwesomeAssertions;
 using Ninject.Web.AspNetCore.Components;
 using Ninject.Web.AspNetCore.Test.Fakes;
 using System.Linq;
@@ -21,7 +23,8 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 				IDisposalCollectorArea area = null;
 
 				barrier.SignalAndWait();
-				lock (disposalManager) {
+				lock (disposalManager)
+				{
 					// make sure the two tasks are creating the area one after the other
 					area = disposalManager.CreateArea();
 				}
@@ -34,7 +37,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var results = (await Task.WhenAll(tasks)).ToList();
 
 			results.Count.Should().Be(2);
-			results.All(r => r.StartsWith("OrderedAggregateDisposalArea")).Should().BeTrue();
+			results.All(r => r.StartsWith("OrderedAggregateDisposalArea", StringComparison.InvariantCulture)).Should().BeTrue();
 			results[0].Should().NotBe(results[1]);
 		}
 

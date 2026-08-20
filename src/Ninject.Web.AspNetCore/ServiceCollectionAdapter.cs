@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Ninject.Syntax;
 using Ninject.Web.Common;
 using System;
@@ -13,10 +13,7 @@ namespace Ninject.Web.AspNetCore
 
 		public void Populate(IKernel kernel, IServiceCollection serviceCollection)
 		{
-			if (serviceCollection == null)
-			{
-				throw new ArgumentNullException(nameof(serviceCollection));
-			}
+			ArgumentNullException.ThrowIfNull(serviceCollection);
 
 			var adapters = kernel.GetAll<IPopulateAdapter>().ToList();
 			var bindingIndex = new BindingIndex();
@@ -125,7 +122,8 @@ namespace Ninject.Web.AspNetCore
 				case ServiceLifetime.Singleton:
 					// Microsoft.Extensions.DependencyInjection expects its singletons to be disposed when the root service scope
 					// and/or the root IServiceProvider is disposed.
-					return bindingInSyntax.InScope(context => {
+					return bindingInSyntax.InScope(context =>
+					{
 						return (context.Kernel as AspNetCoreKernel).RootScope;
 					});
 				case ServiceLifetime.Scoped:
@@ -133,7 +131,8 @@ namespace Ninject.Web.AspNetCore
 				case ServiceLifetime.Transient:
 					// Microsoft.Extensions.DependencyInjection expects transient services to be disposed when the IServiceScope
 					// in which they were created is disposed. See the compliance tests for more details.
-					return bindingInSyntax.InScope(context => {
+					return bindingInSyntax.InScope(context =>
+					{
 						var scope = context.GetServiceProviderScopeParameter();
 						return scope?.DeriveTransientScope();
 					});

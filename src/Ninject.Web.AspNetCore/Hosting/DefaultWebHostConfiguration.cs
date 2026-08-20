@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HostFiltering;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
@@ -24,7 +24,9 @@ namespace Ninject.Web.AspNetCore.Hosting
 	public class DefaultWebHostConfiguration
 	{
 		private readonly string[] _cliArgs;
+#pragma warning disable ASPDEPR004
 		private readonly WebHostBuilder _builder = new WebHostBuilder();
+#pragma warning restore ASPDEPR004
 
 		public DefaultWebHostConfiguration(string[] cliArgs)
 		{
@@ -105,8 +107,8 @@ namespace Ninject.Web.AspNetCore.Hosting
 				{
 					if (options.AllowedHosts == null || options.AllowedHosts.Count == 0)
 					{
-						string[] array = hostingContext.Configuration["AllowedHosts"]?.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-						options.AllowedHosts = ((array != null && array.Length != 0) ? array : new string[] { "*" });
+						string[] array = hostingContext.Configuration["AllowedHosts"]?.Split([';'], StringSplitOptions.RemoveEmptyEntries);
+						options.AllowedHosts = ((array != null && array.Length != 0) ? array : ["*"]);
 					}
 				});
 				services.AddSingleton((IOptionsChangeTokenSource<HostFilteringOptions>)new ConfigurationChangeTokenSource<HostFilteringOptions>(hostingContext.Configuration));
@@ -124,7 +126,11 @@ namespace Ninject.Web.AspNetCore.Hosting
 					services.Configure((ForwardedHeadersOptions options) =>
 					{
 						options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+#if NET10_0_OR_GREATER
+						options.KnownIPNetworks.Clear();
+#else
 						options.KnownNetworks.Clear();
+#endif
 						options.KnownProxies.Clear();
 					});
 					services.AddTransient<IStartupFilter, ForwardedHeadersStartupFilter>();

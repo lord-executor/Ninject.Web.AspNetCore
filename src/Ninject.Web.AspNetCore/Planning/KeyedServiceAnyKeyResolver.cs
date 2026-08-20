@@ -11,7 +11,7 @@ using Ninject.Web.AspNetCore.RequestActivation;
 
 namespace Ninject.Web.AspNetCore.Planning
 {
-#if NET8_0_OR_GREATER	
+#if NET8_0_OR_GREATER
 	/// <summary>
 	/// This class is used to handle keyed services registrations with service key equal to
 	/// KeyedService.AnyKey.
@@ -28,8 +28,8 @@ namespace Ninject.Web.AspNetCore.Planning
 			// this ensures that we e.g. can have a singleton binding with anykey, but instantiate one singleton
 			// per servicekey.
 			var keyedRequest = request as KeyedRequest;
-			if (keyedRequest != null && keyedRequest.ServiceKey != null &&  keyedRequest.ServiceKey != KeyedService.AnyKey 
-			    && keyedRequest.IsUnique)
+			if (keyedRequest != null && keyedRequest.ServiceKey != null && keyedRequest.ServiceKey != KeyedService.AnyKey
+				&& keyedRequest.IsUnique)
 			{
 				var service = request.Service;
 				var matchingBindings = bindings.Where(x => x.Key == service);
@@ -44,8 +44,8 @@ namespace Ninject.Web.AspNetCore.Planning
 					foreach (var binding in bindingGroup.Value)
 					{
 						if (binding.Metadata.HasServiceKeyMetadata() && Object.Equals(binding.Metadata.GetServiceKey(), KeyedService.AnyKey)
-						    && (binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true)
-						    )
+							&& (binding.Metadata.Get<BindingIndex.Item>(nameof(BindingIndex))?.IsLatest ?? true)
+							)
 						{
 							matchingAnyBinding = binding;
 							break;

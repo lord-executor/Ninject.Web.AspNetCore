@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Ninject.Web.AspNetCore.Test.Fakes;
 using System;
@@ -10,7 +10,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 {
 	public class ServiceProviderTest
 	{
-				
+
 		[Fact]
 		public void ServiceProvider_CreatedSuccessfully()
 		{
@@ -18,9 +18,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			NinjectServiceProviderBuilder builder = CreateServiceProviderBuilder(kernel);
 
 			var provider = builder.Build();
-			
+
 			provider.Should().NotBeNull().And.BeOfType(typeof(NinjectServiceProvider));
-		}		
+		}
 
 		[Fact]
 		public void OptionalExisting_SingleServiceResolved()
@@ -28,7 +28,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			var kernel = CreateTestKernel();
 			kernel.Bind<IWarrior>().To<Samurai>();
 			var provider = CreateServiceProvider(kernel);
-			
+
 			provider.GetService(typeof(IWarrior)).Should().NotBeNull().And.BeOfType(typeof(Samurai));
 		}
 
@@ -37,7 +37,7 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 		{
 			var kernel = CreateTestKernel();
 			var provider = CreateServiceProvider(kernel);
-			
+
 			provider.GetService(typeof(IWarrior)).Should().BeNull();
 		}
 
@@ -48,9 +48,9 @@ namespace Ninject.Web.AspNetCore.Test.Unit
 			kernel.Bind<IWarrior>().To<Samurai>();
 			kernel.Bind<IWarrior>().ToConstant(new Ninja("test"));
 			var provider = CreateServiceProvider(kernel);
-			
+
 			var result = provider.GetService(typeof(IList<IWarrior>)) as IEnumerable<IWarrior>;
-			
+
 			result.Should().NotBeNull();
 			var resultList = result.ToList();
 			resultList.Should().HaveCount(2);

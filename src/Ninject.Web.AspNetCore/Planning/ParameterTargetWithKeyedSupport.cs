@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,11 +52,11 @@ namespace Ninject.Web.AspNetCore.Planning
 		object ITarget.ResolveWithin(IContext parent)
 		{
 #if NET8_0_OR_GREATER
-			if (_serviceKeyAttribute.Value != null) 
+			if (_serviceKeyAttribute.Value != null)
 			{
 				return ResolveServiceKeyValue(parent);
 			}
-			
+
 			if (_fromKeyedServicesAttribute.Value != null)
 			{
 				return ResolveFromKeyedService(parent, _fromKeyedServicesAttribute.Value);
@@ -73,7 +74,7 @@ namespace Ninject.Web.AspNetCore.Planning
 
 		private FromKeyedServicesAttribute ReadFromKeyedServicesAttribute()
 		{
-			var keyedattributes = GetCustomAttributes(typeof (FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
+			var keyedattributes = GetCustomAttributes(typeof(FromKeyedServicesAttribute), true) as FromKeyedServicesAttribute[];
 			return keyedattributes?.Length > 0 ? keyedattributes[0] : null;
 		}
 
@@ -135,19 +136,19 @@ namespace Ninject.Web.AspNetCore.Planning
 			{
 				try
 				{
-					result = Convert.ChangeType(asConvertible, this.Type);
+					result = Convert.ChangeType(asConvertible, Type, CultureInfo.InvariantCulture);
 				}
 				catch (InvalidCastException)
 				{
 					// we have to throw and InvalidOperationException in this case, a InvalidCastException
 					// is not passing the tests
-					throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + this.Type);
+					throw new InvalidOperationException("Cannot convert " + asConvertible + " to " + Type);
 				}
 			}
 
 			if (result != null && !this.Type.IsAssignableFrom(result.GetType()))
 			{
-				throw new InvalidOperationException("Cannot convert " + result + " to " + this.Type);
+				throw new InvalidOperationException("Cannot convert " + result + " to " + Type);
 			}
 
 			return result;

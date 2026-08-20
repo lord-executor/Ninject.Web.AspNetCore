@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
@@ -24,7 +24,7 @@ namespace SampleApplication
 			// setting the variable in IIS.
 			var model = Environment.GetEnvironmentVariable("SERVER_HOSTING_MODEL");
 			// Command line arguments have higher precedence than environment variables
-			model = args.FirstOrDefault(arg => arg.StartsWith("--use"))?.Substring(5) ?? model;
+			model = args.FirstOrDefault(arg => arg.StartsWith("--use", StringComparison.InvariantCulture))?.Substring(5) ?? model;
 
 			var hostConfiguration = new AspNetCoreHostConfiguration(args)
 					.UseStartup<Startup>()
