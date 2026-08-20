@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *.cs) dotnet format src/Ninject.Web.AspNetCore.slnx --include \"$f\" --no-restore --verbosity quiet;; esac; } 2>/dev/null || true",
+            "timeout": 60,
+            "statusMessage": "Formatting with dotnet format..."
+          }
+        ]
+      }
+    ]
+  }
+}
